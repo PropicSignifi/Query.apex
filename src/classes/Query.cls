@@ -574,9 +574,34 @@ public class Query {
         return formQueryString();
     }
 
-    public List<SObject> run() {
+    public List<SObject> fetch() {
         String queryString = toQueryString();
         return Database.query(queryString);
+    }
+
+    public List<SObject> fetch(Integer first, Integer last) {
+        List<SObject> retList = new List<SObject>();
+        final List<SObject> fetchedList = fetch();
+        
+        for (Integer i = first; i < fetchedList.size() && i < last; i++) {
+            retList.add(fetchedList.get(i));
+        }
+
+        return retList;
+    }
+
+    public SObject fetch(Integer idx) {
+        final List<SObject> fetchedList = fetch();
+        
+        if (idx < fetchedList.size()) {
+            return fetchedList.get(idx);
+        } else {
+            return null;
+        }
+    }
+
+    public List<SObject> run() {
+        return fetch();
     }
 
     /* Private members */

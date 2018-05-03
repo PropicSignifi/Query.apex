@@ -32,6 +32,25 @@ public class QueryTest {
     }
 
     @isTest
+    static void fetchTest() {
+        Account acc0 = new Account(Name = 'Account 0');
+        Account acc1 = new Account(Name = 'Account 1');
+        Account acc2 = new Account(Name = 'Account 2');
+
+        insert new List<Account>{acc0, acc1, acc2};
+
+        List<Account> accounts = new Query('Account').fetch(1, 3);
+
+        System.assertEquals(accounts.size(), 2);
+        System.assertEquals(accounts.get(0).Name, 'Account 1');
+        System.assertEquals(accounts.get(1).Name, 'Account 2');
+
+        Account account = (Account)new Query('Account').fetch(0);
+        System.assertEquals(account.Name, 'Account 0');
+
+    }
+
+    @isTest
     static void fieldsTest() {
         createData();
 
