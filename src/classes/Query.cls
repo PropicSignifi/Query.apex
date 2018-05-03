@@ -1168,6 +1168,8 @@ public class Query {
 
         if (null == orgList || orgList.isEmpty()) {
             return '';
+        } else if (null == orgList.get(0).namespacePrefix) {
+            return '';
         } else {
             return orgList.get(0).namespacePrefix + '__';
         }
