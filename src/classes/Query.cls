@@ -32,12 +32,12 @@ public class Query {
         Map<String, Schema.SObjectType> globalDescribe =
             Schema.getGlobalDescribe();
 
-        this.objectName = objectName;
-        this.objectType = globalDescribe.get(objectName);
+        this.objectName = appendNamespace(objectName);
+        this.objectType = globalDescribe.get(this.objectName);
 
-        if (null == objectType) {
+        if (null == this.objectType) {
             throw new QueryException('Cannot find corresponding ' +
-                    'SObject type from the SObject name' + objectName);
+                    'SObject type from the SObject name ' + this.objectName);
         }
 
         childRelationships = getChildRelationships();
@@ -582,7 +582,7 @@ public class Query {
     public List<SObject> fetch(Integer first, Integer last) {
         List<SObject> retList = new List<SObject>();
         final List<SObject> fetchedList = fetch();
-        
+
         for (Integer i = first; i < fetchedList.size() && i < last; i++) {
             retList.add(fetchedList.get(i));
         }
@@ -592,7 +592,7 @@ public class Query {
 
     public SObject fetch(Integer idx) {
         final List<SObject> fetchedList = fetch();
-        
+
         if (idx < fetchedList.size()) {
             return fetchedList.get(idx);
         } else {
@@ -651,7 +651,7 @@ public class Query {
     private List<String> orderFields;
     private Map<String, Query> childQuerys;
 
-    // Object Schema variables 
+    // Object Schema variables
     private String objectName;
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
