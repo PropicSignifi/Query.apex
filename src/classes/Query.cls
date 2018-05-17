@@ -906,11 +906,11 @@ public class Query {
             field = appendNamespace(field);
             if (null == fieldMap.get(field)) {
                 throw new QueryException('Cannot find ' + field +
-                        ' in object ' + objectName);
+                        ' in object ' + objType.getDescribe().getName());
             }
             if (!fieldMap.get(field).getDescribe().isAccessible()) {
                 throw new QueryException('Permission denied: ' +
-                        'cannot read ' + field + ' from ' + objectName);
+                        'cannot read ' + field + ' from ' + objType.getDescribe().getName());
             }
         }
 
