@@ -426,6 +426,11 @@ public class QueryTest {
                                     Query.conditionEq('Email', 'N/A'),
                                     Query.conditionEq('HomePhone', 'N/A'),
                                     Query.conditionEq('MobilePhone', 'N/A')
+                                ),
+                                Query.doOr(
+                                    Query.conditionEq('RecordType.Name', 'Person'),
+                                    Query.conditionEq('HomePhone', 'N/A'),
+                                    Query.conditionEq('MobilePhone', 'N/A')
                                 )
                             )
                         )
@@ -436,6 +441,43 @@ public class QueryTest {
         assertContact(accounts.get(0).Contacts.get(0));
 
     }
+
+    @isTest
+    static void debugTest() {
+        Id id = '001O000000qkv3KIAQ';
+        List<Id> idList = new List<Id>{id};
+        Set<Id> idSet = new Set<Id>{id};
+        List<String> stringList = new List<String>();
+        Set<String> stringSet = new Set<String>();
+        List<Decimal> decimalList = new List<Decimal>{1.234};
+        Set<Decimal> decimalSet = new Set<Decimal>{1.234};
+        List<Integer> integerList = new List<Integer>{1};
+        Set<Integer> integerSet = new Set<Integer>{1};
+
+        new Query('Account').
+            lookupIds('RecordTypeId', id).
+            lookupIds('OwnerId', id).
+            lookupIds('CreatedBy', id).
+            lookupIds('LastModifiedBy', id).
+            lookupIds('Owner', id).
+            lookupIds('RecordTypeId', idList).
+            lookupIds('OwnerId', idList).
+            lookupIds('CreatedBy', idList).
+            lookupIds('RecordTypeId', idSet).
+            lookupIds('OwnerId', idSet).
+            lookupIds('CreatedBy', idSet).
+            addConditionIn('LastModifiedBy', stringList).
+            addConditionIn('Owner', stringList).
+            addConditionIn('LastModifiedBy', stringSet).
+            addConditionIn('Owner', stringSet).
+            addConditionIn('AnnualRevenue', decimalList).
+            addConditionIn('AnnualRevenue', decimalSet).
+            addConditionIn('NumberOfEmployees', integerList).
+            addConditionIn('NumberOfEmployees', integerSet).
+            addConditionEq('AccountNumber', 1).
+            debug();
+    }
+
     static void createData() {
         Account acc = new Account();
         acc.FirstName = 'Sam';
