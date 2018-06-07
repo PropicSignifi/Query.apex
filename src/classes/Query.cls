@@ -1196,22 +1196,20 @@ public class Query {
     private static String namespace {
         get {
             if (namespace == null) {
-                namespace = getNamespaceFromOrg();
+                namespace = getNamespaceFromClass();
             }
             return namespace;
         }
     }
 
-    private static String getNamespaceFromOrg() {
-        List<Organization> orgList =
-            [ SELECT namespacePrefix FROM Organization ];
+    private static String getNamespaceFromClass() {
+        final String className = Query.class.getName();
+        final List<String> nameSplit = className.split('\\.');
 
-        if (null == orgList || orgList.isEmpty()) {
-            return '';
-        } else if (null == orgList.get(0).namespacePrefix) {
-            return '';
+        if (nameSplit.size() > 1) {
+            return nameSplit.get(0) + '__';
         } else {
-            return orgList.get(0).namespacePrefix + '__';
+            return '';
         }
     }
 
@@ -1257,5 +1255,4 @@ public class Query {
         private String conditionString;
         private List<Object> args;
     }
-
 }
