@@ -96,7 +96,7 @@ public class Query {
     public Query selectParentFields(String parentName) {
         // Get all the fields from the parent object
         final Map<String, Schema.SObjectField> fieldMap =
-            getParentObjectType(parentName).getDescribe().fields.getMap();
+            getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
 
         if (!parentFields.containsKey(parentName)) {
             parentFields.put(parentName, new Set<String>());
@@ -117,7 +117,7 @@ public class Query {
      *      selects Account.Name, Account.FirstName and Account.LastName.
      */
     public Query selectParentFields(String parentName, Set<String> fields) {
-        checkFieldLevelSecurity(getParentObjectType(parentName), fields);
+        checkFieldLevelSecurity(getParentObjectType(objectType, parentName), fields);
 
         if (parentFields.containsKey(parentName)) {
             parentFields.get(parentName).addAll(fields);
@@ -656,7 +656,29 @@ public class Query {
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
 
-    private Schema.SObjectType getParentObjectType(String parentName) {
+    private Schema.SObjectType getParentObjectType(Schema.SObjectType objType, String parentName) {
+        parentName = translateParentField(parentName);
+        parentName = appendNamespace(parentName);
+
+        Schema.SObjectField field = objType.getDescribe().fields.getMap().get(parentName);
+
+        if (null == field) {
+            throw new QueryException('Cannot find field ' + parentName +
+                    ' from the object ' + objType.getDescribe().getName());
+        }
+
+        List<Schema.SObjectType> referenceTo =
+            field.getDescribe().getReferenceTo();
+
+        if (null == referenceTo || referenceTo.isEmpty()) {
+            throw new QueryException('Cannot find parent relationship ' + parentName +
+                    ' from the object ' + objType.getDescribe().getName());
+        }
+
+        return referenceTo.get(0);
+    }
+
+    private static String translateParentField(String parentName) {
         // translate the reference name
         if (parentName.endsWithIgnoreCase('__r')) {
             parentName = parentName.removeEnd('__r') + '__c';
@@ -673,24 +695,7 @@ public class Query {
             parentName = parentName + 'Id';
         }
 
-        parentName = appendNamespace(parentName);
-
-        Schema.SObjectField field = objectType.getDescribe().fields.getMap().get(parentName);
-
-        if (null == field) {
-            throw new QueryException('Cannot find field ' + parentName +
-                    ' from the object ' + objectName);
-        }
-
-        List<Schema.SObjectType> referenceTo =
-            field.getDescribe().getReferenceTo();
-
-        if (null == referenceTo || referenceTo.isEmpty()) {
-            throw new QueryException('Cannot find parent relationship ' + parentName +
-                    ' from the object ' + objectName);
-        }
-
-        return referenceTo.get(0);
+        return parentName;
     }
 
     private Map<String, Schema.SObjectType> getChildRelationships() {
@@ -897,21 +902,31 @@ public class Query {
     }
 
     private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, Set<String> fields) {
-        // Get all the fields
-        final Map<String, Schema.SObjectField> fieldMap =
-            objType.getDescribe().fields.getMap();
-
         // Check field level security
-        for (String field: fields) {
-            field = appendNamespace(field);
-            if (null == fieldMap.get(field)) {
-                throw new QueryException('Cannot find ' + field +
-                        ' in object ' + objType.getDescribe().getName());
+        for (String fieldPath: fields) {
+            List<String> pathItems = fieldPath.split('\\.');
+            Schema.SObjectType lastParent = objType;
+            String field = appendNamespace(translateParentField(pathItems.get(0)));
+
+            for (Integer i = 0; i < pathItems.size(); i++) {
+                final Map<String, Schema.SObjectField> fieldMap =
+                    lastParent.getDescribe().fields.getMap();
+
+                if (null == fieldMap.get(field)) {
+                    throw new QueryException('Cannot find ' + field +
+                            ' in object ' + lastParent.getDescribe().getName());
+                }
+                if (!fieldMap.get(field).getDescribe().isAccessible()) {
+                    throw new QueryException('Permission denied: cannot read ' +
+                            field + ' from object ' + lastParent.getDescribe().getName());
+                }
+
+                if (i < pathItems.size() - 1) {
+                    lastParent = getParentObjectType(lastParent, field);
+                    field = appendNamespace(translateParentField(pathItems.get(i + 1)));
+                }
             }
-            if (!fieldMap.get(field).getDescribe().isAccessible()) {
-                throw new QueryException('Permission denied: ' +
-                        'cannot read ' + field + ' from ' + objType.getDescribe().getName());
-            }
+
         }
 
         return true;
