@@ -53,7 +53,6 @@ public class QueryTest {
         account = (Account)new Query('Account').fetch();
         System.assertEquals(account.Name, 'Account 0');
 
-
     }
 
     @isTest
@@ -63,9 +62,9 @@ public class QueryTest {
         List<Account> accounts = new Query('Account').
                                  selectFields('Id').
                                  selectFields('Name').
-                                 selectFields('FirstName, LastName').
-                                 selectFields(new List<String>{'PersonMobilePhone', 'PersonEmail'}).
-                                 selectFields(new Set<String>{'PersonHomePhone', 'NumberOfEmployees'}).
+                                 selectFields('Phone, Sic').
+                                 selectFields(new List<String>{'NumberOfEmployees', 'Website'}).
+                                 selectFields(new Set<String>{'Fax', 'Site'}).
                                  run();
 
         assertAccount(accounts.get(0));
@@ -75,21 +74,21 @@ public class QueryTest {
     static void parentFieldsTest() {
         createData();
 
-        List<Contact> contacts;
+        List<Opportunity> opportunities;
 
-        contacts = new Query('Contact').
+        opportunities = new Query('Opportunity').
             selectParentFields('Account').
             selectParentFields('CreatedBy', 'Name').
             selectParentFields('LastModifiedBy', 'FirstName, LastName').
             selectParentFields('Owner', new Set<String>{'FirstName', 'LastName'}).
             run();
 
-        assertContact(contacts.get(0));
+        assertOpportunity(opportunities.get(0));
 
-        System.assertEquals(contacts.get(0).Account.Name, 'Sam Tarly');
-        System.assertNotEquals(contacts.get(0).CreatedBy.Name, null);
-        System.assertNotEquals(contacts.get(0).Owner.FirstName, null);
-        System.assertNotEquals(contacts.get(0).LastModifiedBy.LastName, null);
+        System.assertEquals(opportunities.get(0).Account.Name, 'ABC Ltd');
+        System.assertNotEquals(opportunities.get(0).CreatedBy.Name, null);
+        System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).LastModifiedBy.LastName, null);
     }
 
     @isTest
@@ -133,33 +132,33 @@ public class QueryTest {
 
         Id accId = [ SELECT Id FROM Account LIMIT 1 ].Id;
 
-        List<Contact> contacts;
+        List<Opportunity> opportunities;
 
-        contacts = new Query('Contact').
+        opportunities = new Query('Opportunity').
                    lookupIds('AccountId', accId).
                    run();
 
-        assertContact(contacts.get(0));
+        assertOpportunity(opportunities.get(0));
 
-        contacts = new Query('Contact').
+        opportunities = new Query('Opportunity').
                    lookupIds('AccountId', new Set<Id>{accId}).
                    run();
 
-        assertContact(contacts.get(0));
+        assertOpportunity(opportunities.get(0));
 
-        contacts = new Query('Contact').
+        opportunities = new Query('Opportunity').
                    lookupIds('AccountId', new List<Id>{accId}).
                    run();
 
-        assertContact(contacts.get(0));
+        assertOpportunity(opportunities.get(0));
 
         // negative cases
         final Id wrongId = 'a0EO000000DjJeJMAV';
-        contacts = new Query('Contact').
+        opportunities = new Query('Opportunity').
                    lookupIds('AccountId', wrongId).
                    run();
 
-        System.assert(contacts.isEmpty());
+        System.assert(opportunities.isEmpty());
     }
 
     @isTest
@@ -169,17 +168,17 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
-                   addConditionEq('FirstName', 'Sam').
-                   addConditionEq('LastName', 'Tarly').
-                   run();
+                    addConditionEq('Name', 'ABC Ltd').
+                    addConditionEq('Phone', '+61 410 000 000').
+                    run();
 
         assertAccount(accounts.get(0));
 
         // negative cases
         accounts = new Query('Account').
-                   addConditionEq('FirstName', 'Sam').
-                   addConditionEq('LastName', 'Not Tarly').
-                   run();
+                    addConditionEq('Name', 'ABC Ltd').
+                    addConditionEq('Phone', '+61 410 111 111').
+                    run();
 
         System.assert(accounts.isEmpty());
     }
@@ -191,25 +190,25 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
-                    addConditionEq('FirstName', 'Sam').
+                    addConditionEq('Name', 'ABC Ltd').
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
-                    addConditionNotEq('FirstName', 'Not Sam').
+                    addConditionNotEq('Name', 'CDE Ltd').
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
-                    addConditionIn('FirstName', new Set<String>{'Sam'}).
+                    addConditionIn('Name', new Set<String>{'ABC Ltd'}).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
-                    addConditionNotIn('FirstName', new Set<String>{'Not Sam'}).
+                    addConditionNotIn('Name', new Set<String>{'CDE Ltd'}).
                     run();
 
         assertAccount(accounts.get(0));
@@ -239,7 +238,7 @@ public class QueryTest {
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
-                    addConditionLike('Name', '%Sam%').
+                    addConditionLike('Name', '%ABC%').
                     run();
 
         assertAccount(accounts.get(0));
@@ -253,8 +252,8 @@ public class QueryTest {
 
         accounts = new Query('Account').
                    switchToDisjunction().
-                   addConditionEq('FirstName', 'Sam').
-                   addConditionEq('LastName', 'Not Tarly').
+                   addConditionEq('Name', 'ABC Ltd').
+                   addConditionEq('Phone', '+61 410 111 111').
                    run();
 
         assertAccount(accounts.get(0));
@@ -263,8 +262,8 @@ public class QueryTest {
 
         accounts = new Query('Account').
                    switchToDisjunction().
-                   addConditionEq('FirstName', 'Sam').
-                   addConditionEq('LastName', 'Not Tarly').
+                   addConditionEq('Name', 'ABC Ltd').
+                   addConditionEq('Phone', '+61 410 111 111').
                    switchToConjunction().
                    run();
 
@@ -276,7 +275,7 @@ public class QueryTest {
         createData();
 
         List<Account> accounts = new Query('Account').
-                                 addCondition(Query.conditionEq('FirstName', 'Sam')).
+                                 addCondition(Query.conditionEq('Name', 'ABC Ltd')).
                                  run();
 
         assertAccount(accounts.get(0));
@@ -286,23 +285,24 @@ public class QueryTest {
     static void complexConditionTest() {
         createData();
 
-        String firstName = 'Sam';
-        List<String> lastName = new List<String>{'Tarly'};
+        String accName = 'ABC Ltd';
+        List<String> accPhone = new List<String>{'+61 410 000 000'};
         final Id wrongId = 'a0EO000000DjJeJMAV';
 
-        List<Account> accounts = new Query('Account').
-                                    addCondition(
-                                        Query.doAnd(
-                                            Query.doOr(
-                                                Query.conditionEq('FirstName', firstName),
-                                                Query.conditionEq('ID', wrongId)
-                                            ),
-                                            Query.conditionIn('LastName', lastName),
-                                            Query.conditionEq('PersonEmail', 'sam@tarly.com'),
-                                            Query.conditionLe('NumberOfEmployees', 15)
-                                        )
-                                    ).
-                                    run();
+        List<Account> accounts =
+                new Query('Account').
+                addCondition(
+                    Query.doAnd(
+                        Query.doOr(
+                            Query.conditionEq('Name', accName),
+                            Query.conditionEq('Id', wrongId)
+                        ),
+                        Query.conditionIn('Phone', accPhone),
+                        Query.conditionEq('Website', 'https://www.samplewebsite.com'),
+                        Query.conditionLe('NumberOfEmployees', 15)
+                    )
+                ).
+                run();
 
         assertAccount(accounts.get(0));
     }
@@ -377,18 +377,18 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
-                   addSubquery('Contacts').
+                   addSubquery('Opportunities').
                    run();
 
         assertAccount(accounts.get(0));
-        assertContact(accounts.get(0).Contacts.get(0));
+        assertOpportunity(accounts.get(0).Opportunities.get(0));
 
         accounts = new Query('Account').
-                   addSubquery(Query.subquery('Contacts')).
+                   addSubquery(Query.subquery('Opportunities')).
                    run();
 
         assertAccount(accounts.get(0));
-        assertContact(accounts.get(0).Contacts.get(0));
+        assertOpportunity(accounts.get(0).Opportunities.get(0));
     }
 
     @isTest
@@ -399,13 +399,13 @@ public class QueryTest {
 
         accounts = new Query('Account').
                     addSubquery(
-                        Query.subquery('Contacts').
-                        addConditionEq('Email', 'sam@tarly.com')
+                        Query.subquery('Opportunities').
+                        addConditionEq('TotalOpportunityQuantity', 10)
                     ).
                     run();
 
         assertAccount(accounts.get(0));
-        assertContact(accounts.get(0).Contacts.get(0));
+        assertOpportunity(accounts.get(0).Opportunities.get(0));
 
     }
 
@@ -418,25 +418,26 @@ public class QueryTest {
         accounts = new Query('Account').
                     addCondition(
                         Query.doOr(
-                            Query.conditionIn('FirstName', new Set<String>{'Sam'}),
-                            Query.conditionEq('Lastname', 'N/A')
+                            Query.conditionIn('Name', new Set<String>{'ABC Ltd'}),
+                            Query.conditionEq('Phone', 'N/A')
                         )
                     ).
                     addSubquery(
-                        Query.subquery('Contacts').
+                        Query.subquery('Opportunities').
                         addCondition(
                             Query.doOr(
-                                Query.conditionIn('Email', new Set<String>{'sam@tarly.com'}),
-                                Query.conditionEq('Email', 'N/A'),
+                                Query.conditionIn('TotalOpportunityQuantity',
+                                        new Set<Integer>{10}),
+                                Query.conditionEq('Name', 'N/A'),
                                 Query.doAnd(
-                                    Query.conditionEq('Email', 'N/A'),
-                                    Query.conditionEq('HomePhone', 'N/A'),
-                                    Query.conditionEq('MobilePhone', 'N/A')
+                                    Query.conditionEq('CloseDate', Date.today().addDays(1)),
+                                    Query.conditionEq('Name', 'N/A'),
+                                    Query.conditionEq('Name', 'N/A')
                                 ),
                                 Query.doOr(
-                                    Query.conditionEq('RecordType.Name', 'Person'),
-                                    Query.conditionEq('HomePhone', 'N/A'),
-                                    Query.conditionEq('MobilePhone', 'N/A')
+                                    Query.conditionEq('CloseDate', Date.today().addDays(1)),
+                                    Query.conditionEq('Name', 'N/A'),
+                                    Query.conditionEq('Name', 'N/A')
                                 )
                             )
                         )
@@ -444,7 +445,7 @@ public class QueryTest {
                     run();
 
         assertAccount(accounts.get(0));
-        assertContact(accounts.get(0).Contacts.get(0));
+        assertOpportunity(accounts.get(0).Opportunities.get(0));
 
     }
 
@@ -480,39 +481,46 @@ public class QueryTest {
             addConditionIn('AnnualRevenue', decimalSet).
             addConditionIn('NumberOfEmployees', integerList).
             addConditionIn('NumberOfEmployees', integerSet).
-            addConditionEq('AccountNumber', 1).
+            addConditionEq('NumberOfEmployees', 1).
             debug();
     }
 
     static void createData() {
         Account acc = new Account();
-        acc.FirstName = 'Sam';
-        acc.LastName = 'Tarly';
-        acc.PersonMobilePhone = '+61 410 000 000';
-        acc.PersonHomePhone = '+61 2 0000 0000';
-        acc.PersonEmail = 'sam@tarly.com';
+        acc.Name = 'ABC Ltd';
+        acc.Phone = '+61 410 000 000';
+        acc.Sic = 'D001';
         acc.NumberOfEmployees = 10;
+        acc.Website = 'https://www.samplewebsite.com';
+        acc.Fax = '+61 2 0000 0000';
+        acc.Site = 'Sydney';
 
         insert acc;
+
+        Opportunity opp = new Opportunity();
+        opp.AccountId = acc.Id;
+        opp.Name = 'New Opportunity';
+        opp.CloseDate = Date.today().addDays(3);
+        opp.TotalOpportunityQuantity = 10;
+        opp.StageName = 'New';
+
+        insert opp;
     }
 
     static void assertAccount(Account acc) {
-        System.assertEquals(acc.Name, 'Sam Tarly');
-        System.assertEquals(acc.FirstName, 'Sam');
-        System.assertEquals(acc.LastName, 'Tarly');
-        System.assertEquals(acc.PersonMobilePhone, '+61 410 000 000');
-        System.assertEquals(acc.PersonHomePhone, '+61 2 0000 0000');
-        System.assertEquals(acc.PersonEmail, 'sam@tarly.com');
+        System.assertEquals(acc.Name, 'ABC Ltd');
+        System.assertEquals(acc.Phone, '+61 410 000 000');
+        System.assertEquals(acc.Sic, 'D001');
         System.assertEquals(acc.NumberOfEmployees, 10);
+        System.assertEquals(acc.Website, 'https://www.samplewebsite.com');
+        System.assertEquals(acc.Fax, '+61 2 0000 0000');
+        System.assertEquals(acc.Site, 'Sydney');
     }
 
-    static void assertContact(Contact con) {
-        System.assertEquals(con.Name, 'Sam Tarly');
-        System.assertEquals(con.FirstName, 'Sam');
-        System.assertEquals(con.LastName, 'Tarly');
-        System.assertEquals(con.MobilePhone, '+61 410 000 000');
-        System.assertEquals(con.HomePhone, '+61 2 0000 0000');
-        System.assertEquals(con.Email, 'sam@tarly.com');
+    static void assertOpportunity(Opportunity opp) {
+        System.assertEquals(opp.Name, 'New Opportunity');
+        System.assertEquals(opp.CloseDate, Date.today().addDays(3));
+        System.assertEquals(opp.TotalOpportunityQuantity, 10);
     }
 
 }
