@@ -45,8 +45,14 @@ public class QueryTest {
         System.assertEquals(accounts.get(0).Name, 'Account 1');
         System.assertEquals(accounts.get(1).Name, 'Account 2');
 
-        Account account = (Account)new Query('Account').fetch(0);
+        Account account;
+
+        account = (Account)new Query('Account').fetch(1);
+        System.assertEquals(account.Name, 'Account 1');
+
+        account = (Account)new Query('Account').fetch();
         System.assertEquals(account.Name, 'Account 0');
+
 
     }
 
