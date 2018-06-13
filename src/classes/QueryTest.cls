@@ -450,6 +450,37 @@ public class QueryTest {
     }
 
     @isTest
+    static void literalConditionTest() {
+        createData();
+
+        Account account;
+
+        account = (Account)new Query('Account').
+                addConditionEq('AnnualRevenue', Query.Literal.NIL).
+                fetch();
+
+        assertAccount(account);
+
+        account = (Account)new Query('Account').
+                addConditionEq('IsPartner', Query.Literal.F).
+                fetch();
+
+        assertAccount(account);
+
+        account = (Account)new Query('Account').
+                addConditionNotEq('IsPartner', Query.Literal.T).
+                fetch();
+
+        assertAccount(account);
+
+        Opportunity opp = (Opportunity)new Query('Opportunity').
+                addConditionGe('CloseDate', Query.Literal.TODAY).
+                fetch();
+
+        assertOpportunity(opp);
+    }
+
+    @isTest
     static void debugTest() {
         Id id = '001O000000qkv3KIAQ';
         List<Id> idList = new List<Id>{id};
