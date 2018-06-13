@@ -574,14 +574,13 @@ public class Query {
         return formQueryString();
     }
 
-    public List<SObject> fetch() {
-        String queryString = toQueryString();
-        return Database.query(queryString);
+    public SObject fetch() {
+        return fetch(0);
     }
 
     public List<SObject> fetch(Integer first, Integer last) {
         List<SObject> retList = new List<SObject>();
-        final List<SObject> fetchedList = fetch();
+        final List<SObject> fetchedList = run();
 
         for (Integer i = first; i < fetchedList.size() && i < last; i++) {
             retList.add(fetchedList.get(i));
@@ -591,7 +590,7 @@ public class Query {
     }
 
     public SObject fetch(Integer idx) {
-        final List<SObject> fetchedList = fetch();
+        final List<SObject> fetchedList = run();
 
         if (idx < fetchedList.size()) {
             return fetchedList.get(idx);
@@ -601,7 +600,8 @@ public class Query {
     }
 
     public List<SObject> run() {
-        return fetch();
+        String queryString = toQueryString();
+        return Database.query(queryString);
     }
 
     /* Private members */
