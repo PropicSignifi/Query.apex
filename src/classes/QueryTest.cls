@@ -454,6 +454,7 @@ public class QueryTest {
         createData();
 
         Account account;
+        Opportunity opp;
 
         account = (Account)new Query('Account').
                 addConditionEq('AnnualRevenue', Query.Literal.NIL).
@@ -461,19 +462,19 @@ public class QueryTest {
 
         assertAccount(account);
 
-        account = (Account)new Query('Account').
-                addConditionEq('IsPartner', Query.Literal.F).
+        opp = (Opportunity)new Query('Opportunity').
+                addConditionEq('IsPrivate', Query.Literal.F).
                 fetch();
 
-        assertAccount(account);
+        assertOpportunity(opp);
 
-        account = (Account)new Query('Account').
-                addConditionNotEq('IsPartner', Query.Literal.T).
+        opp = (Opportunity)new Query('Opportunity').
+                addConditionNotEq('IsPrivate', Query.Literal.T).
                 fetch();
 
-        assertAccount(account);
+        assertOpportunity(opp);
 
-        Opportunity opp = (Opportunity)new Query('Opportunity').
+        opp = (Opportunity)new Query('Opportunity').
                 addConditionGe('CloseDate', Query.Literal.TODAY).
                 fetch();
 
@@ -534,6 +535,7 @@ public class QueryTest {
         opp.CloseDate = Date.today().addDays(3);
         opp.TotalOpportunityQuantity = 10;
         opp.StageName = 'New';
+        opp.IsPrivate = false;
 
         insert opp;
     }
