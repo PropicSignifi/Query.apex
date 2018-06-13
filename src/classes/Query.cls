@@ -178,31 +178,16 @@ public class Query {
     /*
      * Specify the Id of the object
      */
-    public Query byIds(Set<Id> idSet) {
-        return lookupIds('Id', idSet);
+    public Query byId(Set<Id> idSet) {
+        return addConditionEq('Id', idSet);
     }
 
-    public Query byIds(List<Id> idList) {
-        return byIds(new Set<Id>(idList));
+    public Query byId(List<Id> idList) {
+        return byId(new Set<Id>(idList));
     }
 
-    public Query byIds(Id id) {
-        return byIds(new Set<Id>{id});
-    }
-
-    /*
-     * Specify the Id of a lookup field
-     */
-    public Query lookupIds(String fieldName, Set<Id> idSet) {
-        return addConditionIn(fieldName, idSet);
-    }
-
-    public Query lookupIds(String fieldName, List<Id> idList) {
-        return lookupIds(fieldName, new Set<Id>(idList));
-    }
-
-    public Query lookupIds(String fieldName, Id id) {
-        return lookupIds(fieldName, new Set<Id>{id});
+    public Query byId(Id id) {
+        return byId(new Set<Id>{id});
     }
 
     /*

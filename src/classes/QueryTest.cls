@@ -100,19 +100,19 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
-                   byIds(accId).
+                   byId(accId).
                    run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
-                   byIds(new Set<Id>{accId}).
+                   byId(new Set<Id>{accId}).
                    run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
-                   byIds(new List<Id>{accId}).
+                   byId(new List<Id>{accId}).
                    run();
 
         assertAccount(accounts.get(0));
@@ -120,45 +120,10 @@ public class QueryTest {
         // negative cases
         final Id wrongId = 'a0EO000000DjJeJMAV';
         accounts = new Query('Account').
-                   byIds(wrongId).
+                   byId(wrongId).
                    run();
 
         System.assert(accounts.isEmpty());
-    }
-
-    @isTest
-    static void lookupIdsTest() {
-        createData();
-
-        Id accId = [ SELECT Id FROM Account LIMIT 1 ].Id;
-
-        List<Opportunity> opportunities;
-
-        opportunities = new Query('Opportunity').
-                   lookupIds('AccountId', accId).
-                   run();
-
-        assertOpportunity(opportunities.get(0));
-
-        opportunities = new Query('Opportunity').
-                   lookupIds('AccountId', new Set<Id>{accId}).
-                   run();
-
-        assertOpportunity(opportunities.get(0));
-
-        opportunities = new Query('Opportunity').
-                   lookupIds('AccountId', new List<Id>{accId}).
-                   run();
-
-        assertOpportunity(opportunities.get(0));
-
-        // negative cases
-        final Id wrongId = 'a0EO000000DjJeJMAV';
-        opportunities = new Query('Opportunity').
-                   lookupIds('AccountId', wrongId).
-                   run();
-
-        System.assert(opportunities.isEmpty());
     }
 
     @isTest
@@ -494,17 +459,17 @@ public class QueryTest {
         Set<Integer> integerSet = new Set<Integer>{1};
 
         new Query('Account').
-            lookupIds('RecordTypeId', id).
-            lookupIds('OwnerId', id).
-            lookupIds('CreatedBy', id).
-            lookupIds('LastModifiedBy', id).
-            lookupIds('Owner', id).
-            lookupIds('RecordTypeId', idList).
-            lookupIds('OwnerId', idList).
-            lookupIds('CreatedBy', idList).
-            lookupIds('RecordTypeId', idSet).
-            lookupIds('OwnerId', idSet).
-            lookupIds('CreatedBy', idSet).
+            addConditionEq('RecordTypeId', id).
+            addConditionEq('OwnerId', id).
+            addConditionEq('CreatedBy', id).
+            addConditionEq('LastModifiedBy', id).
+            addConditionEq('Owner', id).
+            addConditionEq('RecordTypeId', idList).
+            addConditionEq('OwnerId', idList).
+            addConditionEq('CreatedBy', idList).
+            addConditionEq('RecordTypeId', idSet).
+            addConditionEq('OwnerId', idSet).
+            addConditionEq('CreatedBy', idSet).
             addConditionIn('LastModifiedBy', stringList).
             addConditionIn('Owner', stringList).
             addConditionIn('LastModifiedBy', stringSet).
