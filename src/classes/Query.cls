@@ -43,6 +43,35 @@ public class Query {
         childRelationships = getChildRelationships();
     }
 
+    public enum Literal {
+        NIL,
+        T,
+        F,
+        YESTERDAY,
+        TODAY,
+        TOMORROW,
+        LAST_WEEK,
+        THIS_WEEK,
+        NEXT_WEEK,
+        LAST_MONTH,
+        THIS_MONTH,
+        NEXT_MONTH,
+        LAST_90_DAYS,
+        NEXT_90_DAYS,
+        THIS_QUARTER,
+        LAST_QUARTER,
+        NEXT_QUARTER,
+        THIS_YEAR,
+        LAST_YEAR,
+        NEXT_YEAR,
+        THIS_FISCAL_QUARTER,
+        LAST_FISCAL_QUARTER,
+        NEXT_FISCAL_QUARTER,
+        THIS_FISCAL_YEAR,
+        LAST_FISCAL_YEAR,
+        NEXT_FISCAL_YEAR
+    }
+
     /*
      * Specify the selected fields
      * If this function is not called, it would by default select all the fields
@@ -261,9 +290,9 @@ public class Query {
      * Add condition with a ConditionType
      */
     public Query addCondition(ConditionType condition) {
-
         String newConditionString =
             shiftFormatStringIndice(condition.conditionString, conditionArgsIdx);
+        newConditionString = '(' + newConditionString + ')';
         saveConditionArg(condition.args);
         return addComplexCondition(newConditionString, condition.args);
     }
@@ -1249,7 +1278,22 @@ public class Query {
         private ConditionType(String formatString, Object arg) {
             this();
             conditionString = formatString;
-            args.add(arg);
+            if (arg instanceOf Literal) {
+                Literal l = (Literal) arg;
+                String lName = l.name();
+                if (Literal.NIL == l) {
+                    lName = 'NULL';
+                }
+                if (Literal.T == l) {
+                    lName = 'TRUE';
+                }
+                if (Literal.F == l) {
+                    lName = 'FALSE';
+                }
+                conditionString = conditionString.replace('{0}', lName);
+            } else {
+                args.add(arg);
+            }
         }
 
         private String conditionString;
