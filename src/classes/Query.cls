@@ -918,29 +918,35 @@ public class Query {
     private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, Set<String> fields) {
         // Check field level security
         for (String fieldPath: fields) {
-            List<String> pathItems = fieldPath.split('\\.');
-            Schema.SObjectType lastParent = objType;
-            String field = appendNamespace(translateParentField(pathItems.get(0)));
+            if (!checkFieldLevelSecurity(objType, fieldPath)) {
+                return false;
+            }
+        }
 
-            for (Integer i = 0; i < pathItems.size(); i++) {
-                final Map<String, Schema.SObjectField> fieldMap =
-                    lastParent.getDescribe().fields.getMap();
+        return true;
+    }
 
-                if (null == fieldMap.get(field)) {
-                    throw new QueryException('Cannot find ' + field +
-                            ' in object ' + lastParent.getDescribe().getName());
-                }
-                if (!fieldMap.get(field).getDescribe().isAccessible()) {
-                    throw new QueryException('Permission denied: cannot read ' +
-                            field + ' from object ' + lastParent.getDescribe().getName());
-                }
+    private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, String fieldPath) {
+        List<String> pathItems = fieldPath.split('\\.');
+        String nextItem = appendNamespace(translateParentField(pathItems.get(0)));
 
-                if (i < pathItems.size() - 1) {
-                    lastParent = getParentObjectType(lastParent, field);
-                    field = appendNamespace(translateParentField(pathItems.get(i + 1)));
-                }
+        if (pathItems.size() == 1) {
+            // Only one path item left
+            final Map<String, Schema.SObjectField> fieldMap =
+                objType.getDescribe().fields.getMap();
+
+            if (null == fieldMap.get(nextItem)) {
+                throw new QueryException('Cannot find ' + nextItem +
+                        ' in object ' + objType.getDescribe().getName());
+            }
+            if (!fieldMap.get(nextItem).getDescribe().isAccessible()) {
+                throw new QueryException('Permission denied: cannot read ' +
+                        nextItem + ' from object ' + objType.getDescribe().getName());
             }
 
+        } else {
+            return checkFieldLevelSecurity(getParentObjectType(objType, nextItem),
+                    fieldPath.substringAfter('.'));
         }
 
         return true;
