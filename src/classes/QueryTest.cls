@@ -89,6 +89,21 @@ public class QueryTest {
         System.assertNotEquals(opportunities.get(0).CreatedBy.Name, null);
         System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
         System.assertNotEquals(opportunities.get(0).LastModifiedBy.LastName, null);
+
+        opportunities = new Query('Opportunity').
+            selectAllFields().
+            selectFields('Account.CreatedBy.Name').
+            selectFields('CreatedBy.Name').
+            selectFields('LastModifiedBy.FirstName, LastModifiedBy.LastName').
+            selectFields(new Set<String>{'Owner.FirstName', 'Owner.LastName'}).
+            run();
+
+        assertOpportunity(opportunities.get(0));
+
+        System.assertNotEquals(opportunities.get(0).Account.CreatedBy.Name, null);
+        System.assertNotEquals(opportunities.get(0).CreatedBy.Name, null);
+        System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).LastModifiedBy.LastName, null);
     }
 
     @isTest
