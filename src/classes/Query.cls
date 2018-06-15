@@ -78,8 +78,9 @@ public class Query {
      *      with read permission
      */
     public Query selectFields(Set<String> fieldSet) {
-        checkFieldLevelSecurity(objectType, fieldSet);
-        fields.addAll(fieldSet);
+        for (String fieldName : fieldSet) {
+            selectFields(fieldName);
+        }
         return this;
     }
 
@@ -91,19 +92,29 @@ public class Query {
      * This function allows user provide a single field, or multiple fields
      *      concatenated by ','
      */
-    public Query selectFields(String fields) {
-        if (fields.contains(',')) {
-            // parse the fields separated by ','
-            List<String> fieldList = fields.split(', *');
-            return selectFields(new Set<String>(fieldList));
+    public Query selectfields(String fieldNames) {
+        if (fieldNames.contains(',')) {
+            // parse the fieldNames separated by ','
+            List<String> fieldList = fieldNames.split(', *');
+
+            return selectfields(new Set<String>(fieldList));
+        } else {
+            final String fieldName = fieldNames;
+
+            if (!isParentField(fieldName)) {
+                checkFieldLevelSecurity(objectType, fieldName);
+                fields.add(fieldName);
+                return this;
+            } else {
+                return selectParentfields(fieldName);
+            }
         }
-        return selectFields(new Set<String>{fields});
     }
 
     /*
      * Select all user accessible fields
      */
-    public Query selectDefaultFields() {
+    public Query selectAllFields() {
         // Get all the fields
         final Map<String, Schema.SObjectField> fieldMap =
             objectType.getDescribe().fields.getMap();
@@ -117,63 +128,6 @@ public class Query {
         return this;
     }
 
-    /*
-     * Select all fields from a parent relationship
-     * For example, in Contact object, we can call selectParentFields('Account') to select
-     *      Account.Name, Account.FirstName, Account.LastName, etc.
-     */
-    public Query selectParentFields(String parentName) {
-        // Get all the fields from the parent object
-        final Map<String, Schema.SObjectField> fieldMap =
-            getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
-
-        if (!parentFields.containsKey(parentName)) {
-            parentFields.put(parentName, new Set<String>());
-        }
-        // Add the field if it is accessible by the user
-        for (String fieldName : fieldMap.keySet()) {
-            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                parentFields.get(parentName).add(fieldName);
-            }
-        }
-        return this;
-    }
-
-    /*
-     * Select fields from a parent relationship
-     * For example,
-     *      selectParentFields('Account', new Set<String>{'Name', 'FirstName', 'LastName'})
-     *      selects Account.Name, Account.FirstName and Account.LastName.
-     */
-    public Query selectParentFields(String parentName, Set<String> fields) {
-        checkFieldLevelSecurity(getParentObjectType(objectType, parentName), fields);
-
-        if (parentFields.containsKey(parentName)) {
-            parentFields.get(parentName).addAll(fields);
-        } else {
-            parentFields.put(parentName, fields);
-        }
-        return this;
-    }
-
-    public Query selectParentFields(String parentName, List<String> fields) {
-        return selectParentFields(parentName, new Set<String>(fields));
-    }
-
-    /*
-     * Select one field or multiple fields concatenated by ',' from a parent relationship
-     * Example:
-     *      selectParentFields('Account', 'Name, Id')
-     *      to select Account.Name and Account.Id
-     */
-    public Query selectParentFields(String parentName, String fields) {
-        if (fields.contains(',')) {
-            // parse the fields separated by ','
-            List<String> fieldList = fields.split(', *');
-            return selectParentFields(parentName, (new Set<String>(fieldList)));
-        }
-        return selectParentFields(parentName, new List<String>{fields});
-    }
 
     /*
      * Specify the Id of the object
@@ -670,46 +624,112 @@ public class Query {
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
 
-    private Schema.SObjectType getParentObjectType(Schema.SObjectType objType, String parentName) {
-        parentName = translateParentField(parentName);
-        parentName = appendNamespace(parentName);
+    private Schema.SObjectType getParentObjectType(Schema.SObjectType objType, String parentPath) {
+        List<String> pathItems = parentPath.split('\\.');
+        String nextItem = appendNamespace(translateParentField(pathItems.get(0)));
 
-        Schema.SObjectField field = objType.getDescribe().fields.getMap().get(parentName);
+        Schema.SObjectField field = objType.getDescribe().fields.getMap().get(nextItem);
 
         if (null == field) {
-            throw new QueryException('Cannot find field ' + parentName +
+            throw new QueryException('Cannot find field ' + nextItem +
                     ' from the object ' + objType.getDescribe().getName());
+        }
+
+        if (!field.getDescribe().isAccessible()) {
+            throw new QueryException('Permission denied: cannot read ' +
+                    nextItem + ' from object ' + objType.getDescribe().getName());
         }
 
         List<Schema.SObjectType> referenceTo =
             field.getDescribe().getReferenceTo();
 
         if (null == referenceTo || referenceTo.isEmpty()) {
-            throw new QueryException('Cannot find parent relationship ' + parentName +
+            throw new QueryException('Cannot find parent relationship ' + nextItem +
                     ' from the object ' + objType.getDescribe().getName());
         }
 
-        return referenceTo.get(0);
+        Schema.SObjectType nextObj = referenceTo.get(0);
+
+        if (pathItems.size() == 1) {
+            return nextObj;
+        } else {
+            return getParentObjectType(nextObj, parentPath.substringAfter('.'));
+        }
     }
+
+    private static Set<String> standardParentReferences = new Set<String> {
+        'CreatedBy',
+        'LastModifiedBy',
+        'Owner',
+        'RecordType',
+
+        'Account',
+        'Asset',
+        'BannerPhoto',
+        'BillToContact',
+        'BusinessHours',
+        'CallCenter',
+        'Campaign',
+        'CompanySigned',
+        'Contract',
+        'CustomerAuthorizedBy',
+        'CustomerSigned',
+        'DelegatedApprover',
+        'DeletedBy',
+        'FlowInterview',
+        'HiddenBy',
+        'JigsawContract',
+        'Opportunity',
+        'Order',
+        'OriginalOrder',
+        'OriginalOrderItem',
+        'OutboundSocialAccount',
+        'Manager',
+        'MasterRecord',
+        'Parent',
+        'Persona',
+        'Pricebook2',
+        'Product2',
+        'Profile',
+        'Record',
+        'RelatedAsset',
+        'Report',
+        'ReportsTo',
+        'RootAsset',
+        'Scorecard',
+        'ShipToContact',
+        'Source',
+        'TargetEntity',
+        'UserProvAccount',
+        'UserRole',
+        'What',
+        'Who',
+        'Workspace'
+    };
 
     private static String translateParentField(String parentName) {
         // translate the reference name
         if (parentName.endsWithIgnoreCase('__r')) {
             parentName = parentName.removeEnd('__r') + '__c';
-        } else if (parentName.equalsIgnoreCase('Account') ||
-                parentName.equalsIgnoreCase('Owner') ||
-                parentName.equalsIgnoreCase('CreatedBy') ||
-                parentName.equalsIgnoreCase('LastModifiedBy') ||
-                parentName.equalsIgnoreCase('RecordType') ||
-                parentName.equalsIgnoreCase('JigsawContact') ||
-                parentName.equalsIgnoreCase('MasterRecord') ||
-                parentName.equalsIgnoreCase('ReportsTo') ||
-                parentName.equalsIgnoreCase('Owner')) {
-
+        } else if (standardParentReferences.contains(parentName)) {
             parentName = parentName + 'Id';
         }
 
         return parentName;
+    }
+
+    private static Boolean isParentField(String fieldName) {
+        if (fieldName.endsWithIgnoreCase('__c')) {
+            return false;
+        } else if (fieldName.endsWithIgnoreCase('__r')) {
+            return true;
+        } else if (fieldName.endsWithIgnoreCase('Id')) {
+            return false;
+        } else if (standardParentReferences.contains(fieldName)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private Map<String, Schema.SObjectType> getChildRelationships() {
@@ -722,6 +742,25 @@ public class Query {
             childMap.put(child.getRelationshipName(), child.getChildSObject());
         }
         return childMap;
+    }
+
+    /*
+     * Select all fields from a parent relationship
+     * For example, in Contact object, we can call selectParentFields('Account') to select
+     *      Account.Name, Account.FirstName, Account.LastName, etc.
+     */
+    private Query selectParentFields(String parentName) {
+        // Get all the fields from the parent object
+        final Map<String, Schema.SObjectField> fieldMap =
+            getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
+
+        // Add the field if it is accessible by the user
+        for (String fieldName : fieldMap.keySet()) {
+            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+                fields.add(parentName + '.' + fieldName);
+            }
+        }
+        return this;
     }
 
     /*
@@ -828,7 +867,7 @@ public class Query {
         String fieldString = '';
 
         if (fields.isEmpty()) {
-            selectDefaultFields();
+            selectAllFields();
         }
 
         for (String field: fields) {
@@ -913,17 +952,6 @@ public class Query {
         }
 
         return orderByString;
-    }
-
-    private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, Set<String> fields) {
-        // Check field level security
-        for (String fieldPath: fields) {
-            if (!checkFieldLevelSecurity(objType, fieldPath)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, String fieldPath) {

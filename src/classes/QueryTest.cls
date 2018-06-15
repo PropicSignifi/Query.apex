@@ -77,33 +77,21 @@ public class QueryTest {
         List<Opportunity> opportunities;
 
         opportunities = new Query('Opportunity').
-            selectParentFields('Account').
-            selectParentFields('CreatedBy', 'Name').
-            selectParentFields('LastModifiedBy', 'FirstName, LastName').
-            selectParentFields('Owner', new Set<String>{'FirstName', 'LastName'}).
-            run();
-
-        assertOpportunity(opportunities.get(0));
-
-        System.assertEquals(opportunities.get(0).Account.Name, 'ABC Ltd');
-        System.assertNotEquals(opportunities.get(0).CreatedBy.Name, null);
-        System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
-        System.assertNotEquals(opportunities.get(0).LastModifiedBy.LastName, null);
-
-        opportunities = new Query('Opportunity').
             selectAllFields().
-            selectFields('Account.CreatedBy.Name').
-            selectFields('CreatedBy.Name').
+            selectFields('Account.CreatedBy.FirstName').
+            selectFields('CreatedBy').
             selectFields('LastModifiedBy.FirstName, LastModifiedBy.LastName').
-            selectFields(new Set<String>{'Owner.FirstName', 'Owner.LastName'}).
+            selectFields(new List<String>{'Owner.FirstName', 'Owner.LastName'}).
             run();
 
         assertOpportunity(opportunities.get(0));
 
-        System.assertNotEquals(opportunities.get(0).Account.CreatedBy.Name, null);
-        System.assertNotEquals(opportunities.get(0).CreatedBy.Name, null);
-        System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).Account.CreatedBy.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).CreatedBy.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).LastModifiedBy.FirstName, null);
         System.assertNotEquals(opportunities.get(0).LastModifiedBy.LastName, null);
+        System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).Owner.LastName, null);
     }
 
     @isTest
