@@ -102,7 +102,6 @@ public class Query {
             final String fieldName = fieldNames;
 
             if (!isParentField(fieldName)) {
-                checkFieldLevelSecurity(objectType, fieldName);
                 fields.add(fieldName);
                 return this;
             } else {
@@ -115,19 +114,9 @@ public class Query {
      * Select all user accessible fields
      */
     public Query selectAllFields() {
-        // Get all the fields
-        final Map<String, Schema.SObjectField> fieldMap =
-            objectType.getDescribe().fields.getMap();
-
-        // Add the field if it is accessible by the user
-        for (String fieldName : fieldMap.keySet()) {
-            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                fields.add(fieldName);
-            }
-        }
+        isSelectingAllFields = true;
         return this;
     }
-
 
     /*
      * Specify the Id of the object
@@ -584,6 +573,7 @@ public class Query {
 
     // State variables
     private Set<String> fields;
+    private Boolean isSelectingAllFields = false;
 
     private List<String> conditions;
     private static final Integer maxArgSize = 20;
@@ -621,6 +611,20 @@ public class Query {
     private String objectName;
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
+
+    private Query addAllFields() {
+        // Get all the fields
+        final Map<String, Schema.SObjectField> fieldMap =
+            objectType.getDescribe().fields.getMap();
+
+        // Add the field if it is accessible by the user
+        for (String fieldName : fieldMap.keySet()) {
+            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+                fields.add(fieldName);
+            }
+        }
+        return this;
+    }
 
     private Schema.SObjectType getParentObjectType(Schema.SObjectType objType, String parentPath) {
         final String nextItem =
@@ -864,8 +868,16 @@ public class Query {
     private String formFieldString() {
         String fieldString = '';
 
+        for (String field : fields) {
+            checkFieldLevelSecurity(objectType, field);
+        }
+
+        if (isSelectingAllFields) {
+            addAllFields();
+        }
+
         if (fields.isEmpty()) {
-            selectAllFields();
+            fields.add('Id');
         }
 
         for (String field: fields) {

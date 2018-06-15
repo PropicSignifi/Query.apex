@@ -26,7 +26,9 @@ public class QueryTest {
     @isTest
     static void simpleTest() {
         createData();
-        List<Account> accounts = new Query('Account').run();
+        List<Account> accounts = new Query('Account').
+            selectAllFields().
+            run();
 
         assertAccount(accounts.get(0));
     }
@@ -39,7 +41,9 @@ public class QueryTest {
 
         insert new List<Account>{acc0, acc1, acc2};
 
-        List<Account> accounts = new Query('Account').fetch(1, 3);
+        List<Account> accounts = new Query('Account').
+            selectAllFields().
+            fetch(1, 3);
 
         System.assertEquals(accounts.size(), 2);
         System.assertEquals(accounts.get(0).Name, 'Account 1');
@@ -47,10 +51,14 @@ public class QueryTest {
 
         Account account;
 
-        account = (Account)new Query('Account').fetch(1);
+        account = (Account)new Query('Account').
+            selectAllFields().
+            fetch(1);
         System.assertEquals(account.Name, 'Account 1');
 
-        account = (Account)new Query('Account').fetch();
+        account = (Account)new Query('Account').
+            selectAllFields().
+            fetch();
         System.assertEquals(account.Name, 'Account 0');
 
     }
@@ -103,18 +111,21 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                   selectAllFields().
                    byId(accId).
                    run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                   selectAllFields().
                    byId(new Set<Id>{accId}).
                    run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                   selectAllFields().
                    byId(new List<Id>{accId}).
                    run();
 
@@ -123,6 +134,7 @@ public class QueryTest {
         // negative cases
         final Id wrongId = 'a0EO000000DjJeJMAV';
         accounts = new Query('Account').
+                   selectAllFields().
                    byId(wrongId).
                    run();
 
@@ -136,6 +148,7 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionEq('Name', 'ABC Ltd').
                     addConditionEq('Phone', '+61 410 000 000').
                     run();
@@ -144,6 +157,7 @@ public class QueryTest {
 
         // negative cases
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionEq('Name', 'ABC Ltd').
                     addConditionEq('Phone', '+61 410 111 111').
                     run();
@@ -158,54 +172,63 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionEq('Name', 'ABC Ltd').
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionNotEq('Name', 'CDE Ltd').
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionIn('Name', new Set<String>{'ABC Ltd'}).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionNotIn('Name', new Set<String>{'CDE Ltd'}).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionLt('NumberOfEmployees', 15).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionLe('NumberOfEmployees', 10).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionGt('NumberOfEmployees', 5).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionGe('NumberOfEmployees', 10).
                     run();
 
         assertAccount(accounts.get(0));
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addConditionLike('Name', '%ABC%').
                     run();
 
@@ -219,6 +242,7 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                   selectAllFields().
                    switchToDisjunction().
                    addConditionEq('Name', 'ABC Ltd').
                    addConditionEq('Phone', '+61 410 111 111').
@@ -229,6 +253,7 @@ public class QueryTest {
         // negative cases
 
         accounts = new Query('Account').
+                   selectAllFields().
                    switchToDisjunction().
                    addConditionEq('Name', 'ABC Ltd').
                    addConditionEq('Phone', '+61 410 111 111').
@@ -243,6 +268,7 @@ public class QueryTest {
         createData();
 
         List<Account> accounts = new Query('Account').
+                                 selectAllFields().
                                  addCondition(Query.conditionEq('Name', 'ABC Ltd')).
                                  run();
 
@@ -259,6 +285,7 @@ public class QueryTest {
 
         List<Account> accounts =
                 new Query('Account').
+                selectAllFields().
                 addCondition(
                     Query.doAnd(
                         Query.doOr(
@@ -282,6 +309,7 @@ public class QueryTest {
         createData();
 
         List<Account> accounts = new Query('Account').
+                                 selectAllFields().
                                  setLimit(1).
                                  run();
 
@@ -300,6 +328,7 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                    selectAllFields().
                     orderBy('Rating').
                     descend().
                     run();
@@ -309,6 +338,7 @@ public class QueryTest {
         System.assertEquals(accounts.get(2).Name, 'Account 1');
 
         accounts = new Query('Account').
+                    selectAllFields().
                     orderBy('Rating', 'DESC').
                     run();
 
@@ -328,6 +358,7 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                    selectAllFields().
                     orderBy('Rating').
                     orderBy('Phone').
                     ascend().
@@ -345,14 +376,16 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                   selectAllFields().
                    addSubquery('Opportunities').
                    run();
 
         assertAccount(accounts.get(0));
-        assertOpportunity(accounts.get(0).Opportunities.get(0));
+        System.assert(accounts.get(0).Opportunities.get(0).Id != null);
 
         accounts = new Query('Account').
-                   addSubquery(Query.subquery('Opportunities')).
+                   selectAllFields().
+                   addSubquery(Query.subquery('Opportunities').selectAllFields()).
                    run();
 
         assertAccount(accounts.get(0));
@@ -366,8 +399,10 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addSubquery(
                         Query.subquery('Opportunities').
+                        selectAllFields().
                         addConditionEq('TotalOpportunityQuantity', 10)
                     ).
                     run();
@@ -384,6 +419,7 @@ public class QueryTest {
         List<Account> accounts;
 
         accounts = new Query('Account').
+                    selectAllFields().
                     addCondition(
                         Query.doOr(
                             Query.conditionIn('Name', new Set<String>{'ABC Ltd'}),
@@ -392,6 +428,7 @@ public class QueryTest {
                     ).
                     addSubquery(
                         Query.subquery('Opportunities').
+                        selectFields('Name, CloseDate, TotalOpportunityQuantity').
                         addCondition(
                             Query.doOr(
                                 Query.conditionIn('TotalOpportunityQuantity',
@@ -425,24 +462,28 @@ public class QueryTest {
         Opportunity opp;
 
         account = (Account)new Query('Account').
+                selectAllFields().
                 addConditionEq('AnnualRevenue', Query.Literal.NIL).
                 fetch();
 
         assertAccount(account);
 
         opp = (Opportunity)new Query('Opportunity').
+                selectAllFields().
                 addConditionEq('IsPrivate', Query.Literal.F).
                 fetch();
 
         assertOpportunity(opp);
 
         opp = (Opportunity)new Query('Opportunity').
+                selectAllFields().
                 addConditionNotEq('IsPrivate', Query.Literal.T).
                 fetch();
 
         assertOpportunity(opp);
 
         opp = (Opportunity)new Query('Opportunity').
+                selectAllFields().
                 addConditionGe('CloseDate', Query.Literal.TODAY).
                 fetch();
 
@@ -461,7 +502,7 @@ public class QueryTest {
         List<Integer> integerList = new List<Integer>{1};
         Set<Integer> integerSet = new Set<Integer>{1};
 
-        new Query('Account').
+        Query query = new Query('Account').
             addConditionEq('RecordTypeId', id).
             addConditionEq('OwnerId', id).
             addConditionEq('CreatedBy', id).
@@ -483,6 +524,8 @@ public class QueryTest {
             addConditionIn('NumberOfEmployees', integerSet).
             addConditionEq('NumberOfEmployees', 1).
             debug();
+
+        System.assert(query != null);
     }
 
     static void createData() {
