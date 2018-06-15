@@ -580,12 +580,10 @@ public class Query {
         childQuerys = new Map<String, Query>();
         conditionArgs = new List<Object>();
         orderFields = new List<String>();
-        parentFields = new Map<String, Set<String>>();
     }
 
     // State variables
     private Set<String> fields;
-    private Map<String, Set<String>> parentFields;
 
     private List<String> conditions;
     private static final Integer maxArgSize = 20;
@@ -872,12 +870,6 @@ public class Query {
 
         for (String field: fields) {
             fieldString += field + ', ';
-        }
-
-        for (String parentRelationship : parentFields.keySet()) {
-            for (String field : parentFields.get(parentRelationship)) {
-                fieldString += parentRelationship + '.' + field + ', ';
-            }
         }
 
         fieldString += formSubqueryString();
