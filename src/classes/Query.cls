@@ -625,8 +625,8 @@ public class Query {
     private Map<String, Schema.SObjectType> childRelationships;
 
     private Schema.SObjectType getParentObjectType(Schema.SObjectType objType, String parentPath) {
-        List<String> pathItems = parentPath.split('\\.');
-        String nextItem = appendNamespace(translateParentField(pathItems.get(0)));
+        final String nextItem =
+            appendNamespace(translateParentField(parentPath.substringBefore('.')));
 
         Schema.SObjectField field = objType.getDescribe().fields.getMap().get(nextItem);
 
@@ -650,7 +650,7 @@ public class Query {
 
         Schema.SObjectType nextObj = referenceTo.get(0);
 
-        if (pathItems.size() == 1) {
+        if (!parentPath.contains('.')) {
             return nextObj;
         } else {
             return getParentObjectType(nextObj, parentPath.substringAfter('.'));
@@ -955,11 +955,10 @@ public class Query {
     }
 
     private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, String fieldPath) {
-        List<String> pathItems = fieldPath.split('\\.');
-        String nextItem = appendNamespace(translateParentField(pathItems.get(0)));
+        final String nextItem =
+            appendNamespace(translateParentField(fieldPath.substringBefore('.')));
 
-        if (pathItems.size() == 1) {
-            // Only one path item left
+        if (!fieldPath.contains('.')) {
             final Map<String, Schema.SObjectField> fieldMap =
                 objType.getDescribe().fields.getMap();
 
@@ -971,7 +970,6 @@ public class Query {
                 throw new QueryException('Permission denied: cannot read ' +
                         nextItem + ' from object ' + objType.getDescribe().getName());
             }
-
         } else {
             return checkFieldLevelSecurity(getParentObjectType(objType, nextItem),
                     fieldPath.substringAfter('.'));
