@@ -101,12 +101,8 @@ public class Query {
         } else {
             final String fieldName = fieldNames;
 
-            if (!isParentField(fieldName)) {
-                fields.add(fieldName);
-                return this;
-            } else {
-                return selectParentfields(fieldName);
-            }
+            fields.add(fieldName);
+            return this;
         }
     }
 
@@ -116,6 +112,13 @@ public class Query {
     public Query selectAllFields() {
         isSelectingAllFields = true;
         return this;
+    }
+
+    /*
+     * Select all user accessible fields from a parent field
+     */
+    public Query selectAllFields(String parentField) {
+        return selectParentfields(parentField);
     }
 
     /*
@@ -569,10 +572,12 @@ public class Query {
         childQuerys = new Map<String, Query>();
         conditionArgs = new List<Object>();
         orderFields = new List<String>();
+        parentReferences = new Set<String>();
     }
 
     // State variables
     private Set<String> fields;
+    private Set<String> parentReferences;
     private Boolean isSelectingAllFields = false;
 
     private List<String> conditions;
@@ -659,61 +664,13 @@ public class Query {
         }
     }
 
-    private static Set<String> standardParentReferences = new Set<String> {
-        'CreatedBy',
-        'LastModifiedBy',
-        'Owner',
-        'RecordType',
-
-        'Account',
-        'Asset',
-        'BannerPhoto',
-        'BillToContact',
-        'BusinessHours',
-        'CallCenter',
-        'Campaign',
-        'CompanySigned',
-        'Contract',
-        'CustomerAuthorizedBy',
-        'CustomerSigned',
-        'DelegatedApprover',
-        'DeletedBy',
-        'FlowInterview',
-        'HiddenBy',
-        'JigsawContract',
-        'Opportunity',
-        'Order',
-        'OriginalOrder',
-        'OriginalOrderItem',
-        'OutboundSocialAccount',
-        'Manager',
-        'MasterRecord',
-        'Parent',
-        'Persona',
-        'Pricebook2',
-        'Product2',
-        'Profile',
-        'Record',
-        'RelatedAsset',
-        'Report',
-        'ReportsTo',
-        'RootAsset',
-        'Scorecard',
-        'ShipToContact',
-        'Source',
-        'TargetEntity',
-        'UserProvAccount',
-        'UserRole',
-        'What',
-        'Who',
-        'Workspace'
-    };
-
     private static String translateParentField(String parentName) {
         // translate the reference name
         if (parentName.endsWithIgnoreCase('__r')) {
             parentName = parentName.removeEnd('__r') + '__c';
-        } else if (standardParentReferences.contains(parentName)) {
+        } else if (parentName.endsWithIgnoreCase('Id')) {
+            parentName = parentName;
+        } else {
             parentName = parentName + 'Id';
         }
 
@@ -727,10 +684,8 @@ public class Query {
             return true;
         } else if (fieldName.endsWithIgnoreCase('Id')) {
             return false;
-        } else if (standardParentReferences.contains(fieldName)) {
-            return true;
         } else {
-            return false;
+            return true;
         }
     }
 
@@ -752,6 +707,11 @@ public class Query {
      *      Account.Name, Account.FirstName, Account.LastName, etc.
      */
     private Query selectParentFields(String parentName) {
+        parentReferences.add(parentName);
+        return this;
+    }
+
+    private Query addParentFields(String parentName) {
         // Get all the fields from the parent object
         final Map<String, Schema.SObjectField> fieldMap =
             getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
@@ -872,6 +832,10 @@ public class Query {
             checkFieldLevelSecurity(objectType, field);
         }
 
+        for (String parentName : parentReferences) {
+            addParentFields(parentName);
+        }
+
         if (isSelectingAllFields) {
             addAllFields();
         }
@@ -959,10 +923,12 @@ public class Query {
     }
 
     private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, String fieldPath) {
-        final String nextItem =
-            appendNamespace(translateParentField(fieldPath.substringBefore('.')));
+        String nextItem =
+            fieldPath.substringBefore('.');
 
         if (!fieldPath.contains('.')) {
+            nextItem = appendNamespace(nextItem);
+
             final Map<String, Schema.SObjectField> fieldMap =
                 objType.getDescribe().fields.getMap();
 
@@ -975,8 +941,10 @@ public class Query {
                         nextItem + ' from object ' + objType.getDescribe().getName());
             }
         } else {
-            return checkFieldLevelSecurity(getParentObjectType(objType, nextItem),
-                    fieldPath.substringAfter('.'));
+            return checkFieldLevelSecurity(
+                    getParentObjectType(objType, nextItem),
+                    fieldPath.substringAfter('.')
+                );
         }
 
         return true;
