@@ -218,9 +218,9 @@ public class Query {
     }
 
     /*
-     * Add condition with a ConditionType
+     * Add condition with a Condition object
      */
-    public Query addCondition(ConditionType condition) {
+    public Query addCondition(Condition condition) {
         String newConditionString =
             shiftFormatStringIndice(condition.conditionString, conditionArgsIdx);
         newConditionString = '(' + newConditionString + ')';
@@ -233,9 +233,9 @@ public class Query {
      * Example: conditionEq('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate != :Datetime.now()"
      */
-    public static ConditionType conditionEq(String lhs, Object rhs) {
+    public static Condition conditionEq(String lhs, Object rhs) {
         final String formatString = lhs + ' = {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -243,9 +243,9 @@ public class Query {
      * Example: conditionNotEq('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate != :Datetime.now()"
      */
-    public static ConditionType conditionNotEq(String lhs, Object rhs) {
+    public static Condition conditionNotEq(String lhs, Object rhs) {
         final String formatString = lhs + ' != {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -253,9 +253,9 @@ public class Query {
      * Example: conditionIn('Name', mySet)
      *          the condition is equivalent to "Name IN :mySet"
      */
-    public static ConditionType conditionIn(String lhs, Object rhs) {
+    public static Condition conditionIn(String lhs, Object rhs) {
         final String formatString = lhs + ' IN {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -263,9 +263,9 @@ public class Query {
      * Example: conditionNotIn('Name', mySet)
      *          the condition is equivalent to "Name NOT IN :mySet"
      */
-    public static ConditionType conditionNotIn(String lhs, Object rhs) {
+    public static Condition conditionNotIn(String lhs, Object rhs) {
         final String formatString = lhs + ' NOT IN {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -273,9 +273,9 @@ public class Query {
      * Example: conditionLt('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
      */
-    public static ConditionType conditionLt(String lhs, Object rhs) {
+    public static Condition conditionLt(String lhs, Object rhs) {
         final String formatString = lhs + ' < {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -283,9 +283,9 @@ public class Query {
      * Example: conditionLe('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
      */
-    public static ConditionType conditionLe(String lhs, Object rhs) {
+    public static Condition conditionLe(String lhs, Object rhs) {
         final String formatString = lhs + ' <= {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -293,9 +293,9 @@ public class Query {
      * Example: conditionGt('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
      */
-    public static ConditionType conditionGt(String lhs, Object rhs) {
+    public static Condition conditionGt(String lhs, Object rhs) {
         final String formatString = lhs + ' > {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -303,9 +303,9 @@ public class Query {
      * Example: conditionGe('CreatedDate', Datetime.now())
      *          is equivaGent to "CreatedDate <= :Datetime.now()"
      */
-    public static ConditionType conditionGe(String lhs, Object rhs) {
+    public static Condition conditionGe(String lhs, Object rhs) {
         final String formatString = lhs + ' >= {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
     /*
@@ -313,20 +313,20 @@ public class Query {
      * Example: conditionLike('Name', '%Sam%')
      *          the condition is equivalent to "Name Like :Datetime.now()"
      */
-    public static ConditionType conditionLike(String lhs, Object rhs) {
+    public static Condition conditionLike(String lhs, Object rhs) {
         final String formatString = lhs + ' LIKE {0}';
-        return new ConditionType(formatString, rhs);
+        return new Condition(formatString, rhs);
     }
 
-    public static ConditionType doAnd(ConditionType lhs, ConditionType rhs) {
+    public static Condition doAnd(Condition lhs, Condition rhs) {
         return lhs.doAnd(rhs);
     }
 
-    public static ConditionType doAnd(ConditionType condition0,
-                                      ConditionType condition1,
-                                      ConditionType condition2) {
+    public static Condition doAnd(Condition condition0,
+                                  Condition condition1,
+                                  Condition condition2) {
         return doAnd(
-                new List<ConditionType>{
+                new List<Condition>{
                     condition0,
                     condition1,
                     condition2
@@ -334,12 +334,12 @@ public class Query {
             );
     }
 
-    public static ConditionType doAnd(ConditionType condition0,
-                                      ConditionType condition1,
-                                      ConditionType condition2,
-                                      ConditionType condition3) {
+    public static Condition doAnd(Condition condition0,
+                                  Condition condition1,
+                                  Condition condition2,
+                                  Condition condition3) {
         return doAnd(
-                new List<ConditionType>{
+                new List<Condition>{
                     condition0,
                     condition1,
                     condition2,
@@ -348,12 +348,12 @@ public class Query {
             );
     }
 
-    public static ConditionType doAnd(List<ConditionType> conditions) {
+    public static Condition doAnd(List<Condition> conditions) {
         if (null == conditions || conditions.isEmpty()) {
             return null;
         }
 
-        ConditionType ret = conditions.get(0);
+        Condition ret = conditions.get(0);
 
         for (Integer i = 1; i < conditions.size(); i++) {
             ret = ret.doAnd(conditions[i]);
@@ -362,15 +362,15 @@ public class Query {
         return ret;
     }
 
-    public static ConditionType doOr(ConditionType lhs, ConditionType rhs) {
+    public static Condition doOr(Condition lhs, Condition rhs) {
         return lhs.doOr(rhs);
     }
 
-    public static ConditionType doOr(ConditionType condition0,
-                                     ConditionType condition1,
-                                     ConditionType condition2) {
+    public static Condition doOr(Condition condition0,
+                                     Condition condition1,
+                                     Condition condition2) {
         return doOr(
-                new List<ConditionType>{
+                new List<Condition>{
                     condition0,
                     condition1,
                     condition2
@@ -378,12 +378,12 @@ public class Query {
             );
     }
 
-    public static ConditionType doOr(ConditionType condition0,
-                                     ConditionType condition1,
-                                     ConditionType condition2,
-                                     ConditionType condition3) {
+    public static Condition doOr(Condition condition0,
+                                 Condition condition1,
+                                 Condition condition2,
+                                 Condition condition3) {
         return doOr(
-                new List<ConditionType>{
+                new List<Condition>{
                     condition0,
                     condition1,
                     condition2,
@@ -393,12 +393,12 @@ public class Query {
     }
 
 
-    public static ConditionType doOr(List<ConditionType> conditions) {
+    public static Condition doOr(List<Condition> conditions) {
         if (null == conditions || conditions.isEmpty()) {
             return null;
         }
 
-        ConditionType ret = conditions.get(0);
+        Condition ret = conditions.get(0);
 
         for (Integer i = 1; i < conditions.size(); i++) {
             ret = ret.doOr(conditions[i]);
@@ -486,7 +486,7 @@ public class Query {
     }
 
     public Query addSubquery(String relationshipName,
-                                Set<String> fieldSet) {
+                             Set<String> fieldSet) {
         addChildRelationship(relationshipName);
         childQuerys.get(relationshipName).selectFields(fields);
 
@@ -494,7 +494,7 @@ public class Query {
     }
 
     public Query addSubquery(String relationshipName,
-                                List<String> fieldList) {
+                             List<String> fieldList) {
         addChildRelationship(relationshipName);
         childQuerys.get(relationshipName).selectFields(fields);
 
@@ -732,7 +732,7 @@ public class Query {
      */
     @testVisible
     private Query addComplexCondition(String formatString,
-                                        List<Object> args) {
+                                      List<Object> args) {
         List<String> argStringList = new List<String>();
 
         conditions.add(String.escapeSingleQuotes(formatString));
@@ -1234,9 +1234,9 @@ public class Query {
     private class QueryException extends Exception {
     }
 
-    public class ConditionType {
-        public ConditionType doAnd(ConditionType other) {
-            ConditionType newCondition = this.clone();
+    public class Condition {
+        public Condition doAnd(Condition other) {
+            Condition newCondition = this.clone();
 
             newCondition.conditionString =
                 '(' + this.conditionString + ') AND (' +
@@ -1248,8 +1248,8 @@ public class Query {
             return newCondition;
         }
 
-        public ConditionType doOr(ConditionType other) {
-            ConditionType newCondition = this.clone();
+        public Condition doOr(Condition other) {
+            Condition newCondition = this.clone();
 
             newCondition.conditionString =
                 '(' + this.conditionString + ') OR (' +
@@ -1260,11 +1260,11 @@ public class Query {
             return newCondition;
         }
 
-        private ConditionType() {
+        private Condition() {
             args = new List<Object>();
         }
 
-        private ConditionType(String formatString, Object arg) {
+        private Condition(String formatString, Object arg) {
             this();
             conditionString = formatString;
             if (arg instanceOf Literal) {
