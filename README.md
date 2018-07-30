@@ -3,14 +3,26 @@
 Query.apex provides a flexible and dynamic way of building a SOQL query on the
 Salesforce platform.
 
+## Why Query.apex
+
+Although Salesforce provides Database.query method to dynamically execute a
+query from a string, it is far from easy to construct such a string in a
+structural and flexible way. Query.apex is made to improve the flexibility
+of the code and consequently enhance the productivity of the development.
+
 ## Features
 
 - Allows both functional programming and object oriented programming paradigm
 
-- Manages object fields and provides Field Level Security checking
-
 - Supports complex queries including parent/child relationships, and nested
-conditions
+conditions in a flexible way
+
+- Manages the namespace of the object names and field names, while also
+providing the Field Level Security checking
+
+## Documentation
+
+https://click-to-cloud.github.io/query-apex/
 
 ## Examples
 
@@ -18,12 +30,25 @@ conditions
 
 This will return a list of all Accounts from the database.
 
-By default it will select all the fields in Account object which the user has
-the access privilege on it.
+By default it will select only the Id field.
+
+```javascript
+
+List<Account> accounts = new Query('Account').run();
 
 ```
 
-List<Account> accounts = new Query('Account').run();
+### Select all fields
+
+This will return a list of all Accounts from the database, selecting all
+fields which the user has access privilege on.
+
+```javascript
+
+List<Account> accounts =
+    new Query('Account').
+    selectAllFields().
+    run();
 
 ```
 
@@ -32,7 +57,7 @@ List<Account> accounts = new Query('Account').run();
 This will query the Accounts with a specific Id, and return only one SObject as
 a result.
 
-```
+```javascript
 
 Account account =
     (Account)new Query('Account').
@@ -43,14 +68,14 @@ Account account =
 
 ### Get an account based on a foreign key
 
-This will query the Contacts given the AccountId foreign key
+This will query the Contacts given the foreign key AccountId
 
-```
+```javascript
 
 List<Contact> contacts =
     new Query('Contact').
-    lookupIds('AccountId',
-    '001O000001HMWZVIA5').run();
+    addConditionEq('AccountId', '001O000001HMWZVIA5').
+    run();
 
 ```
 
@@ -58,9 +83,12 @@ List<Contact> contacts =
 
 This will select all the fields from the parent object Account.
 
-```
+```javascript
 
-List<Contact> contacts = new Query('Contact').selectParentFields('Account').run();
+List<Contact> contacts =
+    new Query('Contact').
+    selectAllFields('Account').
+    run();
 
 ```
 
@@ -69,14 +97,14 @@ List<Contact> contacts = new Query('Contact').selectParentFields('Account').run(
 This will query all the accounts whose 'FirstName' is 'Sam' and 'LastName' is
 'Tarly'.
 
-By default, all the conditions are joined by 'AND' operator.
+By default, all the conditions are joined by the 'AND' operator.
 
-```
+```javascript
 
 List<Account> accounts =
     new Query('Account').
-    addConditionEq('FirstName', 'Sam').
-    addConditionEq('LastName', 'Tarly').
+    addConditionEq('Name', 'Sam').
+    addConditionLt('NumberOfEmployees', 10).
     run();
 
 ```
@@ -85,10 +113,10 @@ List<Account> accounts =
 ### Query with complex conditions
 
 For more complicated conditions, we can use the method 'conditionXX' to create a
-condition variable, and join these conditions with 'doOr' method or 'doAnd'
-method to join these condition variables.
+condition variable, before using the 'doOr' method or 'doAnd' boolean operation
+methods to join these conditions.
 
-```
+```javascript
 
 List<Account> accounts =
     new Query('Account').
@@ -104,3 +132,22 @@ List<Account> accounts =
     run();
 
 ```
+
+### Query with subqueries
+
+Query.apex also allows selecting child relationships (subqueries), in a
+functional style similar to the conditions.
+
+```javascript
+
+List<Account> accounts =
+    new Query('Account').
+    addSubquery(
+        Query.subquery('Contacts').
+        addConditionEq('FirstName', 'Sam').
+        addConditionIn('LastName', new List<String>{'Tarly'})
+    ).
+    run();
+
+```
+
