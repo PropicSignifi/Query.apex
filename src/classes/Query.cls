@@ -888,11 +888,10 @@ public class Query {
             Query childQuery = childQuerys.get(key);
 
             subqueryString += '(';
-            subqueryString += childQuery.toQueryString();
+            subqueryString += shiftArgStringIndice(childQuery.toQueryString(), conditionArgsIdx);
             subqueryString += ')';
             subqueryString += ', ';
 
-            subqueryString = shiftArgStringIndice(subqueryString, conditionArgsIdx);
             saveConditionArg(childQuery.conditionArgs);
         }
 
