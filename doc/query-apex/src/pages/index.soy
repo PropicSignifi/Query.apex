@@ -1,0 +1,132 @@
+---
+title: "Home"
+description: "Query.apex provides a flexible and dynamic way of building a SOQL query on the Salesforce platform."
+---
+
+{namespace pageIndex}
+
+/**
+ */
+{template .render}
+	{@param site: ?}
+
+	{call main.render data="all"}
+		{param content kind="html"}
+			{call .header data="all" /}
+			{call .why /}
+			{call .features /}
+			{call .how /}
+			{call .highlights /}
+			{call Footer.render data="all" /}
+		{/param}
+	{/call}
+{/template}
+
+/**
+ */
+{template .header}
+	{@param site: ?}
+
+	<header class="header">
+		<div class="container">
+			<h1 class="header-title">{$site.title}</h1>
+			<h2 class="header-subtitle">{$site.index.description}</h2>
+			<div class="btn-group">
+				<a href="/query-apex/tutorials/getting_started/step_1.html" class="btn btn-accent btn-sm">Get Started</a>
+				<a href="/query-apex/docs/" class="btn btn-success btn-sm">Documentation</a>
+				<a href="https://github.com/Click-to-Cloud/Query.apex/" class="btn btn-default btn-sm">GitHub</a>
+			</div>
+		</div>
+	</header>
+{/template}
+
+/**
+ */
+{template .why}
+	<article class="about">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 col-md-offset-2">
+					<h3 class="about-title">Why Query.apex?</h3>
+					<p class="about-description"> Although Salesforce provides Database.query method to dynamically execute a query from a string, it is far from easy to construct such a string in a structural and flexible way. Query.apex is designed to improve the flexibility of the code and consequently enhance the productivity of the development. </p>
+				</div>
+			</div>
+		</div>
+	</article>
+{/template}
+
+/**
+ */
+{template .features}
+	<div class="features">
+		<div class="container">
+			<div class="row">
+				<section class="feature col-md-4 col-md-offset-2">
+					<h3 class="feature-title">Programming Paradigm</h3>
+					<p class="feature-description">Allows both functional programming and object oriented programming paradigm</p>
+				</section>
+				<section class="feature col-md-4">
+					<h3 class="feature-title">Completeness</h3>
+					<p class="feature-description">Supports complex queries including parent/child relationships, and nested conditions in a flexible way</p>
+				</section>
+				<section class="feature col-md-4">
+					<h3 class="feature-title">Salesforce platform friendliness</h3>
+					<p class="feature-description">Manages the namespace of the object names and field names, while also providing the Field Level Security checking</p>
+				</section>
+			</div>
+		</div>
+	</div>
+{/template}
+
+/**
+ */
+{template .how}
+	<article class="about">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 col-md-offset-2">
+					<h3 class="about-title">Start from small steps</h3>
+					<p class="about-description">It's about changing your tranditional query string into a structural way</p>
+					<p class="about-description">Starting from trying each feature, before combining all of them, would be advisable</p>
+					<p class="about-description">Try our tutorial for a quick start</p>
+				</div>
+			</div>
+		</div>
+	</article>
+{/template}
+
+/**
+ */
+{template .highlights}
+	<div class="highlights">
+		<div class="container">
+			<section class="highlight row">
+				<div class="col-md-6 col-md-offset-2">
+					<h4 class="highlight-title">Function Chaining</h4>
+					<p class="highlight-description">Query.apex supports declarative style function chaining</p>
+				</div>
+				<div class="col-md-5 col-md-offset-1">
+					<img class="highlight-image" src="/query-apex/images/highlight_1.png" alt="Function Chaining" height="200">
+				</div>
+			</section>
+			<section class="highlight row">
+				<div class="col-md-6 col-md-push-9">
+					<h4 class="highlight-title">Friendliness</h4>
+					<p class="highlight-description">Query.apex aims enhance the productivity of the development by providing friendly APIs </p>
+				</div>
+				<div class="col-md-5 col-md-offset-2 col-md-pull-6">
+					<img class="highlight-image" src="/query-apex/images/highlight_2.png" alt="Collection Support" height="200">
+				</div>
+			</section>
+			<section class="highlight row">
+				<div class="col-md-6 col-md-offset-2">
+					<h4 class="highlight-title">Complex Condition Support</h4>
+					<p class="highlight-description">Query.apex allows complex condition in a functional style</p>
+				</div>
+				<div class="col-md-5 col-md-offset-1">
+					<img class="highlight-image" src="/query-apex/images/highlight_3.png" alt="Function Composition" height="200">
+				</div>
+			</section>
+		</div>
+	</div>
+{/template}

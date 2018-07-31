@@ -1,0 +1,25 @@
+{namespace main}
+
+/**
+ */
+{template .render}
+	{@param content: ?}
+	{@param site: ?}
+	{@param? elementClasses: ?}
+
+	<div class="{$elementClasses ?: 'main'}">
+		<main class="content">
+			{call Topbar.render}
+				{param items: $site.topbar /}
+				{param style: 'topbar-light' /}
+				{param logo: [
+					'text': $site.title,
+					'href': '/query-apex',
+					'icon': 'icon-16-hammer'
+				] /}
+			{/call}
+
+			{$content}
+		</main>
+	</div>
+{/template}

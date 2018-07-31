@@ -1,0 +1,50 @@
+{namespace blog}
+
+/**
+ */
+{template .render}
+	{call main.render data="all"}
+		{param content kind="html"}
+			<div class="blog">
+				{call .mainPost data="all" /}
+				{call .olderPosts data="all" /}
+			</div>
+		{/param}
+	{/call}
+{/template}
+
+/**
+ */
+{template .mainPost}
+	{@param content: ?}
+	{@param page: ?}
+	{@param siteUrl: ?}
+
+	<article class="container">
+		<header>
+			<small>By {$page.author} <span>| {$page.date}</span></small>
+
+			<h3>{$page.title}</h3>
+		</header>
+
+		<div class="content">
+			{$content}
+		</div>
+		{call SocialButtons.render data="all"}
+			{param siteUrl: $siteUrl /}
+		{/call}
+	</article>
+{/template}
+
+/**
+ */
+{template .olderPosts}
+	{@param page: ?}
+	{@param site: ?}
+
+	{let $blogObject: $site.index.children['blog'] /}
+	{call OlderPosts.render}
+		{param blogObject: $blogObject /}
+		{param url: $page.url /}
+	{/call}
+{/template}

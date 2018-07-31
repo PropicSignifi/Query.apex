@@ -1,0 +1,22 @@
+{namespace OlderPosts}
+
+/**
+ */
+{template .render}
+	{@param? posts: ?}
+
+	<div class="posts-list">
+		<div class="container">
+			{if $posts}
+				{foreach $post in $posts}
+					<div class="post-item container-blog">
+						<a class="post-item__link" href="{$post.url}">
+							<small>By {$post.author} <span>| {$post.date}</span></small>
+							<h4 class="post-item__title">{$post.title}</h4>
+						</a>
+					</div>
+				{/foreach}
+			{/if}
+		</div>
+	</div>
+{/template}
