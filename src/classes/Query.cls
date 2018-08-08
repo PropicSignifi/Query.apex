@@ -678,7 +678,7 @@ public class Query {
     }
 
     private static Boolean isParentField(String fieldName) {
-        if (fieldName.endsWithIgnoreCase('__c')) {
+        if (fieldName.endsWithIgnoreCase('__c') || fieldName.endsWithIgnoreCase('__pc')) {
             return false;
         } else if (fieldName.endsWithIgnoreCase('__r')) {
             return true;
@@ -1203,7 +1203,7 @@ public class Query {
     }
 
     private static String appendNamespace(String src) {
-        if (src.endsWithIgnoreCase('__c')) {
+        if (src.endsWithIgnoreCase('__c') || src.endsWithIgnoreCase('__pc')) {
             src = namespace + src;
         }
 
