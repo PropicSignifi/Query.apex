@@ -516,7 +516,7 @@ public class Query {
     public static Query subquery(String relationshipName) {
         Query childQuery = new Query();
 
-        childQuery.objectName = relationshipName;
+        childQuery.objectName = appendNamespace(relationshipName);
 
         return childQuery;
     }
@@ -1203,7 +1203,9 @@ public class Query {
     }
 
     private static String appendNamespace(String src) {
-        if (src.endsWithIgnoreCase('__c') || src.endsWithIgnoreCase('__pc')) {
+        if (src.endsWithIgnoreCase('__c') ||
+            src.endsWithIgnoreCase('__r') ||
+            src.endsWithIgnoreCase('__pc')) {
             src = namespace + src;
         }
 
