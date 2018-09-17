@@ -1203,9 +1203,12 @@ public class Query {
     }
 
     private static String appendNamespace(String src) {
-        if (src.endsWithIgnoreCase('__c') ||
-            src.endsWithIgnoreCase('__r') ||
-            src.endsWithIgnoreCase('__pc')) {
+        /*
+         * Only append the namespace when '__' occurs only once
+         * In this case, '__' can only be '__c', '__r' or '__pc' as a suffix
+         * If '__' occurs more than once, we will assume it contains a namespace prefix
+         */
+        if (src.countMatches('__') == 1) {
             src = namespace + src;
         }
 
