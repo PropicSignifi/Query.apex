@@ -43,6 +43,15 @@ public class Query {
         childRelationships = getChildRelationships();
     }
 
+    public Query(Schema.SObjectType objectType) {
+        this();
+
+        this.objectName = objectType.getDescribe().getName();
+        this.objectType = objectType;
+
+        childRelationships = getChildRelationships();
+    }
+
     public enum Literal {
         NIL,
         T,
