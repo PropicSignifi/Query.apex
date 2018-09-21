@@ -110,7 +110,7 @@ public class Query {
         } else {
             final String fieldName = fieldNames;
 
-            fields.add(fieldName);
+            fields.add(fieldName.toLowerCase());
             return this;
         }
     }
@@ -634,7 +634,7 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                fields.add(fieldName);
+                fields.add(fieldName.toLowerCase());
             }
         }
         return this;
@@ -728,7 +728,7 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                fields.add(parentName + '.' + fieldName);
+                fields.add((parentName + '.' + fieldName).toLowerCase());
             }
         }
         return this;
@@ -850,7 +850,7 @@ public class Query {
         }
 
         if (fields.isEmpty()) {
-            fields.add('Id');
+            fields.add('Id'.toLowerCase());
         }
 
         for (String field: fields) {

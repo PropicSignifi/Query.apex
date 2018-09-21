@@ -81,6 +81,7 @@ public class QueryTest {
                                  selectFields('Phone, Sic').
                                  selectFields(new List<String>{'NumberOfEmployees', 'Website'}).
                                  selectFields(new Set<String>{'Fax', 'Site'}).
+                                 selectAllFields().
                                  run();
 
         assertAccount(accounts.get(0));
