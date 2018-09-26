@@ -72,6 +72,15 @@ public class QueryTest {
     }
 
     @isTest
+    static void toIdListTest() {
+        createData();
+
+        List<Id> idList = new Query('Account').toIdList();
+
+        System.assertEquals(idList.size(), 1);
+    }
+
+    @isTest
     static void fieldsTest() {
         createData();
 

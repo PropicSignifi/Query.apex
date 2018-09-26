@@ -573,6 +573,16 @@ public class Query {
         return Database.query(queryString);
     }
 
+    public List<Id> toIdList() {
+        List<Id> ret = new List<Id>();
+
+        for (SObject item : run()) {
+            ret.add(item.Id);
+        }
+
+        return ret;
+    }
+
     /* Private members */
 
     private Query() {
