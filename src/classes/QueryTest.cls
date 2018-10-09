@@ -85,7 +85,7 @@ public class QueryTest {
         createData();
 
         List<Account> accounts = new Query('Account').
-                                 selectFields('Id').
+                                 selectField('Id').
                                  selectFields('Name').
                                  selectFields('Phone, Sic').
                                  selectFields(new List<String>{'NumberOfEmployees', 'Website'}).

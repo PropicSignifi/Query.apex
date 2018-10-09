@@ -116,6 +116,14 @@ public class Query {
     }
 
     /*
+     * This function allows user provide a single field
+     */
+    public Query selectfield(String fieldName) {
+        fields.add(fieldName.toLowerCase());
+        return this;
+    }
+
+    /*
      * Select all user accessible fields
      */
     public Query selectAllFields() {
