@@ -577,6 +577,10 @@ public class Query {
     }
 
     public List<SObject> run() {
+        return toSObjectList();
+    }
+
+    public List<SObject> toSObjectList() {
         String queryString = toQueryString();
         return Database.query(queryString);
     }
