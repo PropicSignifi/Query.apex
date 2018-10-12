@@ -154,6 +154,33 @@ public class Query {
     }
 
     /*
+     * Specify the Id of the a lookup field
+     */
+    public Query lookup(String fieldName, Set<Id> idSet) {
+        return addConditionIn(fieldName, idSet);
+    }
+
+    public Query lookup(String fieldName, List<Id> idList) {
+        return lookup(fieldName, new Set<Id>(idList));
+    }
+
+    public Query lookup(String fieldName, Id id) {
+        return lookup(fieldName, new Set<Id>{id});
+    }
+
+    public Query lookup(String fieldName, List<SObject> sObjectList) {
+        Set<Id> idSet = new Set<Id>();
+        for (SObject sobj : sObjectList) {
+            idSet.add(sobj.Id);
+        }
+        return lookup(fieldName, idSet);
+    }
+
+    public Query lookup(String fieldName, SObject sobj) {
+        return lookup(fieldName, new List<SObject>{sobj});
+    }
+
+    /*
      * Add a condition
      * Example: addConditionEq('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate = :Datetime.now()"
