@@ -162,6 +162,39 @@ public class QueryTest {
     }
 
     @isTest
+    static void lookupTest() {
+        createData();
+
+        Account account = [ SELECT Id FROM Account LIMIT 1 ];
+
+        List<Opportunity> opportunities;
+
+        opportunities =
+            new Query('Opportunity').
+            selectAllFields().
+            lookup('AccountId', account.Id).
+            run();
+
+        assertOpportunity(opportunities.get(0));
+
+        opportunities =
+            new Query('Opportunity').
+            selectAllFields().
+            lookup('AccountId', new List<Id>{account.Id}).
+            run();
+
+        assertOpportunity(opportunities.get(0));
+
+        opportunities =
+            new Query('Opportunity').
+            selectAllFields().
+            lookup('AccountId', account).
+            run();
+
+        assertOpportunity(opportunities.get(0));
+    }
+
+    @isTest
     static void simpleConditionTest() {
         createData();
 
