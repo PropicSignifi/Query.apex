@@ -1,5 +1,5 @@
 ---
-title: "Constructors"
+title: "Constructor"
 description: "Constructors of Query"
 layout: "guide"
 icon: "code-file"
@@ -10,7 +10,7 @@ weight: 1
 
 <article id="1">
 
-## Constructors
+## Constructor
 
 Creates a new Query instance.
 
