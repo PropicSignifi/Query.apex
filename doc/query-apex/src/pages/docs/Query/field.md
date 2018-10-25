@@ -10,6 +10,23 @@ weight: 2
 
 <article id="1">
 
+## selectField
+
+#### public Query selectField(String field)
+
+Select a specific field.
+
+field: Name of one field, or multiple field names separated by ','.
+
+```javascript
+
+Query query =
+    new Query('Account').
+    selectField('Name').
+    selectField('OwnerId');
+
+```
+
 ## selectFields
 
 Select specific fields.

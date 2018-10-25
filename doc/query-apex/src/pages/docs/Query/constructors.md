@@ -19,9 +19,15 @@ Creates a new Query instance.
 objectName: Name of the expected object.
 
 ```javascript
-
 Query query = new Query('Account');
+```
 
+#### public Query(Schema.SObjectType objectType)
+
+objectType: An schema SObject type
+
+```javascript
+Query query = new Query(Account.getSObjectType());
 ```
 
 </article>
