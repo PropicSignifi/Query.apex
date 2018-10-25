@@ -40,14 +40,30 @@ List<Account> accounts = new Query('Account').run();
 
 ### Select all fields
 
-This will return a list of all Accounts from the database, selecting all
-fields which the user has access privilege on.
+This will query all Accounts from the database, selecting all fields which
+the user has access privilege on.
 
 ```javascript
 
 List<Account> accounts =
     new Query('Account').
     selectAllFields().
+    run();
+
+```
+
+### Select specific fields
+
+This will query all Accounts from the database, selecting specified fields only.
+
+```javascript
+
+List<Account> accounts =
+    new Query('Account').
+    selectField('Name').
+    selectFields('CreatedById').
+    selectFields('CreatedDate, LastModifiedDate').
+    selectFields(new List<String>{'LastActivityDate', 'LastViewedDate'}).
     run();
 
 ```
@@ -62,20 +78,32 @@ a result.
 Account account =
     (Account)new Query('Account').
     byIds('001O000001HMWZVIA5').
-    fetch(0);
+    fetch();
 
 ```
 
-### Get an account based on a foreign key
+### Get a list of contacts based on a foreign key
 
-This will query the Contacts given the foreign key AccountId
+This will query the Contacts given the foreign key AccountId.
 
 ```javascript
 
 List<Contact> contacts =
     new Query('Contact').
-    addConditionEq('AccountId', '001O000001HMWZVIA5').
+    lookup('AccountId', '001O000001HMWZVIA5').
     run();
+
+```
+
+### Get a list of Id of the query result
+
+This will query all the Accounts and return a list of Id as a result.
+
+```javascript
+
+List<Account> accounts =
+    new Query('Account').
+    toIdList();
 
 ```
 
