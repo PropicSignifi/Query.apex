@@ -3,7 +3,7 @@ title: "Subquery"
 description: "Subquery methods in Query"
 layout: "guide"
 icon: "code-file"
-weight: 4
+weight: 5
 ---
 
 ###### {$page.description}
@@ -98,7 +98,7 @@ Query q =
 
 </article>
 
-<article id="1">
+<article id="2">
 
 ## subquery
 

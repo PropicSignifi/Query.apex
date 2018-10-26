@@ -3,7 +3,7 @@ title: "Condition"
 description: "Condition methods in Query"
 layout: "guide"
 icon: "code-file"
-weight: 3
+weight: 4
 ---
 
 ###### {$page.description}

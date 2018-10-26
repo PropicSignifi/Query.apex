@@ -3,7 +3,7 @@ title: "Result"
 description: "Methods to get the Query result"
 layout: "guide"
 icon: "code-file"
-weight: 0
+weight: 2
 ---
 
 ###### {$page.description}
@@ -12,9 +12,9 @@ weight: 0
 
 ## run
 
-#### public List\<SObject\> run()
-
 Run the query as if running `Database.query()`
+
+#### public List\<SObject\> run()
 
 Returns a list of SObject
 
@@ -25,6 +25,10 @@ List<Account> accounts =
     new Query('Account').
     run();
 ```
+
+</article>
+
+<article id="2">
 
 ## fetch
 
@@ -47,6 +51,8 @@ Account account =
 
 Fetch the nth SObject from the result
 
+n: Indicates the nth SObject in the result list, starting with 0
+
 Returns an SObject
 
 ```javascript
@@ -68,11 +74,15 @@ List<Account> accounts =
     fetch(2, 4);
 ```
 
+</article>
+
+<article id="3">
+
 ## toSObjectList
 
-#### public List\<SObject\> toSObjectList()
-
 Run the query as if running `Database.query()`
+
+#### public List\<SObject\> toSObjectList()
 
 Returns a list of SObject
 
@@ -84,14 +94,22 @@ List<Account> accounts =
     toSObjectList();
 ```
 
-## toIdList
+</article>
 
-#### public List\<Id\> toIdList()
+<article id="4">
+
+## toIdList
 
 Run the query and return the Id list of the result
 
+#### public List\<Id\> toIdList()
+
+Returns a list of Id
+
 ```javascript
-List<Account> accounts =
+List<Id> accounts =
     new Query('Account').
     toIdList();
 ```
+
+</article>

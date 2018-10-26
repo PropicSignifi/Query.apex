@@ -3,7 +3,7 @@ title: "Field Selection"
 description: "Field selection methods in Query"
 layout: "guide"
 icon: "code-file"
-weight: 2
+weight: 3
 ---
 
 ###### {$page.description}
@@ -26,6 +26,10 @@ Query query =
     selectField('OwnerId');
 
 ```
+
+</article>
+
+<article id="2">
 
 ## selectFields
 
@@ -70,6 +74,8 @@ Query query =
 
 </article>
 
+<article id="3">
+
 ## selectAllFields
 
 #### public Query selectAllFields()
@@ -95,3 +101,5 @@ Query query =
     selectAllFields('Owner');
 
 ```
+
+</article>
