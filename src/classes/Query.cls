@@ -1261,12 +1261,18 @@ public class Query {
     }
 
     private static String appendNamespace(String src) {
-        /*
-         * Only append the namespace when '__' occurs only once
-         * In this case, '__' can only be '__c', '__r' or '__pc' as a suffix
-         * If '__' occurs more than once, we will assume it contains a namespace prefix
-         */
+
         if (src.countMatches('__') == 1) {
+            /*
+             * Append the namespace when '__' occurs only once
+             * In this case, '__' can only be '__c', '__r' or '__pc' as a suffix
+             * If '__' occurs more than once, we will assume it contains a namespace prefix
+             */
+            src = namespace + src;
+        } else if (src.endsWithIgnoreCase('__s') && src.countMatches('__') == 2) {
+            /*
+             * Append the namespace when it ends with '__s' and '__' occurs twice
+             */
             src = namespace + src;
         }
 
