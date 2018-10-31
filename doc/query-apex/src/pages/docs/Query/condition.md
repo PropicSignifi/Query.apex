@@ -12,7 +12,7 @@ weight: 4
 
 ## byId
 
-Add a condition to the query, limiting the sObject to a specific ID or a
+Add a condition to the query, filtering the result by a specific ID or a
 collection of ID. Alias to `addConditionEq('Id', ...)`
 
 #### public Query byId(Id id)
@@ -54,6 +54,84 @@ Query query =
 </article>
 
 <article id="2">
+
+## lookup
+
+Add a condition to the query, filtering the result by a foreign key.
+
+#### public Query lookup(String fieldName, Id id)
+
+fieldName: The lookup field name
+
+id: The Id to filter the lookup field
+
+```javascript
+
+Query query =
+    new Query('Contact').
+    lookup('AccountId', '001O000000qkv3KIAQ');
+
+```
+
+#### public Query lookup(String fieldName, List\<Id\> idList)
+
+fieldName: The lookup field name
+
+idList: The list of Id to filter the lookup field
+
+```javascript
+
+Query query =
+    new Query('Contact').
+    lookup('AccountId', new List<Id>{'001O000000qkv3KIAQ'});
+
+```
+
+#### public Query lookup(String fieldName, Set\<Id\> idSet)
+
+fieldName: The lookup field name
+
+idSet: The Set of Id to filter the lookup field
+
+```javascript
+
+Query query =
+    new Query('Contact').
+    lookup('AccountId', new Set<Id>{'001O000000qkv3KIAQ'});
+
+```
+
+#### public Query lookup(String fieldName, SObject sobj)
+
+fieldName: The lookup field name
+
+sobj: The SObject record, whose Id will be taken to filter the lookup field
+
+```javascript
+
+Query query =
+    new Query('Contact').
+    lookup('AccountId', new Account(Id = '001O000000qkv3KIAQ'));
+
+```
+
+#### public Query lookup(String fieldName, List\<SObject\> sObjectList)
+
+fieldName: The lookup field name
+
+sObjectList: The list of SObject records, whose Id will be taken to filter the lookup field
+
+```javascript
+
+Query query =
+    new Query('Contact').
+    lookup('AccountId', new List<Account>{new Account(Id = '001O000000qkv3KIAQ')});
+
+```
+
+</article>
+
+<article id="3">
 
 ## addConditionXX
 
@@ -245,7 +323,7 @@ Query query =
 
 </article>
 
-<article id="3">
+<article id="4">
 
 ## addCondition
 
@@ -266,7 +344,7 @@ Query q =
 
 </article>
 
-<article id="4">
+<article id="5">
 
 ## conditionXX
 
@@ -481,7 +559,7 @@ Query q =
 
 </article>
 
-<article id="5">
+<article id="6">
 
 ## doAnd
 
@@ -589,7 +667,7 @@ Query q =
 
 </article>
 
-<article id="6">
+<article id="7">
 
 ## doOr
 
@@ -699,7 +777,7 @@ Query q =
 
 </article>
 
-<article id="7">
+<article id="8">
 
 ## Misc
 
