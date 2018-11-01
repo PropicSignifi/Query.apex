@@ -110,7 +110,7 @@ public class Query {
         } else {
             final String fieldName = fieldNames;
 
-            fields.add(fieldName.toLowerCase());
+            addToFieldSet(fieldName);
             return this;
         }
     }
@@ -119,7 +119,7 @@ public class Query {
      * This function allows user provide a single field
      */
     public Query selectfield(String fieldName) {
-        fields.add(fieldName.toLowerCase());
+        addToFieldSet(fieldName);
         return this;
     }
 
@@ -683,7 +683,7 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                fields.add(fieldName.toLowerCase());
+                addToFieldSet(fieldName);
             }
         }
         return this;
@@ -747,6 +747,26 @@ public class Query {
         }
     }
 
+    private String addToFieldSet(String fieldName) {
+        if (fieldName.contains('.')) {
+            List<String> oldFields = fieldName.split('\\.');
+            List<String> newFields = new List<String>();
+            for (String field : oldFields) {
+                newFields.add(appendNamespace(field));
+            }
+
+            fieldName = String.join(newFields, '.');
+        } else {
+            fieldName = appendNamespace(fieldName);
+        }
+
+        fieldName = fieldName.toLowerCase();
+
+        fields.add(fieldName);
+
+        return fieldName;
+    }
+
     private Map<String, Schema.SObjectType> getChildRelationships() {
         Map<String, Schema.SObjectType> childMap =
             new Map<String, Schema.SObjectType>();
@@ -777,7 +797,7 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                fields.add((parentName + '.' + fieldName).toLowerCase());
+                addToFieldSet(parentName + '.' + fieldName);
             }
         }
         return this;
@@ -899,7 +919,7 @@ public class Query {
         }
 
         if (fields.isEmpty()) {
-            fields.add('Id'.toLowerCase());
+            addToFieldSet('Id');
         }
 
         for (String field: fields) {
