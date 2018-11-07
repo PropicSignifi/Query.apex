@@ -683,7 +683,7 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                addToFieldSet(fieldName);
+                fields.add(fieldName.toLowerCase());
             }
         }
         return this;
@@ -797,7 +797,7 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                addToFieldSet(parentName + '.' + fieldName);
+                fields.add((parentName + '.' + fieldName).toLowerCase());
             }
         }
         return this;
