@@ -526,35 +526,35 @@ public class Query {
     }
 
     public Query addSubquery(String relationshipName) {
-        return addChildRelationship(relationshipName);
+        addChildRelationship(relationshipName);
+        return this;
     }
 
     public Query addSubquery(String relationshipName,
                              Set<String> fieldSet) {
-        addChildRelationship(relationshipName);
-        childQuerys.get(relationshipName).selectFields(fields);
+        addChildRelationship(relationshipName).selectFields(fields);
 
         return this;
     }
 
     public Query addSubquery(String relationshipName,
                              List<String> fieldList) {
-        addChildRelationship(relationshipName);
-        childQuerys.get(relationshipName).selectFields(fields);
+        addChildRelationship(relationshipName).selectFields(fields);
 
         return this;
     }
 
     public Query addSubquery(String relationshipName, String fields) {
-       addChildRelationship(relationshipName);
-        childQuerys.get(relationshipName).selectFields(fields);
+        addChildRelationship(relationshipName).selectFields(fields);
 
         return this;
     }
 
     public Query addSubquery(Query subquery) {
 
-        return addChildRelationship(subquery);
+        addChildRelationship(subquery);
+
+        return this;
     }
 
     public static Query subquery(String relationshipName) {
@@ -1249,6 +1249,7 @@ public class Query {
     }
 
     private Query addChildRelationship(String relationshipName) {
+        relationshipName = appendNamespace(relationshipName);
         if (null == childRelationships.get(relationshipName)) {
             throw new QueryException('Invalid child relationship ' +
                     relationshipName + ' in object ' + objectName);
@@ -1261,7 +1262,7 @@ public class Query {
 
         childQuerys.put(relationshipName, childQuery);
 
-        return this;
+        return childQuery;
     }
 
     private Query addChildRelationship(Query childQuery) {
@@ -1277,7 +1278,7 @@ public class Query {
 
         childQuerys.put(relationshipName, childQuery);
 
-        return this;
+        return childQuery;
     }
 
     private static String appendNamespace(String src) {
