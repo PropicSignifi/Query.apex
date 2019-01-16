@@ -616,6 +616,21 @@ public class Query {
         return toSObjectList();
     }
 
+    public List<SObject> runWithOrderedIds(List<Id> idList) {
+        Query cloned = this;
+        cloned.byId(idList);
+
+        Map<Id, SObject> mapIdToSObject = new Map<Id, SObject>(cloned.run());
+
+        List<SObject> ret = new List<SObject>();
+
+        for (Id id : idList) {
+            ret.add(mapIdToSObject.get(id));
+        }
+
+        return ret;
+    }
+
     public List<SObject> toSObjectList() {
         String queryString = toQueryString();
         return Database.query(queryString);
