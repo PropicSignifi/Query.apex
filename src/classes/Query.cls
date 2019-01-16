@@ -560,7 +560,7 @@ public class Query {
     public static Query subquery(String relationshipName) {
         Query childQuery = new Query();
 
-        childQuery.objectName = appendNamespace(relationshipName);
+        childQuery.objectName = childQuery.appendNamespace(relationshipName);
 
         return childQuery;
     }
@@ -570,6 +570,15 @@ public class Query {
 
         for (Integer i = 0; i < conditionArgsIdx; i++) {
             debugDeep(i);
+        }
+        return this;
+    }
+
+    public Query setNamespace(String namespace) {
+        if (String.isBlank(namespace)) {
+            this.namespace = '';
+        } else {
+            this.namespace = namespace;
         }
         return this;
     }
@@ -1281,7 +1290,7 @@ public class Query {
         return childQuery;
     }
 
-    private static String appendNamespace(String src) {
+    private String appendNamespace(String src) {
 
         if (src.countMatches('__') == 1) {
             /*
@@ -1300,14 +1309,7 @@ public class Query {
         return src;
     }
 
-    private static String namespace {
-        get {
-            if (namespace == null) {
-                namespace = getNamespaceFromClass();
-            }
-            return namespace;
-        }
-    }
+    private String namespace = getNamespaceFromClass();
 
     private static String getNamespaceFromClass() {
         final String className = Query.class.getName();
