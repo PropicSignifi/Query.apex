@@ -24,9 +24,14 @@
 public class Query {
 
     /* Public members */
-
     public Query(String objectName) {
+        this(objectName, getNamespaceFromClass());
+    }
+
+    public Query(String objectName, String namespace) {
         this();
+
+        setNamespace(namespace);
 
         // Get Schema.SObjectType
         Map<String, Schema.SObjectType> globalDescribe =
@@ -1324,7 +1329,7 @@ public class Query {
         return src;
     }
 
-    private String namespace = getNamespaceFromClass();
+    private String namespace;
 
     private static String getNamespaceFromClass() {
         final String className = Query.class.getName();
