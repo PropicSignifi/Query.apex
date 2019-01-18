@@ -1329,7 +1329,7 @@ public class Query {
         return src;
     }
 
-    private String namespace;
+    private String namespace = getNamespaceFromClass();
 
     private static String getNamespaceFromClass() {
         final String className = Query.class.getName();
