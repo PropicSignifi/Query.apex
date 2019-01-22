@@ -306,6 +306,13 @@ public class QueryTest {
                     run();
 
         assertAccount(accounts.get(0));
+
+        accounts = new Query('Account').
+                    selectAllFields().
+                    addConditionNotLike('Name', '%CBA%').
+                    run();
+
+        assertAccount(accounts.get(0));
     }
 
     @isTest

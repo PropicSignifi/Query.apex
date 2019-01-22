@@ -260,10 +260,19 @@ public class Query {
     /*
      * Add a condition
      * Example: addConditionLike('Name', '%Sam%')
-     *          the condition is equivalent to "Name Like :Datetime.now()"
+     *          the condition is equivalent to "Name LIKE '%Sam%'"
      */
     public Query addConditionLike(String lhs, Object rhs) {
         return addCondition(conditionLike(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNotLike('Name', '%Sam%')
+     *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
+     */
+    public Query addConditionNotLike(String lhs, Object rhs) {
+        return addCondition(conditionNotLike(lhs, rhs));
     }
 
     /*
@@ -360,10 +369,20 @@ public class Query {
     /*
      * Create a condition
      * Example: conditionLike('Name', '%Sam%')
-     *          the condition is equivalent to "Name Like :Datetime.now()"
+     *          the condition is equivalent to "Name LIKE '%Sam%'"
      */
     public static Condition conditionLike(String lhs, Object rhs) {
         final String formatString = lhs + ' LIKE {0}';
+        return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionNotLike('Name', '%Sam%')
+     *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
+     */
+    public static Condition conditionNotLike(String lhs, Object rhs) {
+        final String formatString = 'NOT ' + lhs + ' LIKE {0}';
         return new Condition(formatString, rhs);
     }
 
