@@ -456,6 +456,10 @@ public class Query {
         return ret;
     }
 
+    public static Condition doNot(Condition condition) {
+        return condition.doNot();
+    }
+
     /*
      * By default, all the conditions are concatenated by 'AND' keyword
      * Calling switchToDisjunction() will switch the operator to 'OR'
@@ -1367,6 +1371,15 @@ public class Query {
                 shiftFormatStringIndice(other.conditionString, this.args.size()) +
                 ')';
             newCondition.args.addAll(other.args);
+
+            return newCondition;
+        }
+
+        public Condition doNot() {
+            Condition newCondition = this.clone();
+
+            newCondition.conditionString =
+                '(NOT (' + this.conditionString + '))';
 
             return newCondition;
         }

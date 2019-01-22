@@ -366,8 +366,12 @@ public class QueryTest {
                             Query.conditionEq('Id', wrongId)
                         ),
                         Query.conditionIn('Phone', accPhone),
-                        Query.conditionEq('Website', 'https://www.samplewebsite.com'),
-                        Query.conditionLe('NumberOfEmployees', 15)
+                        Query.doNot(
+                            Query.doOr(
+                                Query.conditionNotEq('Website', 'https://www.samplewebsite.com'),
+                                Query.conditionGt('NumberOfEmployees', 15)
+                            )
+                        )
                     )
                 ).
                 run();
