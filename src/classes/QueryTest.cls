@@ -413,22 +413,13 @@ public class QueryTest {
 
         accounts = new Query('Account').
                     selectAllFields().
-                    orderBy('Rating').
-                    descend().
-                    run();
-
-        System.assertEquals(accounts.get(0).Name, 'Account 2');
-        System.assertEquals(accounts.get(1).Name, 'Account 3');
-        System.assertEquals(accounts.get(2).Name, 'Account 1');
-
-        accounts = new Query('Account').
-                    selectAllFields().
                     orderBy('Rating', 'DESC').
                     run();
 
         System.assertEquals(accounts.get(0).Name, 'Account 2');
         System.assertEquals(accounts.get(1).Name, 'Account 3');
-        System.assertEquals(accounts.get(2).Name, 'Account 1');
+	System.assertEquals(accounts.get(2).Name, 'Account 1');
+
     }
 
     @isTest
@@ -443,14 +434,40 @@ public class QueryTest {
 
         accounts = new Query('Account').
                     selectAllFields().
-                    orderBy('Rating').
-                    orderBy('Phone').
-                    ascend().
+                    orderBy('Rating', 'DESC').
+                    orderBy('Phone', 'ASC').
                     run();
 
-        System.assertEquals(accounts.get(0).Name, 'Account 1');
-        System.assertEquals(accounts.get(1).Name, 'Account 3');
-        System.assertEquals(accounts.get(2).Name, 'Account 2');
+        System.assertEquals(accounts.get(0).Name, 'Account 2');
+        System.assertEquals(accounts.get(1).Name, 'Account 1');
+        System.assertEquals(accounts.get(2).Name, 'Account 3');
+    }
+
+    @isTest
+    static void multipleNullsOrderTest() {
+        Account acc1 = new Account(Name = 'Account 1', Rating = '1', Phone = '110');
+        Account acc2 = new Account(Name = 'Account 2', Rating = '9', Phone = '120');
+        Account acc3 = new Account(Name = 'Account 3', Rating = '1', Phone = '130');
+        Account acc4 = new Account(Name = 'Account 4', Rating = '1', Phone = null);
+        Account acc5 = new Account(Name = 'Account 5', Rating = null, Phone = '110');
+        Account acc6 = new Account(Name = 'Account 6', Rating = '9', Phone = null);
+
+        insert new List<Account>{acc1, acc2, acc3, acc4, acc5, acc6};
+
+        List<Account> accounts;
+
+        accounts = new Query('Account').
+                    selectAllFields().
+                    orderBy('Rating', 'DESC', Query.NULLS_LAST).
+                    orderBy('Phone', 'ASC', Query.NULLS_FIRST).
+                    run();
+
+        System.assertEquals(accounts.get(0).Name, 'Account 6');
+        System.assertEquals(accounts.get(1).Name, 'Account 2');
+        System.assertEquals(accounts.get(2).Name, 'Account 4');
+        System.assertEquals(accounts.get(3).Name, 'Account 1');
+        System.assertEquals(accounts.get(4).Name, 'Account 3');
+        System.assertEquals(accounts.get(5).Name, 'Account 5');
     }
 
     @isTest
