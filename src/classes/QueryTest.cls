@@ -397,8 +397,27 @@ public class QueryTest {
                                  setLimit(1).
                                  run();
 
-        System.assert(accounts.size() == 1);
+        System.assertEquals(accounts.size(), 1);
         assertAccount(accounts.get(0));
+    }
+
+    @isTest
+    static void offsetTest() {
+        Account acc1 = new Account(Name = 'Account 1');
+        Account acc2 = new Account(Name = 'Account 2');
+        Account acc3 = new Account(Name = 'Account 3');
+        Account acc4 = new Account(Name = 'Account 4');
+
+        insert new List<Account>{acc1, acc2, acc3, acc4};
+
+        List<Account> accounts;
+        accounts  = new Query('Account').
+                    selectAllFields().
+                    setOffset(2).
+                    run();
+
+        System.assertEquals(accounts.size(), 2);
+        System.assertEquals(accounts.get(0).Name, 'Account 3');
     }
 
     @isTest

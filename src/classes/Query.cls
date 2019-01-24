@@ -516,6 +516,11 @@ public class Query {
         return this;
     }
 
+    public Query setOffset(Integer n) {
+        resultOffset = n;
+        return this;
+    }
+
     public Query orderBy(String fieldName) {
         orderList.add(new OrderTuple(fieldName));
         return this;
@@ -709,6 +714,7 @@ public class Query {
 
     private String conditionOperator = 'AND';
     private Integer sizeLimit = -1;
+    private Integer resultOffset = -1;
     private Map<String, Query> childQuerys;
 
     private List<OrderTuple> orderList;
@@ -961,6 +967,10 @@ public class Query {
 
         if (sizeLimit >= 0) {
             query += ' LIMIT ' + sizeLimit;
+        }
+
+        if (resultOffset >= 0) {
+            query += ' OFFSET ' + resultOffset;
         }
 
         return query;
