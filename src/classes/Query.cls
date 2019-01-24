@@ -517,39 +517,29 @@ public class Query {
     }
 
     public Query orderBy(String fieldName) {
-        orderFields.add(fieldName);
+        orderList.add(new OrderTuple(fieldName));
         return this;
     }
 
     public Query orderBy(String fieldName, String orderDirection) {
-        // The orderDirection can be only either 'ASC' or 'DESC' ignoring case
-        orderFields.add(fieldName);
-
+        OrderTuple singleOrder;
         if (orderDirection.equalsIgnoreCase('ASC')) {
-            ascend();
-        } else if (orderDirection.equalsIgnoreCase('DESC')){
-            descend();
+            singleOrder = new OrderTuple(fieldName, true);
+        } else if (orderDirection.equalsIgnoreCase('DESC')) {
+            singleOrder = new OrderTuple(fieldName, false);
         }
+        orderList.add(singleOrder);
         return this;
     }
 
-    public Query ascend() {
-        ascending = true;
-        return this;
-    }
-
-    public Query descend() {
-        ascending = false;
-        return this;
-    }
-
-    public Query orderNullsFirst() {
-        nullsFirst = true;
-        return this;
-    }
-
-    public Query orderNullsLast() {
-        nullsFirst = false;
+    public Query orderBy(String fieldName, String orderDirection, Boolean nullsFirst) {
+        OrderTuple singleOrder;
+        if (orderDirection.equalsIgnoreCase('ASC')) {
+            singleOrder = new OrderTuple(fieldName, true, nullsFirst);
+        } else if (orderDirection.equalsIgnoreCase('DESC')) {
+            singleOrder = new OrderTuple(fieldName, false, nullsFirst);
+        }
+        orderList.add(singleOrder);
         return this;
     }
 
@@ -681,14 +671,16 @@ public class Query {
         conditions = new List<String>();
         childQuerys = new Map<String, Query>();
         conditionArgs = new List<Object>();
-        orderFields = new List<String>();
         parentReferences = new Set<String>();
+        orderList = new List<OrderTuple>();
     }
 
     // State variables
     private Set<String> fields;
     private Set<String> parentReferences;
     private Boolean isSelectingAllFields = false;
+    public static final Boolean NULLS_FIRST = true;
+    public static final Boolean NULLS_LAST = false;
 
     private List<String> conditions;
     private static final Integer maxArgSize = 20;
@@ -717,10 +709,29 @@ public class Query {
 
     private String conditionOperator = 'AND';
     private Integer sizeLimit = -1;
-    private Boolean ascending = true;
-    private Boolean nullsFirst = true;
-    private List<String> orderFields;
     private Map<String, Query> childQuerys;
+
+    private List<OrderTuple> orderList;
+    private class OrderTuple {
+        private String fieldName;
+        private Boolean ascending = true;
+        private Boolean nullsFirst = true;
+
+        private OrderTuple(String fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        private OrderTuple(String fieldName, Boolean ascending) {
+            this.fieldName = fieldName;
+            this.ascending = ascending;
+        }
+
+        private OrderTuple(String fieldName, Boolean ascending, Boolean nullsFirst) {
+            this.fieldName = fieldName;
+            this.ascending = ascending;
+            this.nullsFirst = nullsFirst;
+        }
+    }
 
     // Object Schema variables
     private String objectName;
@@ -944,7 +955,7 @@ public class Query {
             query += ' WHERE ' + conditionString;
         }
 
-        if (!orderFields.isEmpty()) {
+        if (!orderList.isEmpty()) {
             query += ' ORDER BY ' + formOrderByString();
         }
 
@@ -1030,24 +1041,26 @@ public class Query {
 
     private String formOrderByString() {
         String orderByString = '';
-        for (String field : orderFields) {
-            orderByString += field + ', ';
+        Integer count = 0;
+        for (OrderTuple singleOrder : orderList) {
+            // check if the orderTuple is the first in list
+            if (count != 0) {
+                orderByString += ', ';
+            }
+            orderByString += singleOrder.fieldName;
+            if (singleOrder.ascending) {
+                orderByString += ' ASC';
+            } else {
+                orderByString += ' DESC';
+            }
+
+            if (singleOrder.nullsFirst) {
+                orderByString += ' NULLS FIRST';
+            } else {
+                orderbyString += ' NULLS LAST';
+            }
+            count++;
         }
-
-        orderByString = orderByString.removeEnd(', ');
-
-        if (ascending) {
-            orderByString += ' ASC';
-        } else {
-            orderByString += ' DESC';
-        }
-
-        if (nullsFirst) {
-            orderByString += ' NULLS FIRST';
-        } else {
-            orderByString += ' NULLS LAST';
-        }
-
         return orderByString;
     }
 
