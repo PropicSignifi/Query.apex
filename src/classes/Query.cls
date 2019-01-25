@@ -548,6 +548,34 @@ public class Query {
         return this;
     }
 
+    public Query ascend() {
+        for (OrderTuple singleOrder : orderList) {
+            singleOrder.ascending = true;
+        }
+        return this;
+    }
+
+    public Query descend() {
+        for (OrderTuple singleOrder : orderList) {
+            singleOrder.ascending = false;
+        }
+        return this;
+    }
+
+    public Query orderNullsFirst() {
+        for (OrderTuple singleOrder : orderList) {
+            singleOrder.nullsFirst = true;
+        }
+        return this;
+    }
+
+    public Query orderNullsLast() {
+        for (OrderTuple singleOrder : orderList) {
+            singleOrder.nullsFirst = false;
+        }
+        return this;
+    }
+
     public Query addSubquery(String relationshipName) {
         addChildRelationship(relationshipName);
         return this;
