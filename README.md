@@ -77,7 +77,7 @@ a result.
 
 Account account =
     (Account)new Query('Account').
-    byIds('001O000001HMWZVIA5').
+    byId('001O000001HMWZVIA5').
     fetch();
 
 ```
