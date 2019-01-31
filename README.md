@@ -22,7 +22,13 @@ providing the Field Level Security checking
 
 ## Documentation
 
+You can find the documentation in
+
 https://click-to-cloud.github.io/query-apex/
+
+As well as the tutorial
+
+https://click-to-cloud.github.io/query-apex/tutorials/getting_started/
 
 ## Examples
 
