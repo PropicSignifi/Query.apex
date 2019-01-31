@@ -12,7 +12,7 @@ of the code and consequently enhance the productivity of the development.
 
 ## Features
 
-- Allows both functional programming and object oriented programming paradigm
+- Allows object oriented programming paradigm and function chaining
 
 - Supports complex queries including parent/child relationships, and nested
 conditions in a flexible way
