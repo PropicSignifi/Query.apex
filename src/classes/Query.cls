@@ -147,7 +147,7 @@ public class Query {
      * Specify the Id of the object
      */
     public Query byId(Set<Id> idSet) {
-        return addConditionEq('Id', idSet);
+        return addConditionIn('Id', idSet);
     }
 
     public Query byId(List<Id> idList) {
