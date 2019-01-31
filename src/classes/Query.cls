@@ -289,7 +289,7 @@ public class Query {
     /*
      * Create a condition
      * Example: conditionEq('CreatedDate', Datetime.now())
-     *          the condition is equivalent to "CreatedDate != :Datetime.now()"
+     *          the condition is equivalent to "CreatedDate = :Datetime.now()"
      */
     public static Condition conditionEq(String lhs, Object rhs) {
         final String formatString = lhs + ' = {0}';
