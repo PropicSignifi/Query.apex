@@ -627,7 +627,7 @@ public class QueryTest {
     }
 
     @isTest
-    static void literalConditionTest() {
+    static void conditionWithConstArgumentTest() {
         createData();
 
         Account account;
@@ -635,29 +635,148 @@ public class QueryTest {
 
         account = (Account)new Query('Account').
                 selectAllFields().
-                addConditionEq('AnnualRevenue', Query.Literal.NIL).
+                addConditionEq('AnnualRevenue', null).
+                fetch();
+
+        assertAccount(account);
+
+        account = (Account)new Query('Account').
+                selectAllFields().
+                addConditionNotEq('Name', null).
                 fetch();
 
         assertAccount(account);
 
         opp = (Opportunity)new Query('Opportunity').
                 selectAllFields().
-                addConditionEq('IsPrivate', Query.Literal.F).
+                addConditionEq('IsPrivate', false).
                 fetch();
 
         assertOpportunity(opp);
 
         opp = (Opportunity)new Query('Opportunity').
                 selectAllFields().
-                addConditionNotEq('IsPrivate', Query.Literal.T).
+                addConditionNotEq('IsPrivate', true).
                 fetch();
+
+        assertOpportunity(opp);
+    }
+
+    @isTest
+    static void dateLiteralTest() {
+        createData();
+
+        Opportunity opp;
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CloseDate', Query.TODAY).
+            fetch();
 
         assertOpportunity(opp);
 
         opp = (Opportunity)new Query('Opportunity').
-                selectAllFields().
-                addConditionGe('CloseDate', Query.Literal.TODAY).
-                fetch();
+            selectAllFields().
+            addConditionGe('CloseDate', Query.YESTERDAY).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionEq('CloseDate', Query.NEXT_N_DAYS(4)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CloseDate', Query.LAST_N_DAYS(10)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionLe('CreatedDate', Query.NEXT_N_WEEKS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CreatedDate', Query.LAST_N_WEEKS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionLe('CreatedDate', Query.NEXT_N_MONTHS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CreatedDate', Query.LAST_N_MONTHS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionLe('CreatedDate', Query.NEXT_N_QUARTERS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CreatedDate', Query.LAST_N_QUARTERS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionLe('CreatedDate', Query.NEXT_N_YEARS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CreatedDate', Query.LAST_N_YEARS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionLe('CreatedDate', Query.NEXT_N_FISCAL_QUARTERS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CreatedDate', Query.LAST_N_FISCAL_QUARTERS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionLe('CreatedDate', Query.NEXT_N_FISCAL_YEARS(2)).
+            fetch();
+
+        assertOpportunity(opp);
+
+        opp = (Opportunity)new Query('Opportunity').
+            selectAllFields().
+            addConditionGe('CreatedDate', Query.LAST_N_FISCAL_YEARS(2)).
+            fetch();
 
         assertOpportunity(opp);
     }

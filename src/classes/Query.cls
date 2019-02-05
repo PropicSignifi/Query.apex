@@ -57,35 +57,6 @@ public class Query {
         childRelationships = getChildRelationships();
     }
 
-    public enum Literal {
-        NIL,
-        T,
-        F,
-        YESTERDAY,
-        TODAY,
-        TOMORROW,
-        LAST_WEEK,
-        THIS_WEEK,
-        NEXT_WEEK,
-        LAST_MONTH,
-        THIS_MONTH,
-        NEXT_MONTH,
-        LAST_90_DAYS,
-        NEXT_90_DAYS,
-        THIS_QUARTER,
-        LAST_QUARTER,
-        NEXT_QUARTER,
-        THIS_YEAR,
-        LAST_YEAR,
-        NEXT_YEAR,
-        THIS_FISCAL_QUARTER,
-        LAST_FISCAL_QUARTER,
-        NEXT_FISCAL_QUARTER,
-        THIS_FISCAL_YEAR,
-        LAST_FISCAL_YEAR,
-        NEXT_FISCAL_YEAR
-    }
-
     /*
      * Specify the selected fields
      * If this function is not called, it would by default select all the fields
@@ -508,6 +479,92 @@ public class Query {
         conditionArgs.clear();
 
         return this;
+    }
+
+    public static final DateLiteral YESTERDAY = new DateLiteral('YESTERDAY');
+    public static final DateLiteral TODAY = new DateLiteral('TODAY');
+    public static final DateLiteral TOMORROW = new DateLiteral('TOMORROW');
+    public static final DateLiteral LAST_WEEK = new DateLiteral('LAST_WEEK');
+    public static final DateLiteral THIS_WEEK = new DateLiteral('THIS_WEEK');
+    public static final DateLiteral NEXT_WEEK = new DateLiteral('NEXT_WEEK');
+    public static final DateLiteral LAST_MONTH = new DateLiteral('LAST_MONTH');
+    public static final DateLiteral THIS_MONTH = new DateLiteral('THIS_MONTH');
+    public static final DateLiteral NEXT_MONTH = new DateLiteral('NEXT_MONTH');
+    public static final DateLiteral LAST_90_DAYS = new DateLiteral('LAST_90_DAYS');
+    public static final DateLiteral NEXT_90_DAYS = new DateLiteral('NEXT_90_DAYS');
+    public static final DateLiteral THIS_QUARTER = new DateLiteral('THIS_QUARTER');
+    public static final DateLiteral LAST_QUARTER = new DateLiteral('LAST_QUARTER');
+    public static final DateLiteral NEXT_QUARTER = new DateLiteral('NEXT_QUARTER');
+    public static final DateLiteral THIS_YEAR = new DateLiteral('THIS_YEAR');
+    public static final DateLiteral LAST_YEAR = new DateLiteral('LAST_YEAR');
+    public static final DateLiteral NEXT_YEAR = new DateLiteral('NEXT_YEAR');
+    public static final DateLiteral THIS_FISCAL_QUARTER =
+        new DateLiteral('THIS_FISCAL_QUARTER');
+    public static final DateLiteral LAST_FISCAL_QUARTER =
+        new DateLiteral('LAST_FISCAL_QUARTER');
+    public static final DateLiteral NEXT_FISCAL_QUARTER =
+        new DateLiteral('NEXT_FISCAL_QUARTER');
+    public static final DateLiteral THIS_FISCAL_YEAR =
+        new DateLiteral('THIS_FISCAL_YEAR');
+    public static final DateLiteral LAST_FISCAL_YEAR =
+        new DateLiteral('LAST_FISCAL_YEAR');
+    public static final DateLiteral NEXT_FISCAL_YEAR =
+        new DateLiteral('NEXT_FISCAL_YEAR');
+
+    public static DateLiteral LAST_N_DAYS(Integer n) {
+        return new DateLiteral('LAST_N_DAYS', n);
+    }
+
+    public static DateLiteral NEXT_N_DAYS(Integer n) {
+        return new DateLiteral('NEXT_N_DAYS', n);
+    }
+
+    public static DateLiteral LAST_N_WEEKS(Integer n) {
+        return new DateLiteral('LAST_N_WEEKS', n);
+    }
+
+    public static DateLiteral NEXT_N_WEEKS(Integer n) {
+        return new DateLiteral('NEXT_N_WEEKS', n);
+    }
+
+    public static DateLiteral LAST_N_MONTHS(Integer n) {
+        return new DateLiteral('LAST_N_MONTHS', n);
+    }
+
+    public static DateLiteral NEXT_N_MONTHS(Integer n) {
+        return new DateLiteral('NEXT_N_MONTHS', n);
+    }
+
+    public static DateLiteral LAST_N_QUARTERS(Integer n) {
+        return new DateLiteral('LAST_N_QUARTERS', n);
+    }
+
+    public static DateLiteral NEXT_N_QUARTERS(Integer n) {
+        return new DateLiteral('NEXT_N_QUARTERS', n);
+    }
+
+    public static DateLiteral LAST_N_YEARS(Integer n) {
+        return new DateLiteral('LAST_N_YEARS', n);
+    }
+
+    public static DateLiteral NEXT_N_YEARS(Integer n) {
+        return new DateLiteral('NEXT_N_YEARS', n);
+    }
+
+    public static DateLiteral LAST_N_FISCAL_QUARTERS(Integer n) {
+        return new DateLiteral('LAST_N_FISCAL_QUARTERS', n);
+    }
+
+    public static DateLiteral NEXT_N_FISCAL_QUARTERS(Integer n) {
+        return new DateLiteral('NEXT_N_FISCAL_QUARTERS', n);
+    }
+
+    public static DateLiteral LAST_N_FISCAL_YEARS(Integer n) {
+        return new DateLiteral('LAST_N_FISCAL_YEARS', n);
+    }
+
+    public static DateLiteral NEXT_N_FISCAL_YEARS(Integer n) {
+        return new DateLiteral('NEXT_N_FISCAL_YEARS', n);
     }
 
     public Query setLimit(Integer n) {
@@ -1419,6 +1476,20 @@ public class Query {
     private class QueryException extends Exception {
     }
 
+    public class DateLiteral {
+        private DateLiteral(String name) {
+            this.name = name;
+        }
+
+        public DateLiteral(String name, Integer n) {
+            this.name = name;
+            this.num = n;
+        }
+
+        private String name;
+        private Integer num;
+    }
+
     public class Condition {
         public Condition doAnd(Condition other) {
             Condition newCondition = this.clone();
@@ -1460,22 +1531,17 @@ public class Query {
 
         private Condition(String formatString, Object arg) {
             this();
-            conditionString = formatString;
-            if (arg instanceOf Literal) {
-                Literal l = (Literal) arg;
-                String lName = l.name();
-                if (Literal.NIL == l) {
-                    lName = 'NULL';
+            if (arg instanceOf DateLiteral) {
+                DateLiteral literal = (DateLiteral)arg;
+                String literalExpression = literal.name;
+
+                if (literal.num != null) {
+                    literalExpression += ': ' + literal.num;
                 }
-                if (Literal.T == l) {
-                    lName = 'TRUE';
-                }
-                if (Literal.F == l) {
-                    lName = 'FALSE';
-                }
-                conditionString = conditionString.replace('{0}', lName);
+                this.conditionString = formatString.replace('{0}', literalExpression);
             } else {
-                args.add(arg);
+                this.conditionString = formatString;
+                this.args.add(arg);
             }
         }
 
