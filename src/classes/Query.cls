@@ -1481,7 +1481,7 @@ public class Query {
             this.name = name;
         }
 
-        public DateLiteral(String name, Integer n) {
+        private DateLiteral(String name, Integer n) {
             this.name = name;
             this.num = n;
         }
