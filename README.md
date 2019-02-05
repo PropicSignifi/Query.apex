@@ -167,6 +167,20 @@ List<Account> accounts =
 
 ```
 
+### Query with date literal conditions
+
+We can also use date literals in conditions.
+
+```javascript
+
+List<Account> accounts =
+    new Query('Account').
+    addConditionLe('LastModifiedDate', Query.TODAY).
+    addConditionEq('CreatedDate', Query.LAST_N_WEEKS(3)).
+    run();
+
+```
+
 ### Query with subqueries
 
 Query.apex also allows selecting child relationships (subqueries), in a
