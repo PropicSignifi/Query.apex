@@ -852,3 +852,97 @@ Query q =
 ```
 
 </article>
+
+<article id="9">
+
+## Date Literals
+
+The second parameter of the `addConditionXX` and `conditionXX` methods is usually a binding
+variable, but in some cases, we can use date literals to build date or date time related
+conditions more easily.
+
+
+```javascript
+Query q =
+    new Query('Account').
+    addConditionLe('LastModifiedDate', Query.TODAY).
+    addConditionEq('CreatedDate', Query.LAST_N_WEEKS(3));
+```
+
+The predefined Date Literals includes ones with no parameters, and some with an Integer as
+a parameter.
+
+##### public static final DateLiteral YESTERDAY
+
+##### public static final DateLiteral TODAY
+
+##### public static final DateLiteral TOMORROW
+
+##### public static final DateLiteral LAST\_WEEK
+
+##### public static final DateLiteral THIS\_WEEK
+
+##### public static final DateLiteral NEXT\_WEEK
+
+##### public static final DateLiteral LAST\_MONTH
+
+##### public static final DateLiteral THIS\_MONTH
+
+##### public static final DateLiteral NEXT\_MONTH
+
+##### public static final DateLiteral LAST\_90\_DAYS
+
+##### public static final DateLiteral NEXT\_90\_DAYS
+
+##### public static final DateLiteral THIS\_QUARTER
+
+##### public static final DateLiteral LAST\_QUARTER
+
+##### public static final DateLiteral NEXT\_QUARTER
+
+##### public static final DateLiteral THIS\_YEAR
+
+##### public static final DateLiteral LAST\_YEAR
+
+##### public static final DateLiteral NEXT\_YEAR
+
+##### public static final DateLiteral THIS\_FISCAL\_QUARTER
+
+##### public static final DateLiteral LAST\_FISCAL\_QUARTER
+
+##### public static final DateLiteral NEXT\_FISCAL\_QUARTER
+
+##### public static final DateLiteral THIS\_FISCAL\_YEAR
+
+##### public static final DateLiteral LAST\_FISCAL\_YEAR
+
+##### public static final DateLiteral NEXT\_FISCAL\_YEAR
+
+##### public static DateLiteral LAST\_N\_DAYS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_DAYS(Integer n)
+
+##### public static DateLiteral LAST\_N\_WEEKS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_WEEKS(Integer n)
+
+##### public static DateLiteral LAST\_N\_MONTHS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_MONTHS(Integer n)
+
+##### public static DateLiteral LAST\_N\_QUARTERS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_QUARTERS(Integer n)
+
+##### public static DateLiteral LAST\_N\_YEARS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_YEARS(Integer n)
+
+##### public static DateLiteral LAST\_N\_FISCAL\_QUARTERS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_FISCAL\_QUARTERS(Integer n)
+
+##### public static DateLiteral LAST\_N\_FISCAL\_YEARS(Integer n)
+
+##### public static DateLiteral NEXT\_N\_FISCAL\_YEARS(Integer n)
+
