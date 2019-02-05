@@ -668,7 +668,7 @@ public class Query {
     }
 
     public List<SObject> runWithOrderedIds(List<Id> idList) {
-        Query cloned = this;
+        Query cloned = this.clone();
         cloned.byId(idList);
 
         Map<Id, SObject> mapIdToSObject = new Map<Id, SObject>(cloned.run());
