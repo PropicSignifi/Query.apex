@@ -73,6 +73,22 @@ public class Query {
         return selectFields(new Set<String>(fieldList));
     }
 
+    public Query selectField(Schema.SObjectField field) {
+        return selectfield(field.getDescribe().getName());
+    }
+
+    public Query selectFields(Set<Schema.SObjectField> fields) {
+        return selectFields(new List<Schema.SObjectField>(fields));
+    }
+
+    public Query selectFields(List<Schema.SObjectField> fields) {
+        List<String> fieldStrings= new List<String>();
+        for (Schema.SObjectField field : fields) {
+            fieldStrings.add(field.getDescribe().getName());
+        }
+        return selectFields(fieldStrings);
+    }
+
     /*
      * This function allows user provide a single field, or multiple fields
      *      concatenated by ','
@@ -167,11 +183,29 @@ public class Query {
 
     /*
      * Add a condition
+     * Example: addConditionEq(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate = :Datetime.now()"
+     */
+    public Query addConditionEq(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionEq(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
      * Example: addConditionNotEq('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate != :Datetime.now()"
      */
     public Query addConditionNotEq(String lhs, Object rhs) {
         return addCondition(conditionNotEq(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNotEq(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate != :Datetime.now()"
+     */
+    public Query addConditionNotEq(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionNotEq(lhs.getDescribe().getName(), rhs));
     }
 
     /*
@@ -185,11 +219,29 @@ public class Query {
 
     /*
      * Add a condition
+     * Example: addConditionIn(SObject.Name, mySet)
+     *          the condition is equivalent to "Name IN :mySet"
+     */
+    public Query addConditionIn(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionIn(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
      * Example: addConditionNotIn('Name', mySet)
      *          the condition is equivalent to "Name NOT IN :mySet"
      */
     public Query addConditionNotIn(String lhs, Object rhs) {
         return addCondition(conditionNotIn(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNotIn(SObject.Name, mySet)
+     *          the condition is equivalent to "Name NOT IN :mySet"
+     */
+    public Query addConditionNotIn(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionNotIn(lhs.getDescribe().getName(), rhs));
     }
 
     /*
@@ -203,11 +255,29 @@ public class Query {
 
     /*
      * Add a condition
+     * Example: addConditionLt(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate < :Datetime.now()"
+     */
+    public Query addConditionLt(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionLt(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
      * Example: addConditionLe('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
      */
     public Query addConditionLe(String lhs, Object rhs) {
         return addCondition(conditionLe(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionLe(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
+     */
+    public Query addConditionLe(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionLe(lhs.getDescribe().getName(), rhs));
     }
 
     /*
@@ -221,11 +291,29 @@ public class Query {
 
     /*
      * Add a condition
+     * Example: addConditionGt(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate < :Datetime.now()"
+     */
+    public Query addConditionGt(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionGt(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
      * Example: addConditionGe('CreatedDate', Datetime.now())
      *          is equivaGent to "CreatedDate <= :Datetime.now()"
      */
     public Query addConditionGe(String lhs, Object rhs) {
         return addCondition(conditionGe(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionGe(SObject.CreatedDate, Datetime.now())
+     *          is equivaGent to "CreatedDate <= :Datetime.now()"
+     */
+    public Query addConditionGe(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionGe(lhs.getDescribe().getName(), rhs));
     }
 
     /*
@@ -239,11 +327,29 @@ public class Query {
 
     /*
      * Add a condition
+     * Example: addConditionLike(SObject.CreatedDate, '%Sam%')
+     *          the condition is equivalent to "Name Like :Datetime.now()"
+     */
+    public Query addConditionLike(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionLike(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
      * Example: addConditionNotLike('Name', '%Sam%')
      *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
      */
     public Query addConditionNotLike(String lhs, Object rhs) {
         return addCondition(conditionNotLike(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNotLike(SObject.CreatedDate, '%Sam%')
+     *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
+     */
+    public Query addConditionNotLike(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionNotLike(lhs.getDescribe().getName(), rhs));
     }
 
     /*
@@ -269,12 +375,30 @@ public class Query {
 
     /*
      * Create a condition
+     * Example: conditionEq(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate != :Datetime.now()"
+     */
+    public static Condition conditionEq(Schema.SObjectField lhs, Object rhs) {
+        return conditionEq(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
      * Example: conditionNotEq('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate != :Datetime.now()"
      */
     public static Condition conditionNotEq(String lhs, Object rhs) {
         final String formatString = lhs + ' != {0}';
         return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionNotEq(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate != :Datetime.now()"
+     */
+    public static Condition conditionNotEq(Schema.SObjectField lhs, Object rhs) {
+        return conditionNotEq(lhs.getDescribe().getName(), rhs);
     }
 
     /*
@@ -289,12 +413,30 @@ public class Query {
 
     /*
      * Create a condition
+     * Example: conditionIn(SObject.Name, mySet)
+     *          the condition is equivalent to "Name IN :mySet"
+     */
+    public static Condition conditionIn(Schema.SObjectField lhs, Object rhs) {
+        return conditionIn(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
      * Example: conditionNotIn('Name', mySet)
      *          the condition is equivalent to "Name NOT IN :mySet"
      */
     public static Condition conditionNotIn(String lhs, Object rhs) {
         final String formatString = lhs + ' NOT IN {0}';
         return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionNotIn(SObject.Name, mySet)
+     *          the condition is equivalent to "Name NOT IN :mySet"
+     */
+    public static Condition conditionNotIn(Schema.SObjectField lhs, Object rhs) {
+        return conditionNotIn(lhs.getDescribe().getName(), rhs);
     }
 
     /*
@@ -309,12 +451,30 @@ public class Query {
 
     /*
      * Create a condition
+     * Example: conditionLt(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate < :Datetime.now()"
+     */
+    public static Condition conditionLt(Schema.SObjectField lhs, Object rhs) {
+        return conditionLt(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
      * Example: conditionLe('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
      */
     public static Condition conditionLe(String lhs, Object rhs) {
         final String formatString = lhs + ' <= {0}';
         return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionLe(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
+     */
+    public static Condition conditionLe(Schema.SObjectField lhs, Object rhs) {
+        return conditionLe(lhs.getDescribe().getName(), rhs);
     }
 
     /*
@@ -329,12 +489,30 @@ public class Query {
 
     /*
      * Create a condition
+     * Example: conditionGt(SObject.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate < :Datetime.now()"
+     */
+    public static Condition conditionGt(Schema.SObjectField lhs, Object rhs) {
+        return conditionGt(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
      * Example: conditionGe('CreatedDate', Datetime.now())
      *          is equivaGent to "CreatedDate <= :Datetime.now()"
      */
     public static Condition conditionGe(String lhs, Object rhs) {
         final String formatString = lhs + ' >= {0}';
         return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionGe(SObject.CreatedDate, Datetime.now())
+     *          is equivaGent to "CreatedDate <= :Datetime.now()"
+     */
+    public static Condition conditionGe(Schema.SObjectField lhs, Object rhs) {
+        return conditionGe(lhs.getDescribe().getName(), rhs);
     }
 
     /*
@@ -348,6 +526,14 @@ public class Query {
     }
 
     /*
+     * Example: conditionLike(SObject.Name, '%Sam%')
+     *          the condition is equivalent to "Name Like :Datetime.now()"
+     */
+    public static Condition conditionLike(Schema.SObjectField lhs, Object rhs) {
+        return conditionLike(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
      * Create a condition
      * Example: conditionNotLike('Name', '%Sam%')
      *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
@@ -355,6 +541,15 @@ public class Query {
     public static Condition conditionNotLike(String lhs, Object rhs) {
         final String formatString = 'NOT ' + lhs + ' LIKE {0}';
         return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionNotLike(SObject.Name, '%Sam%')
+     *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
+     */
+    public static Condition conditionNotLike(Schema.SObjectField lhs, Object rhs) {
+        return conditionNotLike(lhs.getDescribe().getName(), rhs);
     }
 
     public static Condition doAnd(Condition lhs, Condition rhs) {
