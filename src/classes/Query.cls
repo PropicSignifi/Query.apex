@@ -633,6 +633,9 @@ public class Query {
         return this;
     }
 
+    public static final Boolean NULLS_FIRST = true;
+    public static final Boolean NULLS_LAST = false;
+
     public Query addSubquery(String relationshipName) {
         addChildRelationship(relationshipName);
         return this;
@@ -769,8 +772,6 @@ public class Query {
     private Set<String> fields;
     private Set<String> parentReferences;
     private Boolean isSelectingAllFields = false;
-    public static final Boolean NULLS_FIRST = true;
-    public static final Boolean NULLS_LAST = false;
 
     private List<String> conditions;
     private static final Integer maxArgSize = 20;
