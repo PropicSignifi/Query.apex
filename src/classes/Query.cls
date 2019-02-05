@@ -757,6 +757,11 @@ public class Query {
         return ret;
     }
 
+    public Database.QueryLocator getQueryLocator() {
+        String queryString = toQueryString();
+        return Database.getQueryLocator(queryString);
+    }
+
     /* Private members */
 
     private Query() {
