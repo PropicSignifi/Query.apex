@@ -73,22 +73,6 @@ public class Query {
         return selectFields(new Set<String>(fieldList));
     }
 
-    public Query selectField(Schema.SObjectField field) {
-        return selectfield(field.getDescribe().getName());
-    }
-
-    public Query selectFields(Set<Schema.SObjectField> fields) {
-        return selectFields(new List<Schema.SObjectField>(fields));
-    }
-
-    public Query selectFields(List<Schema.SObjectField> fields) {
-        List<String> fieldStrings= new List<String>();
-        for (Schema.SObjectField field : fields) {
-            fieldStrings.add(field.getDescribe().getName());
-        }
-        return selectFields(fieldStrings);
-    }
-
     /*
      * This function allows user provide a single field, or multiple fields
      *      concatenated by ','
@@ -113,6 +97,27 @@ public class Query {
     public Query selectfield(String fieldName) {
         addToFieldSet(fieldName);
         return this;
+
+    }
+
+    public Query selectField(Schema.SObjectField field) {
+        return selectfields(field);
+    }
+
+    public Query selectFields(Schema.SObjectField field) {
+        return selectfield(field.getDescribe().getName());
+    }
+
+    public Query selectFields(Set<Schema.SObjectField> fields) {
+        return selectFields(new List<Schema.SObjectField>(fields));
+    }
+
+    public Query selectFields(List<Schema.SObjectField> fields) {
+        List<String> fieldStrings= new List<String>();
+        for (Schema.SObjectField field : fields) {
+            fieldStrings.add(field.getDescribe().getName());
+        }
+        return selectFields(fieldStrings);
     }
 
     /*
@@ -183,7 +188,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionEq(SObject.CreatedDate, Datetime.now())
+     * Example: addConditionEq(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate = :Datetime.now()"
      */
     public Query addConditionEq(Schema.SObjectField lhs, Object rhs) {
@@ -201,7 +206,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionNotEq(SObject.CreatedDate, Datetime.now())
+     * Example: addConditionNotEq(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate != :Datetime.now()"
      */
     public Query addConditionNotEq(Schema.SObjectField lhs, Object rhs) {
@@ -219,7 +224,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionIn(SObject.Name, mySet)
+     * Example: addConditionIn(Account.Name, mySet)
      *          the condition is equivalent to "Name IN :mySet"
      */
     public Query addConditionIn(Schema.SObjectField lhs, Object rhs) {
@@ -237,7 +242,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionNotIn(SObject.Name, mySet)
+     * Example: addConditionNotIn(Account.Name, mySet)
      *          the condition is equivalent to "Name NOT IN :mySet"
      */
     public Query addConditionNotIn(Schema.SObjectField lhs, Object rhs) {
@@ -255,7 +260,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionLt(SObject.CreatedDate, Datetime.now())
+     * Example: addConditionLt(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
      */
     public Query addConditionLt(Schema.SObjectField lhs, Object rhs) {
@@ -273,7 +278,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionLe(SObject.CreatedDate, Datetime.now())
+     * Example: addConditionLe(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
      */
     public Query addConditionLe(Schema.SObjectField lhs, Object rhs) {
@@ -291,7 +296,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionGt(SObject.CreatedDate, Datetime.now())
+     * Example: addConditionGt(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
      */
     public Query addConditionGt(Schema.SObjectField lhs, Object rhs) {
@@ -309,7 +314,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionGe(SObject.CreatedDate, Datetime.now())
+     * Example: addConditionGe(Account.CreatedDate, Datetime.now())
      *          is equivaGent to "CreatedDate <= :Datetime.now()"
      */
     public Query addConditionGe(Schema.SObjectField lhs, Object rhs) {
@@ -327,7 +332,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionLike(SObject.CreatedDate, '%Sam%')
+     * Example: addConditionLike(Account.CreatedDate, '%Sam%')
      *          the condition is equivalent to "Name Like :Datetime.now()"
      */
     public Query addConditionLike(Schema.SObjectField lhs, Object rhs) {
@@ -345,7 +350,7 @@ public class Query {
 
     /*
      * Add a condition
-     * Example: addConditionNotLike(SObject.CreatedDate, '%Sam%')
+     * Example: addConditionNotLike(Account.CreatedDate, '%Sam%')
      *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
      */
     public Query addConditionNotLike(Schema.SObjectField lhs, Object rhs) {
@@ -375,8 +380,8 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionEq(SObject.CreatedDate, Datetime.now())
-     *          the condition is equivalent to "CreatedDate != :Datetime.now()"
+     * Example: conditionEq(Account.CreatedDate, Datetime.now())
+     *          the condition is equivalent to "CreatedDate = :Datetime.now()"
      */
     public static Condition conditionEq(Schema.SObjectField lhs, Object rhs) {
         return conditionEq(lhs.getDescribe().getName(), rhs);
@@ -394,7 +399,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionNotEq(SObject.CreatedDate, Datetime.now())
+     * Example: conditionNotEq(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate != :Datetime.now()"
      */
     public static Condition conditionNotEq(Schema.SObjectField lhs, Object rhs) {
@@ -413,7 +418,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionIn(SObject.Name, mySet)
+     * Example: conditionIn(Account.Name, mySet)
      *          the condition is equivalent to "Name IN :mySet"
      */
     public static Condition conditionIn(Schema.SObjectField lhs, Object rhs) {
@@ -432,7 +437,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionNotIn(SObject.Name, mySet)
+     * Example: conditionNotIn(Account.Name, mySet)
      *          the condition is equivalent to "Name NOT IN :mySet"
      */
     public static Condition conditionNotIn(Schema.SObjectField lhs, Object rhs) {
@@ -451,7 +456,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionLt(SObject.CreatedDate, Datetime.now())
+     * Example: conditionLt(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
      */
     public static Condition conditionLt(Schema.SObjectField lhs, Object rhs) {
@@ -470,7 +475,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionLe(SObject.CreatedDate, Datetime.now())
+     * Example: conditionLe(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate <= :Datetime.now()"
      */
     public static Condition conditionLe(Schema.SObjectField lhs, Object rhs) {
@@ -489,7 +494,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionGt(SObject.CreatedDate, Datetime.now())
+     * Example: conditionGt(Account.CreatedDate, Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
      */
     public static Condition conditionGt(Schema.SObjectField lhs, Object rhs) {
@@ -508,7 +513,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionGe(SObject.CreatedDate, Datetime.now())
+     * Example: conditionGe(Account.CreatedDate, Datetime.now())
      *          is equivaGent to "CreatedDate <= :Datetime.now()"
      */
     public static Condition conditionGe(Schema.SObjectField lhs, Object rhs) {
@@ -526,7 +531,7 @@ public class Query {
     }
 
     /*
-     * Example: conditionLike(SObject.Name, '%Sam%')
+     * Example: conditionLike(Account.Name, '%Sam%')
      *          the condition is equivalent to "Name Like :Datetime.now()"
      */
     public static Condition conditionLike(Schema.SObjectField lhs, Object rhs) {
@@ -545,7 +550,7 @@ public class Query {
 
     /*
      * Create a condition
-     * Example: conditionNotLike(SObject.Name, '%Sam%')
+     * Example: conditionNotLike(Account.Name, '%Sam%')
      *          the condition is equivalent to "NOT Name LIKE '%Sam%'"
      */
     public static Condition conditionNotLike(Schema.SObjectField lhs, Object rhs) {
