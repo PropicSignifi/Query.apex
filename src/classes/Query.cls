@@ -767,6 +767,10 @@ public class Query {
         return new DateLiteral('NEXT_N_FISCAL_YEARS', n);
     }
 
+    public static DateLiteral buildDateLiteral(String name, Integer num) {
+        return new DateLiteral(name, num);
+    }
+
     public Query setLimit(Integer n) {
         sizeLimit = n;
 
