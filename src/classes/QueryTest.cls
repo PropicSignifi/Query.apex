@@ -59,10 +59,12 @@ public class QueryTest {
 
         Account account;
 
-        account = (Account)new Query('Account').
+        List<Account> accountsList = new Query('Account').
             selectAllFields().
-            fetch(1);
-        System.assertEquals(account.Name, 'Account 1');
+            fetch(2);
+        System.assertEquals(accountsList.get(0).Name, 'Account 0');
+        System.assertEquals(accountsList.get(1).Name, 'Account 1');
+        System.assertEquals(accountsList.size(), 2);
 
         account = (Account)new Query('Account').
             selectAllFields().
