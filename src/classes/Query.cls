@@ -903,12 +903,17 @@ public class Query {
     }
 
     public SObject fetch() {
-        return fetch(0);
+        final List<SObject> fetchedList = fetch(1);
+        if (fetchedList.isEmpty()) {
+            return null;
+        } else {
+            return fetchedList.get(0);
+        }
     }
 
     public List<SObject> fetch(Integer first, Integer last) {
         List<SObject> retList = new List<SObject>();
-        final List<SObject> fetchedList = run();
+        final List<SObject> fetchedList = setLimit(last).run();
 
         for (Integer i = first; i < fetchedList.size() && i < last; i++) {
             retList.add(fetchedList.get(i));
@@ -917,14 +922,8 @@ public class Query {
         return retList;
     }
 
-    public SObject fetch(Integer idx) {
-        final List<SObject> fetchedList = run();
-
-        if (idx < fetchedList.size()) {
-            return fetchedList.get(idx);
-        } else {
-            return null;
-        }
+    public List<SObject> fetch(Integer size) {
+        return fetch(0, size);
     }
 
     public List<SObject> run() {
