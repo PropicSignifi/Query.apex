@@ -784,6 +784,76 @@ public class QueryTest {
     }
 
     @isTest
+    static void aggregateTest() {
+        Account acc1 = new Account(Name = 'Account 1', Rating = '1', NumberOfEmployees = 1);
+        Account acc2 = new Account(Name = 'Account 2', Rating = '9', NumberOfEmployees = 3);
+        Account acc3 = new Account(Name = 'Account 3', Rating = '1', NumberOfEmployees = 5);
+        Account acc4 = new Account(Name = 'Account 4', Rating = null, NumberOfEmployees = 7);
+
+        insert new List<Account>{acc1, acc2, acc3, acc4};
+
+        AggregateResult result =
+            new Query('Account').
+            countField('Name').
+            countField('Name', 'countName').
+            countDistinctField('Rating').
+            countDistinctField('Rating', 'countRating').
+            maxField('NumberOfEmployees').
+            maxField('NumberOfEmployees', 'maxEmployee').
+            minField('NumberOfEmployees').
+            minField('NumberOfEmployees', 'minEmployee').
+            avgField('NumberOfEmployees').
+            avgField('NumberOfEmployees', 'avgEmployee').
+            sumField('NumberOfEmployees').
+            sumField('NumberOfEmployees', 'sumEmployee').
+            aggregate();
+
+        System.assertEquals(result.get('countName'), 4);
+        System.assertEquals(result.get('countRating'), 2);
+        System.assertEquals(result.get('maxEmployee'), 7);
+        System.assertEquals(result.get('minEmployee'), 1);
+        System.assertEquals(result.get('avgEmployee'), 4);
+        System.assertEquals(result.get('sumEmployee'), 16);
+    }
+
+    @isTest
+    static void groupByTest() {
+        Account acc1 = new Account(Name = 'Account 1', Rating = '1', NumberOfEmployees = 1);
+        Account acc2 = new Account(Name = 'Account 2', Rating = '9', NumberOfEmployees = 3);
+        Account acc3 = new Account(Name = 'Account 3', Rating = '1', NumberOfEmployees = 5);
+        Account acc4 = new Account(Name = 'Account 4', Rating = null, NumberOfEmployees = 7);
+
+        insert new List<Account>{acc1, acc2, acc3, acc4};
+
+        List<AggregateResult> results =
+            new Query('Account').
+            selectField('Rating').
+            countField('Name', 'countName').
+            maxField('NumberOfEmployees', 'maxEmployee').
+            minField('NumberOfEmployees', 'minEmployee').
+            avgField('NumberOfEmployees', 'avgEmployee').
+            sumField('NumberOfEmployees', 'sumEmployee').
+            groupBy('Rating');
+
+        Map<String, AggregateResult> resultMap = new Map<String, AggregateResult>();
+
+        for (AggregateResult result : results) {
+            resultMap.put((String)result.get('Rating'), result);
+        }
+
+        System.assertEquals(resultMap.get('1').get('countName'), 2);
+        System.assertEquals(resultMap.get('1').get('maxEmployee'), 5);
+        System.assertEquals(resultMap.get('1').get('minEmployee'), 1);
+        System.assertEquals(resultMap.get('1').get('avgEmployee'), 3);
+        System.assertEquals(resultMap.get('1').get('sumEmployee'), 6);
+        System.assertEquals(resultMap.get('9').get('countName'), 1);
+        System.assertEquals(resultMap.get('9').get('maxEmployee'), 3);
+        System.assertEquals(resultMap.get('9').get('minEmployee'), 3);
+        System.assertEquals(resultMap.get('9').get('avgEmployee'), 3);
+        System.assertEquals(resultMap.get('9').get('sumEmployee'), 3);
+    }
+
+    @isTest
     static void debugTest() {
         Id id = '001O000000qkv3KIAQ';
         List<Id> idList = new List<Id>{id};
