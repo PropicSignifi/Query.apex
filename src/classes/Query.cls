@@ -1111,6 +1111,15 @@ public class Query {
     }
 
     private String addToFieldSet(String fieldName) {
+        fieldName = appendNamespaceToField(fieldName);
+        fieldName = fieldName.toLowerCase();
+
+        fields.add(fieldName);
+
+        return fieldName;
+    }
+
+    private String appendNamespaceToField(String fieldName) {
         if (fieldName.contains('.')) {
             List<String> oldFields = fieldName.split('\\.');
             List<String> newFields = new List<String>();
@@ -1122,10 +1131,6 @@ public class Query {
         } else {
             fieldName = appendNamespace(fieldName);
         }
-
-        fieldName = fieldName.toLowerCase();
-
-        fields.add(fieldName);
 
         return fieldName;
     }
