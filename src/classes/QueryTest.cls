@@ -809,11 +809,17 @@ public class QueryTest {
             aggregate();
 
         System.assertEquals(result.get('countName'), 4);
+        System.assertEquals(result.get('expr0'), 4);
         System.assertEquals(result.get('countRating'), 2);
+        System.assertEquals(result.get('expr1'), 2);
         System.assertEquals(result.get('maxEmployee'), 7);
+        System.assertEquals(result.get('expr2'), 7);
         System.assertEquals(result.get('minEmployee'), 1);
+        System.assertEquals(result.get('expr3'), 1);
         System.assertEquals(result.get('avgEmployee'), 4);
+        System.assertEquals(result.get('expr4'), 4);
         System.assertEquals(result.get('sumEmployee'), 16);
+        System.assertEquals(result.get('expr5'), 16);
     }
 
     @isTest
