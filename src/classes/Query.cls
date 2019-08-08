@@ -1426,12 +1426,17 @@ public class Query {
     private String formAggregateString() {
         String aggregateString = '';
 
+        for (AggregateTuple tuple : aggregateList) {
+            checkFieldLevelSecurity(objectType, tuple.fieldName);
+        }
+
         if (!fields.isEmpty()) {
             aggregateString += ', ';
         }
 
         for (AggregateTuple tuple : aggregateList) {
-            aggregateString += tuple.function + '(' + tuple.fieldName + ')';
+            String field = appendNamespaceToField(tuple.fieldName);
+            aggregateString += tuple.function + '(' + field + ')';
             if (tuple.alias != null) {
                 aggregateString += tuple.alias;
             }
