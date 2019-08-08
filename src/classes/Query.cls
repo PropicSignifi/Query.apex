@@ -1029,7 +1029,8 @@ public class Query {
     public List<AggregateResult> groupBy(Set<String> fieldSet) {
         String fields = '';
         for (String field : fieldSet) {
-            fields += field + ', ';
+            checkFieldLevelSecurity(objectType, field);
+            fields += appendNamespaceToField(field) + ', ';
         }
         fields = fields.removeEnd(', ');
 
