@@ -180,6 +180,26 @@ public class Query {
         return this;
     }
 
+    public Query groupBy(String fields) {
+        if (fields.contains(',')) {
+            // parse the fieldNames separated by ','
+            List<String> fieldList = fields.split(', *');
+
+            return groupBy(new Set<String>(fieldList));
+        } else {
+            return groupBy(new Set<String>{fields});
+        }
+    }
+
+    public Query groupBy(Set<String> fieldSet) {
+        for (String field : fieldSet) {
+            field = appendNamespaceToField(field);
+            field = field.toLowerCase();
+            groupByFields.add(field);
+        }
+        return this;
+    }
+
     /*
      * Select all user accessible fields
      */
@@ -1010,35 +1030,10 @@ public class Query {
         return Database.query(queryString);
     }
 
-    public AggregateResult aggregate() {
+    public List<AggregateResult> aggregate() {
         String queryString = toQueryString();
         return Database.query(queryString);
     }
-
-    public List<AggregateResult> groupBy(String fields) {
-        if (fields.contains(',')) {
-            // parse the fieldNames separated by ','
-            List<String> fieldList = fields.split(', *');
-
-            return groupBy(new Set<String>(fieldList));
-        } else {
-            return groupBy(new Set<String>{fields});
-        }
-    }
-
-    public List<AggregateResult> groupBy(Set<String> fieldSet) {
-        String fields = '';
-        for (String field : fieldSet) {
-            checkFieldLevelSecurity(objectType, field);
-            fields += appendNamespaceToField(field) + ', ';
-        }
-        fields = fields.removeEnd(', ');
-
-        String queryString = toQueryString();
-        queryString += ' GROUP BY ' + fields;
-        return Database.query(queryString);
-    }
-
 
     public List<Id> toIdList() {
         List<Id> ret = new List<Id>();
@@ -1065,6 +1060,7 @@ public class Query {
         parentReferences = new Set<String>();
         orderList = new List<OrderTuple>();
         aggregateList = new List<AggregateTuple>();
+        groupByFields = new Set<String>();
     }
 
     // State variables
@@ -1140,6 +1136,8 @@ public class Query {
             this(function, fieldName, null);
         }
     }
+
+    private Set<String> groupByFields;
 
     private final String MAX = 'MAX';
     private final String MIN = 'MIN';
@@ -1367,9 +1365,9 @@ public class Query {
 
         query += formFieldString();
 
-        query += ' ';
-
-        query += formAggregateString();
+        if (!aggregateList.isEmpty()) {
+            query += ' ' + formAggregateString();
+        }
 
         query += ' FROM ' + objectName;
 
@@ -1377,6 +1375,10 @@ public class Query {
 
         if (String.isNotBlank(conditionString)) {
             query += ' WHERE ' + conditionString;
+        }
+
+        if (!groupByFields.isEmpty()) {
+            query += ' GROUP BY ' + formGroupByString();
         }
 
         if (!orderList.isEmpty()) {
@@ -1490,6 +1492,17 @@ public class Query {
         }
 
         return subqueryString;
+    }
+
+    private String formGroupByString() {
+        String groupByString = '';
+
+        for (String field : groupByFields) {
+            groupByString += field + ', ';
+        }
+        groupByString = groupByString.removeEnd(', ');
+
+        return groupByString;
     }
 
     private String formOrderByString() {

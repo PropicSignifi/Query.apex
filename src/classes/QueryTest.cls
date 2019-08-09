@@ -806,7 +806,7 @@ public class QueryTest {
             avgField('NumberOfEmployees', 'avgEmployee').
             sumField('NumberOfEmployees').
             sumField('NumberOfEmployees', 'sumEmployee').
-            aggregate();
+            aggregate()[0];
 
         System.assertEquals(result.get('countName'), 4);
         System.assertEquals(result.get('expr0'), 4);
@@ -839,7 +839,8 @@ public class QueryTest {
             minField('NumberOfEmployees', 'minEmployee').
             avgField('NumberOfEmployees', 'avgEmployee').
             sumField('NumberOfEmployees', 'sumEmployee').
-            groupBy('Rating');
+            groupBy('Rating').
+            aggregate();
 
         Map<String, AggregateResult> resultMap = new Map<String, AggregateResult>();
 
