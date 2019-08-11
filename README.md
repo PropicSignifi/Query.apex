@@ -17,6 +17,8 @@ of the code and consequently enhance the productivity of the development.
 - Supports complex queries including parent/child relationships, and nested
 conditions in a flexible way
 
+- Supports aggregate functions including group by methods
+
 - Manages the namespace of the object names and field names, while also
 providing the Field Level Security checking
 
@@ -199,3 +201,66 @@ List<Account> accounts =
 
 ```
 
+### Simple aggregate functions
+
+Aggregate functions including 'count', 'countDistinct', 'max', 'min', 'avg',
+'sum' are supported, but user needs to call another method named 'aggregate'
+to get the result.
+
+The 'aggregate' method returns a list of 'AggregateResult' items.
+
+```javascript
+AggregateResult result =
+    new Query('Account').
+    countField('Name', 'countName').
+    countDistinctField('Rating', 'countRating').
+    maxField('NumberOfEmployees', 'maxEmployee').
+    minField('NumberOfEmployees', 'minEmployee').
+    avgField('NumberOfEmployees', 'avgEmployee').
+    sumField('NumberOfEmployees', 'sumEmployee').
+    aggregate()[0];
+
+Integer countName = (Integer)result.get('countName');
+Integer countRating = (Integer)result.get('countRating');
+Integer maxEmployee = (Integer)result.get('maxEmployee');
+Integer minEmployee = (Integer)result.get('minEmployee');
+Decimal avgEmployee = (Decimal)result.get('avgEmployee');
+Integer sumEmployee = (Integer)result.get('sumEmployee');
+```
+
+In this example, 'countName', 'maxEmployee', and so forth are the alias for
+the aggregate functions. Since there is no group by clauses used, the returned
+list has one and only one item. You can get the value of an aggregated field
+using the 'get' method in the first 'AggregateResult' item.
+
+### Aggregate functions combined with group by clause
+
+Aggregate functions are more useful combined with the 'groupBy' method, so that
+each group can have its own aggregate result. Similar to the simple aggregate
+functions, the 'aggregate' method is needed to get the aggregate results, which
+will return a list of 'AggregateResult' items.
+
+```
+List<AggregateResult> results =
+    new Query('Account').
+    selectField('Rating').
+    countField('Name', 'countName').
+    maxField('NumberOfEmployees', 'maxEmployee').
+    minField('NumberOfEmployees', 'minEmployee').
+    avgField('NumberOfEmployees', 'avgEmployee').
+    sumField('NumberOfEmployees', 'sumEmployee').
+    groupBy('Rating').
+    aggregate();
+
+for (AggregateResult result : results) {
+    System.debug('Rating: ' + result.get('Rating'));
+    System.debug('maxEmployee: ' + result.get('maxEmployee'));
+    System.debug('minEmployee: ' + result.get('minEmployee'));
+    System.debug('avgEmployee: ' + result.get('avgEmployee'));
+    System.debug('sumEmployee: ' + result.get('sumEmployee'));
+}
+```
+
+Note that we can only select fields that appear in the group by method. In
+this example, only the 'Rating' field is in the group by clause, so only the
+'Rating' field can be selected.
