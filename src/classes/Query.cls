@@ -120,6 +120,86 @@ public class Query {
         return selectFields(fieldStrings);
     }
 
+    public Query countField(String field) {
+        aggregateList.add(new AggregateTuple(COUNT, field));
+        return this;
+    }
+
+    public Query countField(String field, String alias) {
+        aggregateList.add(new AggregateTuple(COUNT, field, alias));
+        return this;
+    }
+
+    public Query maxField(String field) {
+        aggregateList.add(new AggregateTuple(MAX, field));
+        return this;
+    }
+
+    public Query maxField(String field, String alias) {
+        aggregateList.add(new AggregateTuple(MAX, field, alias));
+        return this;
+    }
+
+    public Query minField(String field) {
+        aggregateList.add(new AggregateTuple(MIN, field));
+        return this;
+    }
+
+    public Query minField(String field, String alias) {
+        aggregateList.add(new AggregateTuple(MIN, field, alias));
+        return this;
+    }
+
+    public Query avgField(String field) {
+        aggregateList.add(new AggregateTuple(AVG, field));
+        return this;
+    }
+
+    public Query avgField(String field, String alias) {
+        aggregateList.add(new AggregateTuple(AVG, field, alias));
+        return this;
+    }
+
+    public Query sumField(String field) {
+        aggregateList.add(new AggregateTuple(SUM, field));
+        return this;
+    }
+
+    public Query sumField(String field, String alias) {
+        aggregateList.add(new AggregateTuple(SUM, field, alias));
+        return this;
+    }
+
+    public Query countDistinctField(String field) {
+        aggregateList.add(new AggregateTuple(COUNT_DISTINCT, field));
+        return this;
+    }
+
+    public Query countDistinctField(String field, String alias) {
+        aggregateList.add(new AggregateTuple(COUNT_DISTINCT, field, alias));
+        return this;
+    }
+
+    public Query groupBy(String fields) {
+        if (fields.contains(',')) {
+            // parse the fieldNames separated by ','
+            List<String> fieldList = fields.split(', *');
+
+            return groupBy(new Set<String>(fieldList));
+        } else {
+            return groupBy(new Set<String>{fields});
+        }
+    }
+
+    public Query groupBy(Set<String> fieldSet) {
+        for (String field : fieldSet) {
+            field = appendNamespaceToField(field);
+            field = field.toLowerCase();
+            groupByFields.add(field);
+        }
+        return this;
+    }
+
     /*
      * Select all user accessible fields
      */
@@ -950,6 +1030,11 @@ public class Query {
         return Database.query(queryString);
     }
 
+    public List<AggregateResult> aggregate() {
+        String queryString = toQueryString();
+        return Database.query(queryString);
+    }
+
     public List<Id> toIdList() {
         List<Id> ret = new List<Id>();
 
@@ -974,6 +1059,8 @@ public class Query {
         conditionArgs = new List<Object>();
         parentReferences = new Set<String>();
         orderList = new List<OrderTuple>();
+        aggregateList = new List<AggregateTuple>();
+        groupByFields = new Set<String>();
     }
 
     // State variables
@@ -1032,6 +1119,32 @@ public class Query {
             this.nullsFirst = nullsFirst;
         }
     }
+
+    private List<AggregateTuple> aggregateList;
+    private class AggregateTuple {
+        private String function;
+        private String fieldName;
+        private String alias;
+
+        private AggregateTuple(String function, String fieldName, String alias) {
+            this.function = function;
+            this.fieldName = fieldName;
+            this.alias = alias;
+        }
+
+        private AggregateTuple(String function, String fieldName) {
+            this(function, fieldName, null);
+        }
+    }
+
+    private Set<String> groupByFields;
+
+    private final String MAX = 'MAX';
+    private final String MIN = 'MIN';
+    private final String AVG = 'AVG';
+    private final String SUM = 'SUM';
+    private final String COUNT = 'COUNT';
+    private final String COUNT_DISTINCT = 'COUNT_DISTINCT';
 
     // Object Schema variables
     private String objectName;
@@ -1111,6 +1224,15 @@ public class Query {
     }
 
     private String addToFieldSet(String fieldName) {
+        fieldName = appendNamespaceToField(fieldName);
+        fieldName = fieldName.toLowerCase();
+
+        fields.add(fieldName);
+
+        return fieldName;
+    }
+
+    private String appendNamespaceToField(String fieldName) {
         if (fieldName.contains('.')) {
             List<String> oldFields = fieldName.split('\\.');
             List<String> newFields = new List<String>();
@@ -1122,10 +1244,6 @@ public class Query {
         } else {
             fieldName = appendNamespace(fieldName);
         }
-
-        fieldName = fieldName.toLowerCase();
-
-        fields.add(fieldName);
 
         return fieldName;
     }
@@ -1247,12 +1365,20 @@ public class Query {
 
         query += formFieldString();
 
+        if (!aggregateList.isEmpty()) {
+            query += ' ' + formAggregateString();
+        }
+
         query += ' FROM ' + objectName;
 
         final String conditionString = formConditionString();
 
         if (String.isNotBlank(conditionString)) {
             query += ' WHERE ' + conditionString;
+        }
+
+        if (!groupByFields.isEmpty()) {
+            query += ' GROUP BY ' + formGroupByString();
         }
 
         if (!orderList.isEmpty()) {
@@ -1285,7 +1411,7 @@ public class Query {
             addAllFields();
         }
 
-        if (fields.isEmpty()) {
+        if (fields.isEmpty() && aggregateList.isEmpty()) {
             addToFieldSet('Id');
         }
 
@@ -1298,6 +1424,31 @@ public class Query {
         fieldString = fieldString.removeEnd(', ');
 
         return fieldString;
+    }
+
+    private String formAggregateString() {
+        String aggregateString = '';
+
+        for (AggregateTuple tuple : aggregateList) {
+            checkFieldLevelSecurity(objectType, tuple.fieldName);
+        }
+
+        if (!fields.isEmpty()) {
+            aggregateString += ', ';
+        }
+
+        for (AggregateTuple tuple : aggregateList) {
+            String field = appendNamespaceToField(tuple.fieldName);
+            aggregateString += tuple.function + '(' + field + ')';
+            if (tuple.alias != null) {
+                aggregateString += tuple.alias;
+            }
+            aggregateString += ', ';
+        }
+
+        aggregateString = aggregateString.removeEnd(', ');
+
+        return aggregateString;
     }
 
     private String formConditionString() {
@@ -1341,6 +1492,17 @@ public class Query {
         }
 
         return subqueryString;
+    }
+
+    private String formGroupByString() {
+        String groupByString = '';
+
+        for (String field : groupByFields) {
+            groupByString += field + ', ';
+        }
+        groupByString = groupByString.removeEnd(', ');
+
+        return groupByString;
     }
 
     private String formOrderByString() {
