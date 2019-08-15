@@ -120,62 +120,62 @@ public class Query {
         return selectFields(fieldStrings);
     }
 
-    public Query countField(String field) {
+    public Query count(String field) {
         aggregateList.add(new AggregateTuple(COUNT, field));
         return this;
     }
 
-    public Query countField(String field, String alias) {
+    public Query count(String field, String alias) {
         aggregateList.add(new AggregateTuple(COUNT, field, alias));
         return this;
     }
 
-    public Query maxField(String field) {
+    public Query max(String field) {
         aggregateList.add(new AggregateTuple(MAX, field));
         return this;
     }
 
-    public Query maxField(String field, String alias) {
+    public Query max(String field, String alias) {
         aggregateList.add(new AggregateTuple(MAX, field, alias));
         return this;
     }
 
-    public Query minField(String field) {
+    public Query min(String field) {
         aggregateList.add(new AggregateTuple(MIN, field));
         return this;
     }
 
-    public Query minField(String field, String alias) {
+    public Query min(String field, String alias) {
         aggregateList.add(new AggregateTuple(MIN, field, alias));
         return this;
     }
 
-    public Query avgField(String field) {
+    public Query avg(String field) {
         aggregateList.add(new AggregateTuple(AVG, field));
         return this;
     }
 
-    public Query avgField(String field, String alias) {
+    public Query avg(String field, String alias) {
         aggregateList.add(new AggregateTuple(AVG, field, alias));
         return this;
     }
 
-    public Query sumField(String field) {
+    public Query sum(String field) {
         aggregateList.add(new AggregateTuple(SUM, field));
         return this;
     }
 
-    public Query sumField(String field, String alias) {
+    public Query sum(String field, String alias) {
         aggregateList.add(new AggregateTuple(SUM, field, alias));
         return this;
     }
 
-    public Query countDistinctField(String field) {
+    public Query countDistinct(String field) {
         aggregateList.add(new AggregateTuple(COUNT_DISTINCT, field));
         return this;
     }
 
-    public Query countDistinctField(String field, String alias) {
+    public Query countDistinct(String field, String alias) {
         aggregateList.add(new AggregateTuple(COUNT_DISTINCT, field, alias));
         return this;
     }

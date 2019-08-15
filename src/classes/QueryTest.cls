@@ -839,18 +839,18 @@ public class QueryTest {
 
         AggregateResult result =
             new Query('Account').
-            countField('Name').
-            countField('Name', 'countName').
-            countDistinctField('Rating').
-            countDistinctField('Rating', 'countRating').
-            maxField('NumberOfEmployees').
-            maxField('NumberOfEmployees', 'maxEmployee').
-            minField('NumberOfEmployees').
-            minField('NumberOfEmployees', 'minEmployee').
-            avgField('NumberOfEmployees').
-            avgField('NumberOfEmployees', 'avgEmployee').
-            sumField('NumberOfEmployees').
-            sumField('NumberOfEmployees', 'sumEmployee').
+            count('Name').
+            count('Name', 'countName').
+            countDistinct('Rating').
+            countDistinct('Rating', 'countRating').
+            max('NumberOfEmployees').
+            max('NumberOfEmployees', 'maxEmployee').
+            min('NumberOfEmployees').
+            min('NumberOfEmployees', 'minEmployee').
+            avg('NumberOfEmployees').
+            avg('NumberOfEmployees', 'avgEmployee').
+            sum('NumberOfEmployees').
+            sum('NumberOfEmployees', 'sumEmployee').
             aggregate()[0];
 
         System.assertEquals(result.get('countName'), 4);
@@ -879,11 +879,11 @@ public class QueryTest {
         List<AggregateResult> results =
             new Query('Account').
             selectField('Rating').
-            countField('Name', 'countName').
-            maxField('NumberOfEmployees', 'maxEmployee').
-            minField('NumberOfEmployees', 'minEmployee').
-            avgField('NumberOfEmployees', 'avgEmployee').
-            sumField('NumberOfEmployees', 'sumEmployee').
+            count('Name', 'countName').
+            max('NumberOfEmployees', 'maxEmployee').
+            min('NumberOfEmployees', 'minEmployee').
+            avg('NumberOfEmployees', 'avgEmployee').
+            sum('NumberOfEmployees', 'sumEmployee').
             groupBy('Rating').
             aggregate();
 

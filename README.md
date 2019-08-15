@@ -232,12 +232,12 @@ The 'aggregate' method returns a list of 'AggregateResult' items.
 ```javascript
 AggregateResult result =
     new Query('Account').
-    countField('Name', 'countName').
-    countDistinctField('Rating', 'countRating').
-    maxField('NumberOfEmployees', 'maxEmployee').
-    minField('NumberOfEmployees', 'minEmployee').
-    avgField('NumberOfEmployees', 'avgEmployee').
-    sumField('NumberOfEmployees', 'sumEmployee').
+    count('Name', 'countName').
+    countDistinct('Rating', 'countRating').
+    max('NumberOfEmployees', 'maxEmployee').
+    min('NumberOfEmployees', 'minEmployee').
+    avg('NumberOfEmployees', 'avgEmployee').
+    sum('NumberOfEmployees', 'sumEmployee').
     aggregate()[0];
 
 Integer countName = (Integer)result.get('countName');
@@ -264,11 +264,11 @@ will return a list of 'AggregateResult' items.
 List<AggregateResult> results =
     new Query('Account').
     selectField('Rating').
-    countField('Name', 'countName').
-    maxField('NumberOfEmployees', 'maxEmployee').
-    minField('NumberOfEmployees', 'minEmployee').
-    avgField('NumberOfEmployees', 'avgEmployee').
-    sumField('NumberOfEmployees', 'sumEmployee').
+    count('Name', 'countName').
+    max('NumberOfEmployees', 'maxEmployee').
+    min('NumberOfEmployees', 'minEmployee').
+    avg('NumberOfEmployees', 'avgEmployee').
+    sum('NumberOfEmployees', 'sumEmployee').
     groupBy('Rating').
     aggregate();
 
