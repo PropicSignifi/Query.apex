@@ -358,6 +358,51 @@ public class QueryTest {
     }
 
     @isTest
+    static void conditionIncludeTest() {
+        QuickText text = new QuickText(
+            Name = 'MyQuickText',
+            Message = 'MyMessage',
+            Channel = 'Channel1;Channel2'
+        );
+        insert text;
+
+        List<QuickText> result = new Query('QuickText').
+            selectFields('Name, Message, Channel').
+            addConditionIncludes('Channel', 'Channel1').
+            run();
+
+        System.assertEquals(result.size(), 1);
+        System.assertEquals(result[0].Name, 'MyQuickText');
+
+    }
+
+    @isTest
+    static void conditionExcludesTest() {
+        QuickText text1 = new QuickText(
+            Name = 'MyQuickText1',
+            Message = 'MyMessage1',
+            Channel = 'Channel1;Channel2'
+        );
+
+        QuickText text2 = new QuickText(
+            Name = 'MyQuickText2',
+            Message = 'MyMessage2',
+            Channel = 'Channel3;Channel4'
+        );
+
+        insert new List<QuickText> {text1, text2};
+
+        List<QuickText> result = new Query('QuickText').
+            selectFields('Name, Message, Channel').
+            addConditionExcludes('Channel', 'Channel2').
+            run();
+
+        System.assertEquals(result.size(), 1);
+        System.assertEquals(result[0].Name, 'MyQuickText2');
+
+    }
+
+    @isTest
     static void complexConditionTest() {
         createData();
 

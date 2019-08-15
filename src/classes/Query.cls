@@ -438,6 +438,119 @@ public class Query {
     }
 
     /*
+     * Add a condition
+     * Example: addConditionIncludes('Channel', 'MyChannel')
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public Query addConditionIncludes(String lhs, String rhs) {
+        return addCondition(conditionIncludes(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionIncludes(QuckText.Channel, 'MyChannel')
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public Query addConditionIncludes(Schema.SObjectField lhs, String rhs) {
+        return addCondition(conditionIncludes(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionIncludes('Channel', new List<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public Query addConditionIncludes(String lhs, List<String> rhs) {
+        return addCondition(conditionIncludes(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionIncludes(QuckText.Channel, new List<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public Query addConditionIncludes(Schema.SObjectField lhs, List<String> rhs) {
+        return addCondition(conditionIncludes(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionIncludes('Channel', new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public Query addConditionIncludes(String lhs, Set<String> rhs) {
+        return addCondition(conditionIncludes(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionIncludes(QuckText.Channel, new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public Query addConditionIncludes(Schema.SObjectField lhs, Set<String> rhs) {
+        return addCondition(conditionIncludes(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionExcludes('Channel', 'MyChannel')
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+
+    public Query addConditionExcludes(String lhs, String rhs) {
+        return addCondition(conditionExcludes(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionExcludes(QuckText.Channel, 'MyChannel')
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+
+    public Query addConditionExcludes(Schema.SObjectField lhs, String rhs) {
+        return addCondition(conditionExcludes(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionExcludes('Channel', new List<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+
+    public Query addConditionExcludes(String lhs, List<String> rhs) {
+        return addCondition(conditionExcludes(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionExcludes(QuckText.Channel, new List<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+
+    public Query addConditionExcludes(Schema.SObjectField lhs, List<String> rhs) {
+        return addCondition(conditionExcludes(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionExcludes('Channel', new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+
+    public Query addConditionExcludes(String lhs, Set<String> rhs) {
+        return addCondition(conditionExcludes(lhs, rhs));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionExcludes(QuckText.Channel, new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+
+    public Query addConditionExcludes(Schema.SObjectField lhs, Set<String> rhs) {
+        return addCondition(conditionExcludes(lhs.getDescribe().getName(), rhs));
+    }
+    /*
      * Add condition with a Condition object
      */
     public Query addCondition(Condition condition) {
@@ -635,6 +748,118 @@ public class Query {
      */
     public static Condition conditionNotLike(Schema.SObjectField lhs, Object rhs) {
         return conditionNotLike(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionIncludes('Channel', 'MyChannel')
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public static Condition conditionIncludes(String lhs, String rhs) {
+        return conditionIncludes(lhs, new Set<String>{rhs});
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionIncludes(QuickText.Channel, 'MyChannel')
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public static Condition conditionIncludes(Schema.SObjectField lhs, String rhs) {
+        return conditionIncludes(lhs.getDescribe().getName(), new Set<String>{rhs});
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionIncludes(Channel, new List<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public static Condition conditionIncludes(String lhs, List<String> rhs) {
+        return conditionIncludes(lhs, new Set<String>(rhs));
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionIncludes(QuickText.Channel, new List<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public static Condition conditionIncludes(Schema.SObjectField lhs, List<String> rhs) {
+        return conditionIncludes(lhs.getDescribe().getName(), new Set<String>(rhs));
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionIncludes(Channel, new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public static Condition conditionIncludes(String lhs, Set<String> rhs) {
+        final String formatString = lhs + ' INCLUDES ' + toString(rhs);
+        return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionIncludes(QuickText.Channel, new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "Channel INCLUDES ('MyChannel')"
+     */
+    public static Condition conditionIncludes(Schema.SObjectField lhs, Set<String> rhs) {
+        return conditionIncludes(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionExcludes(Channel, 'MyChannel')
+     *          the condition is equivalent to "QuickText.Channel EXCLUDES ('MyChannel')"
+     */
+
+    public static Condition conditionExcludes(String lhs, String rhs) {
+        return conditionExcludes(lhs, new Set<String>{rhs});
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionExcludes(QuickText.Channel, 'MyChannel')
+     *          the condition is equivalent to "QuickText.Channel EXCLUDES ('MyChannel')"
+     */
+
+    public static Condition conditionExcludes(Schema.SObjectField lhs, String rhs) {
+        return conditionExcludes(lhs.getDescribe().getName(), new Set<String>{rhs});
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionExcludes(Channel, new List<String>{'MyChannel'})
+     *          the condition is equivalent to "QuickText.Channel EXCLUDES ('MyChannel')"
+     */
+    public static Condition conditionExcludes(String lhs, List<String> rhs) {
+        return conditionExcludes(lhs, new Set<String>(rhs));
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionExcludes(QuickText.Channel, new List<String>{'MyChannel'})
+     *          the condition is equivalent to "QuickText.Channel EXCLUDES ('MyChannel')"
+     */
+    public static Condition conditionExcludes(Schema.SObjectField lhs, List<String> rhs) {
+        return conditionExcludes(lhs.getDescribe().getName(), new Set<String>(rhs));
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionExcludes(Channel, new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "QuickText.Channel EXCLUDES ('MyChannel')"
+     */
+    public static Condition conditionExcludes(String lhs, Set<String> rhs) {
+        final String formatString = lhs + ' EXCLUDES ' + toString(rhs);
+        return new Condition(formatString, rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionExcludes(QuickText.Channel, new Set<String>{'MyChannel'})
+     *          the condition is equivalent to "QuickText.Channel EXCLUDES ('MyChannel')"
+     */
+    public static Condition conditionExcludes(Schema.SObjectField lhs, Set<String> rhs) {
+        return conditionExcludes(lhs.getDescribe().getName(), rhs);
     }
 
     public static Condition doAnd(Condition lhs, Condition rhs) {
@@ -1294,7 +1519,7 @@ public class Query {
                                       List<Object> args) {
         List<String> argStringList = new List<String>();
 
-        conditions.add(String.escapeSingleQuotes(formatString));
+        conditions.add(formatString);
         conditionArgs.addAll(args);
 
         return this;

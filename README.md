@@ -145,7 +145,6 @@ List<Account> accounts =
 
 ```
 
-
 ### Query with complex conditions
 
 For more complicated conditions, we can use the method 'conditionXX' to create a
@@ -181,6 +180,27 @@ List<Account> accounts =
     addConditionEq('CreatedDate', Query.LAST_N_WEEKS(3)).
     run();
 
+```
+
+### Query with conditions with INCLUDES/EXCLUDES operator
+
+INCLUDES and EXCLUDES operator can be used on multi-picklist fields.
+
+The following example is querying `QuickText` with the `Channel` field that
+includes both the two values at the same time:
+
+```javascript
+List<QuickText> result = new Query('QuickText').
+    addConditionIncludes('Channel', 'MyChannel;OtherChannel').
+    run();
+```
+
+In contrast, this example is a condition that includes any of the two values: 
+
+```javascript
+List<QuickText> result = new Query('QuickText').
+    addConditionIncludes('Channel', new List<String>{'MyChannel', 'OtherChannel'}).
+    run();
 ```
 
 ### Query with subqueries
@@ -240,7 +260,7 @@ each group can have its own aggregate result. Similar to the simple aggregate
 functions, the 'aggregate' method is needed to get the aggregate results, which
 will return a list of 'AggregateResult' items.
 
-```
+```javascript
 List<AggregateResult> results =
     new Query('Account').
     selectField('Rating').
