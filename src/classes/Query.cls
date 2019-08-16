@@ -1203,6 +1203,23 @@ public class Query {
         return this;
     }
 
+    public static void enforceGlobalSecurity(Boolean enforce) {
+        Query.securityEnforcedGlobal = enforce;
+    }
+
+    public static void enforceGlobalSecurity() {
+        enforceGlobalSecurity(true);
+    }
+
+    public Query enforceSecurity(Boolean enforce) {
+        this.securityEnforced = enforce;
+        return this;
+    }
+
+    public Query enforceSecurity() {
+        return enforceSecurity(true);
+    }
+
     public String toQueryString() {
         return formQueryString();
     }
@@ -1402,7 +1419,7 @@ public class Query {
         }
 
         if (!field.getDescribe().isAccessible()) {
-            throw new QueryException('Permission denied: cannot read ' +
+            alertSecurity('Permission denied: cannot read ' +
                     nextItem + ' from object ' + objType.getDescribe().getName());
         }
 
@@ -1770,7 +1787,7 @@ public class Query {
                         ' in object ' + objType.getDescribe().getName());
             }
             if (!fieldMap.get(nextItem).getDescribe().isAccessible()) {
-                throw new QueryException('Permission denied: cannot read ' +
+                alertSecurity('Permission denied: cannot read ' +
                         nextItem + ' from object ' + objType.getDescribe().getName());
             }
         } else {
@@ -2056,6 +2073,27 @@ public class Query {
         return src;
     }
 
+    private static Boolean securityEnforcedGlobal = false;
+    private Boolean securityEnforced = null;
+
+    /*
+     * By default, if field level security is missing, it will print a warning.
+     *
+     * But if the security is enforced, it will throw an exception.
+     *
+     * The flag cam be controlled by the static method `enforceGlobalSecurity` or
+     * the object method `enforceSecurity`.
+     */
+    private void alertSecurity(String msg) {
+        Boolean enforced = securityEnforced != null ? securityEnforced : securityEnforcedGlobal;
+
+        if (enforced) {
+            throw new SecurityException(msg);
+        } else {
+            System.debug(LoggingLevel.WARN, msg);
+        }
+    }
+
     private String namespace = getNamespaceFromClass();
 
     private static String getNamespaceFromClass() {
@@ -2070,6 +2108,9 @@ public class Query {
     }
 
     private class QueryException extends Exception {
+    }
+
+    private class SecurityException extends Exception {
     }
 
     public class DateLiteral {
