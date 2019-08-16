@@ -29,8 +29,6 @@ public class Query {
     }
 
     public Query(String objectName, String namespace) {
-        this();
-
         setNamespace(namespace);
 
         // Get Schema.SObjectType
@@ -49,8 +47,6 @@ public class Query {
     }
 
     public Query(Schema.SObjectType objectType) {
-        this();
-
         this.objectName = objectType.getDescribe().getName();
         this.objectType = objectType;
 
@@ -1293,27 +1289,17 @@ public class Query {
     }
 
     /* Private members */
-
-    private Query() {
-        fields = new Set<String>();
-        conditions = new List<String>();
-        childQuerys = new Map<String, Query>();
-        conditionArgs = new List<Object>();
-        parentReferences = new Set<String>();
-        orderList = new List<OrderTuple>();
-        aggregateList = new List<AggregateTuple>();
-        groupByFields = new Set<String>();
-    }
+    private Query() {}
 
     // State variables
-    private Set<String> fields;
-    private Set<String> parentReferences;
+    private Set<String> fields = new Set<String>();
+    private Set<String> parentReferences = new Set<String>();
     private Boolean isSelectingAllFields = false;
 
-    private List<String> conditions;
+    private List<String> conditions = new List<String>();
     private static final Integer maxArgSize = 20;
     private Integer conditionArgsIdx = 0;
-    private List<Object> conditionArgs;
+    private List<Object> conditionArgs = new List<Object>();
     private Object conditionArgs0;
     private Object conditionArgs1;
     private Object conditionArgs2;
@@ -1338,9 +1324,9 @@ public class Query {
     private String conditionOperator = 'AND';
     private Integer sizeLimit = -1;
     private Integer resultOffset = -1;
-    private Map<String, Query> childQuerys;
+    private Map<String, Query> childQuerys = new Map<String, Query>();
 
-    private List<OrderTuple> orderList;
+    private List<OrderTuple> orderList = new List<OrderTuple>();
     private class OrderTuple {
         private String fieldName;
         private Boolean ascending = true;
@@ -1362,7 +1348,7 @@ public class Query {
         }
     }
 
-    private List<AggregateTuple> aggregateList;
+    private List<AggregateTuple> aggregateList = new List<AggregateTuple>();
     private class AggregateTuple {
         private String function;
         private String fieldName;
@@ -1379,7 +1365,7 @@ public class Query {
         }
     }
 
-    private Set<String> groupByFields;
+    private Set<String> groupByFields = new Set<String>();
 
     private final String MAX = 'MAX';
     private final String MIN = 'MIN';
