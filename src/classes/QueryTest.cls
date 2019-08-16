@@ -624,10 +624,16 @@ public class QueryTest {
                         selectAllFields().
                         addConditionEq('TotalOpportunityQuantity', 10)
                     ).
+                    addSubquery(
+                        Query.subquery('Tasks').
+                        selectAllFields().
+                        addConditionEq('Subject', 'New Task')
+                    ).
                     run();
 
         assertAccount(accounts.get(0));
         assertOpportunity(accounts.get(0).Opportunities.get(0));
+        assertTask(accounts.get(0).Tasks.get(0));
 
     }
 
@@ -964,6 +970,13 @@ public class QueryTest {
         opp.IsPrivate = false;
 
         insert opp;
+
+        Task task = new Task();
+        task.WhatId = acc.Id;
+        task.Subject = 'New Task';
+
+        insert task;
+
     }
 
     static void assertAccount(Account acc) {
@@ -980,6 +993,10 @@ public class QueryTest {
         System.assertEquals(opp.Name, 'New Opportunity');
         System.assertEquals(opp.CloseDate, Date.today().addDays(3));
         System.assertEquals(opp.TotalOpportunityQuantity, 10);
+    }
+
+    static void assertTask(Task task) {
+        System.assertEquals(task.Subject, 'New Task');
     }
 
 }
