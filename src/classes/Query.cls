@@ -205,6 +205,14 @@ public class Query {
     }
 
     /*
+     * Select all user editable fields
+     */
+    public Query selectEditableFields() {
+        isSelectingEditableFields = true;
+        return this;
+    }
+
+    /*
      * Select all user accessible fields from a parent field
      */
     public Query selectAllFields(String parentField) {
@@ -1295,6 +1303,7 @@ public class Query {
     private Set<String> fields = new Set<String>();
     private Set<String> parentReferences = new Set<String>();
     private Boolean isSelectingAllFields = false;
+    private Boolean isSelectingEditableFields = false;
 
     private List<String> conditions = new List<String>();
     private static final Integer maxArgSize = 20;
@@ -1379,14 +1388,20 @@ public class Query {
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
 
-    private Query addAllFields() {
+    private final String READABLE = 'readable';
+    private final String EDITABLE = 'editable';
+
+    private Query addAllFields(String accessLevel) {
         // Get all the fields
         final Map<String, Schema.SObjectField> fieldMap =
             objectType.getDescribe().fields.getMap();
 
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
-            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+            if (accessLevel == READABLE &&
+                fieldMap.get(fieldName).getDescribe().isAccessible() ||
+                accessLevel == EDITABLE &&
+                fieldMap.get(fieldName).getDescribe().isUpdateable()) {
                 fields.add(fieldName.toLowerCase());
             }
         }
@@ -1639,7 +1654,11 @@ public class Query {
         }
 
         if (isSelectingAllFields) {
-            addAllFields();
+            addAllFields(READABLE);
+        }
+
+        if (isSelectingEditableFields) {
+            addAllFields(EDITABLE);
         }
 
         if (fields.isEmpty() && aggregateList.isEmpty()) {
