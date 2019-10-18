@@ -1430,6 +1430,8 @@ public class Query {
         // translate the reference name
         if (parentName.endsWithIgnoreCase('__r')) {
             parentName = parentName.removeEnd('__r') + '__c';
+        } else if (parentName.endsWithIgnoreCase('__pr')) {
+            parentName = parentName.removeEnd('__pr') + '__pc';
         } else if (parentName.endsWithIgnoreCase('Id')) {
             parentName = parentName;
         } else {
@@ -1442,7 +1444,7 @@ public class Query {
     private static Boolean isParentField(String fieldName) {
         if (fieldName.endsWithIgnoreCase('__c') || fieldName.endsWithIgnoreCase('__pc')) {
             return false;
-        } else if (fieldName.endsWithIgnoreCase('__r')) {
+        } else if (fieldName.endsWithIgnoreCase('__r') || fieldName.endsWithIgnoreCase('__pr')) {
             return true;
         } else if (fieldName.endsWithIgnoreCase('Id')) {
             return false;
