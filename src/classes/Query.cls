@@ -1506,7 +1506,8 @@ public class Query {
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
-                fields.add((parentName + '.' + fieldName).toLowerCase());
+                fields.add((appendNamespaceToField(parentName) + '.' + fieldName).
+                        toLowerCase());
             }
         }
         return this;
