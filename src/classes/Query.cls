@@ -1349,7 +1349,7 @@ public class Query {
     private Object conditionArgs19;
 
     private String conditionOperator = 'AND';
-    private String optionalClause = ' ';
+    private String optionalClause = '';
     private Integer sizeLimit = -1;
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
@@ -1658,7 +1658,7 @@ public class Query {
             query += ' OFFSET ' + resultOffset;
         }
 
-        if(!optionalClause.isEmpty()){
+        if(!String.isEmpty(optionalClause)){
             query += optionalClause;
         }
         return query;
