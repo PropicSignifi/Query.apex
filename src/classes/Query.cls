@@ -990,6 +990,24 @@ public class Query {
         return this;
     }
 
+    /*
+     * After calling this function, optional clause will be added to the query
+     */
+
+    public Query forView(){
+        optionalClause = 'FOR VIEW';
+        return this;
+    }
+
+    public Query forUpdate(){
+        optionalClause = 'FOR UPDATE';
+        return this;
+    }
+
+    public Query forReference(){
+        optionalClause = 'FOR REFERENCE';
+        return this;
+    }
     public static final DateLiteral YESTERDAY = new DateLiteral('YESTERDAY');
     public static final DateLiteral TODAY = new DateLiteral('TODAY');
     public static final DateLiteral TOMORROW = new DateLiteral('TOMORROW');
@@ -1331,6 +1349,7 @@ public class Query {
     private Object conditionArgs19;
 
     private String conditionOperator = 'AND';
+    private String optionalClause = '';
     private Integer sizeLimit = -1;
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
@@ -1639,6 +1658,9 @@ public class Query {
             query += ' OFFSET ' + resultOffset;
         }
 
+        if(!String.isEmpty(optionalClause)){
+            query += optionalClause;
+        }
         return query;
     }
 
