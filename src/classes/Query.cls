@@ -554,6 +554,7 @@ public class Query {
     public Query addConditionExcludes(Schema.SObjectField lhs, Set<String> rhs) {
         return addCondition(conditionExcludes(lhs.getDescribe().getName(), rhs));
     }
+
     /*
      * Add condition with a Condition object
      */
@@ -563,6 +564,14 @@ public class Query {
         newConditionString = '(' + newConditionString + ')';
         saveConditionArg(condition.args);
         return addComplexCondition(newConditionString, condition.args);
+    }
+
+    /*
+     * Add having condition for group by clauses
+     */
+    public Query addHaving(Condition condition) {
+        havingCondition = condition;
+        return this;
     }
 
     /*
@@ -1375,6 +1384,7 @@ public class Query {
     }
 
     private Set<String> groupByFields = new Set<String>();
+    Condition havingCondition;
 
     private final String MAX = 'MAX';
     private final String MIN = 'MIN';
@@ -1535,7 +1545,6 @@ public class Query {
      * Example: addComplexCondition('CreatedDate <= {0} AND Name = {1}',
                     new List<Object>{Datetime.now(), 'Sam'})
      */
-    @testVisible
     private Query addComplexCondition(String formatString,
                                       List<Object> args) {
         List<String> argStringList = new List<String>();
@@ -1625,6 +1634,10 @@ public class Query {
 
         if (!groupByFields.isEmpty()) {
             query += ' GROUP BY ' + formGroupByString();
+        }
+
+        if (havingCondition != null) {
+            query += ' HAVING ' + formHavingString();
         }
 
         if (!orderList.isEmpty()) {
@@ -1720,6 +1733,23 @@ public class Query {
         // format the arguments
         List<String> args = new List<String>();
         for (Integer i = 0; i < conditionArgsIdx; i++) {
+            args.add(':conditionArgs' + i);
+        }
+        conditionString = format(conditionString, args);
+
+        return conditionString;
+    }
+
+    private String formHavingString() {
+        String conditionString = havingCondition.conditionString;
+        Integer indexStart = conditionArgsIdx;
+
+        // shift the arg index
+        saveConditionArg(havingCondition.args);
+
+        // format the arguments
+        List<String> args = new List<String>();
+        for (Integer i = indexStart; i < conditionArgsIdx; i++) {
             args.add(':conditionArgs' + i);
         }
         conditionString = format(conditionString, args);
