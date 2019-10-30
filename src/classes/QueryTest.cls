@@ -42,6 +42,24 @@ public class QueryTest {
     }
 
     @isTest
+    static void selectEditableFieldsTest() {
+        createData();
+        List<Account> accounts;
+
+        accounts = new Query('Account').
+            selectEditableFields().
+            run();
+
+        assertAccount(accounts.get(0));
+
+        accounts = new Query(Account.getSObjectType()).
+            selectAllFields().
+            run();
+
+        assertAccount(accounts.get(0));
+    }
+
+    @isTest
     static void fetchTest() {
         Account acc0 = new Account(Name = 'Account 0');
         Account acc1 = new Account(Name = 'Account 1');
