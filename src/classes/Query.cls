@@ -1659,7 +1659,7 @@ public class Query {
         }
 
         if(!String.isEmpty(optionalClause)){
-            query += optionalClause;
+            query += ' '+optionalClause;
         }
         return query;
     }

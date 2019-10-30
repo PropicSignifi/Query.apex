@@ -83,6 +83,16 @@ public class QueryTest {
     }
 
     @isTest
+    static void OptionalClauseTest() {
+        createData();
+
+        List<Account> accountsForView = new Query('Account').forView().run();
+        List<Account> accountsForUpdate = new Query('Account').forUpdate().run();
+        List<Account> accountsForReference = new Query('Account').forReference().run();
+
+    }
+
+    @isTest
     static void runWithOrderedIdsTest() {
         Account acc0 = new Account(Name = 'Account 0');
         Account acc1 = new Account(Name = 'Account 1');
