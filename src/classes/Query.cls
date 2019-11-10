@@ -213,6 +213,14 @@ public class Query {
     }
 
     /*
+     * Select all user creatable fields
+     */
+    public Query selectCreatableFields() {
+        isSelectingCreatableFields = true;
+        return this;
+    }
+
+    /*
      * Select all user accessible fields from a parent field
      */
     public Query selectAllFields(String parentField) {
@@ -1331,6 +1339,7 @@ public class Query {
     private Set<String> parentReferences = new Set<String>();
     private Boolean isSelectingAllFields = false;
     private Boolean isSelectingEditableFields = false;
+    private Boolean isSelectingCreatableFields = false;
 
     private List<String> conditions = new List<String>();
     private static final Integer maxArgSize = 20;
@@ -1419,6 +1428,7 @@ public class Query {
 
     private final String READABLE = 'readable';
     private final String EDITABLE = 'editable';
+    private final String CREATABLE = 'creatable';
 
     private Query addAllFields(String accessLevel) {
         // Get all the fields
@@ -1430,7 +1440,9 @@ public class Query {
             if (accessLevel == READABLE &&
                 fieldMap.get(fieldName).getDescribe().isAccessible() ||
                 accessLevel == EDITABLE &&
-                fieldMap.get(fieldName).getDescribe().isUpdateable()) {
+                fieldMap.get(fieldName).getDescribe().isUpdateable() ||
+                accessLevel == CREATABLE &&
+                fieldMap.get(fieldName).getDescribe().isCreateable()) {
                 fields.add(fieldName.toLowerCase());
             }
         }
@@ -1694,6 +1706,10 @@ public class Query {
 
         if (isSelectingEditableFields) {
             addAllFields(EDITABLE);
+        }
+
+        if (isSelectingCreatableFields) {
+            addAllFields(CREATABLE);
         }
 
         if (fields.isEmpty() && aggregateList.isEmpty()) {
