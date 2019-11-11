@@ -117,7 +117,7 @@ public class QueryTest {
     }
 
     @isTest
-    static void runWithOrderedIdsTest() {
+    static void runPreservingIdOrderTest() {
         Account acc0 = new Account(Name = 'Account 0');
         Account acc1 = new Account(Name = 'Account 1');
         Account acc2 = new Account(Name = 'Account 2');
@@ -128,7 +128,7 @@ public class QueryTest {
 
         List<Id> idList = new List<Id>{ acc0.Id, acc1.Id, acc2.Id, acc0.Id };
 
-        List<Account> accounts = new Query('Account').runWithOrderedIds(idList);
+        List<Account> accounts = new Query('Account').runPreservingIdOrder(idList);
 
         System.assertEquals(accounts.get(0).Id, acc0.Id);
         System.assertEquals(accounts.get(1).Id, acc1.Id);

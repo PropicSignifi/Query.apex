@@ -1291,7 +1291,7 @@ public class Query {
         return toSObjectList();
     }
 
-    public List<SObject> runWithOrderedIds(List<Id> idList) {
+    public List<SObject> runPreservingIdOrder(List<Id> idList) {
         Query cloned = this.clone();
         cloned.byId(idList);
 
