@@ -9,8 +9,9 @@ Salesforce platform.
 
 Although Salesforce provides Database.query method to dynamically execute a
 query from a string, it is far from easy to construct such a string in a
-structural and flexible way. Query.apex is made to improve the flexibility
-of the code and consequently enhance the productivity of the development.
+bug-free, structural and flexible way. Query.apex is made to improve the
+flexibility of the code and consequently enhance the productivity of the
+development.
 
 ## Features
 
@@ -19,10 +20,12 @@ of the code and consequently enhance the productivity of the development.
 - Supports complex queries including parent/child relationships, and nested
 conditions in a flexible way
 
+- Prevents SOQL injections, without manually escaping the string variables
+
 - Supports aggregate functions including group by methods
 
 - Manages the namespace of the object names and field names, while also
-providing the Field Level Security checking
+provides the Object/Field Level Security checking
 
 ## Documentation
 
@@ -43,9 +46,7 @@ This will return a list of all Accounts from the database.
 By default it will select only the Id field.
 
 ```javascript
-
 List<Account> accounts = new Query('Account').run();
-
 ```
 
 ### Select all fields
@@ -54,12 +55,10 @@ This will query all Accounts from the database, selecting all fields which
 the user has access privilege on.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     selectAllFields().
     run();
-
 ```
 
 ### Select specific fields
@@ -67,7 +66,6 @@ List<Account> accounts =
 This will query all Accounts from the database, selecting specified fields only.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     selectField('Name').
@@ -75,7 +73,6 @@ List<Account> accounts =
     selectFields('CreatedDate, LastModifiedDate').
     selectFields(new List<String>{'LastActivityDate', 'LastViewedDate'}).
     run();
-
 ```
 
 ### Get an account based on its Id
@@ -84,12 +81,10 @@ This will query the Accounts with a specific Id, and return only one SObject as
 a result.
 
 ```javascript
-
 Account account =
     (Account)new Query('Account').
     byId('001O000001HMWZVIA5').
     fetch();
-
 ```
 
 ### Get a list of contacts based on a foreign key
@@ -97,12 +92,10 @@ Account account =
 This will query the Contacts given the foreign key AccountId.
 
 ```javascript
-
 List<Contact> contacts =
     new Query('Contact').
     lookup('AccountId', '001O000001HMWZVIA5').
     run();
-
 ```
 
 ### Get a list of Id of the query result
@@ -110,11 +103,9 @@ List<Contact> contacts =
 This will query all the Accounts and return a list of Id as a result.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     toIdList();
-
 ```
 
 ### Select parent fields
@@ -122,12 +113,10 @@ List<Account> accounts =
 This will select all the fields from the parent object Account.
 
 ```javascript
-
 List<Contact> contacts =
     new Query('Contact').
     selectAllFields('Account').
     run();
-
 ```
 
 ### Query with simple conditions
@@ -138,13 +127,11 @@ This will query all the accounts whose 'FirstName' is 'Sam' and 'LastName' is
 By default, all the conditions are joined by the 'AND' operator.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     addConditionEq('Name', 'Sam').
     addConditionLt('NumberOfEmployees', 10).
     run();
-
 ```
 
 ### Query with complex conditions
@@ -154,7 +141,6 @@ condition variable, before using the 'doOr' method or 'doAnd' boolean operation
 methods to join these conditions.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     addCondition(
@@ -167,7 +153,6 @@ List<Account> accounts =
         )
     ).
     run();
-
 ```
 
 ### Query with date literal conditions
@@ -175,13 +160,11 @@ List<Account> accounts =
 We can also use date literals in conditions.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     addConditionLe('LastModifiedDate', Query.TODAY).
     addConditionEq('CreatedDate', Query.LAST_N_WEEKS(3)).
     run();
-
 ```
 
 ### Query with conditions with INCLUDES/EXCLUDES operator
@@ -211,7 +194,6 @@ Query.apex also allows selecting child relationships (subqueries), in a
 functional style similar to the conditions.
 
 ```javascript
-
 List<Account> accounts =
     new Query('Account').
     addSubquery(
@@ -220,7 +202,6 @@ List<Account> accounts =
         addConditionIn('LastName', new List<String>{'Tarly'})
     ).
     run();
-
 ```
 
 ### Simple aggregate functions
