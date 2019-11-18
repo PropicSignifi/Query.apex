@@ -288,7 +288,7 @@ List<AggregateResult> results =
     selectField('AccountId').
     count('Name', 'countName').
     groupBy('AccountId').
-    addHaving(Query.conditionGt('Count(Name)', 1)).
+    addHaving(Query.conditionGe('Count(Name)', 1)).
     aggregate();
 
 // Loop the aggregate result to get the account ids
