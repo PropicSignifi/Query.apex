@@ -1645,6 +1645,19 @@ public class Query {
     }
 
     private String formQueryString() {
+        String queryStr = formQueryStringPreformat();
+
+        // format the arguments
+        List<String> args = new List<String>();
+        for (Integer i = 0; i < conditionArgsIdx; i++) {
+            args.add(':conditionArgs' + i);
+        }
+        queryStr = format(queryStr, args);
+
+        return queryStr;
+    }
+
+    private String formQueryStringPreformat() {
         conditionArgsIdx = 0;
 
         String query = 'SELECT ';
@@ -1768,13 +1781,6 @@ public class Query {
         conditionString = shiftFormatStringIndice(conditionString, conditionArgsIdx);
         saveConditionArg(conditionArgs);
 
-        // format the arguments
-        List<String> args = new List<String>();
-        for (Integer i = 0; i < conditionArgsIdx; i++) {
-            args.add(':conditionArgs' + i);
-        }
-        conditionString = format(conditionString, args);
-
         return conditionString;
     }
 
@@ -1802,7 +1808,8 @@ public class Query {
             Query childQuery = childQuerys.get(key);
 
             subqueryString += '(';
-            subqueryString += shiftArgStringIndice(childQuery.toQueryString(), conditionArgsIdx);
+            subqueryString += shiftFormatStringIndice(childQuery.formQueryStringPreformat(),
+                    conditionArgsIdx);
             subqueryString += ')';
             subqueryString += ', ';
 
@@ -1926,26 +1933,6 @@ public class Query {
         }
 
         return formatString;
-    }
-
-    /*
-     * This function shifts the conditionArg index in the given string
-     * Example:
-     *  after passing
-     *      'Name = :conditionArgs0 AND Phone = :conditionArgs1'
-     *      and shift 2,
-     *  The returned string is
-     *      'Name = :conditionArgs2 AND Phone = :conditionArgs3'
-     */
-    private static String shiftArgStringIndice(String argString, Integer shift) {
-        for (Integer i = maxArgSize - shift - 1; i >= 0; i--) {
-            final String target = ':conditionArgs' + i;
-            final String replacement = ':conditionArgs' + (i + shift);
-
-            argString = argString.replace(target, replacement);
-        }
-
-        return argString;
     }
 
     /*
