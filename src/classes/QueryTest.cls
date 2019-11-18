@@ -977,6 +977,47 @@ public class QueryTest {
     }
 
     @isTest
+    static void semiJoinTest() {
+        Account acc = new Account(Name = 'New Account');
+        insert acc;
+
+        Opportunity opp = new Opportunity(
+            AccountId = acc.Id,
+            Name = 'New Opportunity',
+            CloseDate = Date.today().addDays(3),
+            TotalOpportunityQuantity = 10,
+            StageName = 'New',
+            IsPrivate = false);
+        insert opp;
+
+        Account acc2 = (Account)new Query('Account').
+            addConditionIn('Id', new Query('Opportunity').
+                    selectField('AccountId').
+                    byId(opp.Id)).
+            fetch();
+
+        System.assertEquals(acc.Id, acc2.Id);
+
+        Account acc3 = (Account)new Query('Account').
+            lookup('Id', new Query('Opportunity').
+                    selectField('AccountId').
+                    addConditionEq('StageName', 'New').
+                    byId(opp.Id)).
+            addConditionEq('Name', 'New Account').
+            fetch();
+
+        System.assertEquals(acc.Id, acc3.Id);
+
+        Opportunity opp2 = (Opportunity)new Query('Opportunity').
+            lookup('AccountId', new Query('Account').
+                    selectField('Id').
+                    byId(acc.Id)).
+            fetch();
+
+        System.assertEquals(opp.Id, opp2.Id);
+    }
+
+    @isTest
     static void debugTest() {
         Id id = '001O000000qkv3KIAQ';
         List<Id> idList = new List<Id>{id};

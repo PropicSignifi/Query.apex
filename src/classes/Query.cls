@@ -269,6 +269,10 @@ public class Query {
         return lookup(fieldName, new List<SObject>{sobj});
     }
 
+    public Query lookup(String fieldName, Query query) {
+        return addConditionIn(fieldName, query);
+    }
+
     /*
      * Add a condition
      * Example: addConditionEq('CreatedDate', Datetime.now())
@@ -320,6 +324,24 @@ public class Query {
      *          the condition is equivalent to "Name IN :mySet"
      */
     public Query addConditionIn(Schema.SObjectField lhs, Object rhs) {
+        return addCondition(conditionIn(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
+     * Add a semi-join condition
+     * Example: addConditionIn('Id', new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id IN (SELECT AccountId FROM Opportunity)"
+     */
+    public Query addConditionIn(String lhs, Query rhs) {
+        return addCondition(conditionIn(lhs, rhs));
+    }
+
+    /*
+     * Add a semi-join condition
+     * Example: addConditionIn(Account.Id, new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id IN (SELECT AccountId FROM Opportunity)"
+     */
+    public Query addConditionIn(Schema.SObjectField lhs, Query rhs) {
         return addCondition(conditionIn(lhs.getDescribe().getName(), rhs));
     }
 
@@ -636,6 +658,32 @@ public class Query {
      *          the condition is equivalent to "Name IN :mySet"
      */
     public static Condition conditionIn(Schema.SObjectField lhs, Object rhs) {
+        return conditionIn(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a semi-join condition
+     * Example: conditionIn('Id', new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id IN (SELECT AccountId FROM Opportunity)"
+     */
+    public static Condition conditionIn(String lhs, Query rhs) {
+        final String formatString = lhs + ' IN (' +
+            rhs.formQueryStringPreformat() + ')';
+
+        Condition condition = new Condition();
+
+        condition.conditionString = formatString;
+        condition.args = rhs.conditionArgs;
+
+        return condition;
+    }
+
+    /*
+     * Create a semi-join condition
+     * Example: conditionIn(Account.Id, new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id IN (SELECT AccountId FROM Opportunity)"
+     */
+    public static Condition conditionIn(Schema.SObjectField lhs, Query rhs) {
         return conditionIn(lhs.getDescribe().getName(), rhs);
     }
 
