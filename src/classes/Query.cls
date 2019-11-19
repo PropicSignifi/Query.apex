@@ -590,10 +590,11 @@ public class Query {
      */
     public Query addCondition(Condition condition) {
         String newConditionString =
-            shiftFormatStringIndice(condition.conditionString, conditionArgsIdx);
+            shiftFormatStringIndice(condition.conditionString, conditionArgs.size());
         newConditionString = '(' + newConditionString + ')';
-        saveConditionArg(condition.args);
-        return addComplexCondition(newConditionString, condition.args);
+        conditions.add(newConditionString);
+        conditionArgs.addAll(condition.args);
+        return this;
     }
 
     /*
@@ -1275,7 +1276,7 @@ public class Query {
     public Query debug() {
         System.debug(toQueryString());
 
-        for (Integer i = 0; i < conditionArgsIdx; i++) {
+        for (Integer i = 0; i < finalConditionArgsIdx; i++) {
             debugDeep(i);
         }
         return this;
@@ -1391,8 +1392,9 @@ public class Query {
 
     private List<String> conditions = new List<String>();
     private static final Integer maxArgSize = 20;
-    private Integer conditionArgsIdx = 0;
+    private Integer finalConditionArgsIdx = 0;
     private List<Object> conditionArgs = new List<Object>();
+    private List<Object> finalConditionArgs = new List<Object>();
     private Object conditionArgs0;
     private Object conditionArgs1;
     private Object conditionArgs2;
@@ -1619,28 +1621,17 @@ public class Query {
         return this;
     }
 
-    /*
-     * Add complex condition with a format string and multiple arguments
-     * Example: addComplexCondition('CreatedDate <= {0} AND Name = {1}',
-                    new List<Object>{Datetime.now(), 'Sam'})
-     */
-    private Query addComplexCondition(String formatString,
-                                      List<Object> args) {
-        List<String> argStringList = new List<String>();
-
-        conditions.add(formatString);
-        conditionArgs.addAll(args);
-
-        return this;
+    private void saveConditions(List<Object> args) {
+        finalConditionArgsIdx += args.size();
+        finalConditionArgs.addAll(args);
     }
 
     /*
      * Save the arg to the member variable
      */
-    private void saveConditionArg(List<Object> args) {
-        for (Object arg : args) {
-            saveConditionArg(conditionArgsIdx, arg);
-            conditionArgsIdx++;
+    private void saveConditionArg() {
+        for (Integer i = 0; i < finalConditionArgs.size(); i++) {
+            saveConditionArg(i, finalConditionArgs[i]);
         }
     }
 
@@ -1695,9 +1686,11 @@ public class Query {
     private String formQueryString() {
         String queryStr = formQueryStringPreformat();
 
+        saveConditionArg();
+
         // format the arguments
         List<String> args = new List<String>();
-        for (Integer i = 0; i < conditionArgsIdx; i++) {
+        for (Integer i = 0; i < finalConditionArgsIdx; i++) {
             args.add(':conditionArgs' + i);
         }
         queryStr = format(queryStr, args);
@@ -1706,7 +1699,7 @@ public class Query {
     }
 
     private String formQueryStringPreformat() {
-        conditionArgsIdx = 0;
+        finalConditionArgsIdx = 0;
 
         String query = 'SELECT ';
 
@@ -1826,19 +1819,18 @@ public class Query {
         conditionString = conditionString.removeEnd(' ' + conditionOperator + ' ');
 
         // shift the arg index
-        conditionString = shiftFormatStringIndice(conditionString, conditionArgsIdx);
-        saveConditionArg(conditionArgs);
+        conditionString = shiftFormatStringIndice(conditionString, finalConditionArgsIdx);
+        saveConditions(conditionArgs);
 
         return conditionString;
     }
 
     private String formHavingString() {
         String conditionString =
-            shiftFormatStringIndice(havingCondition.conditionString, conditionArgsIdx);
-        Integer indexStart = conditionArgsIdx;
+            shiftFormatStringIndice(havingCondition.conditionString, finalConditionArgsIdx);
 
         // shift the arg index
-        saveConditionArg(havingCondition.args);
+        saveConditions(havingCondition.args);
 
         return conditionString;
     }
@@ -1851,11 +1843,11 @@ public class Query {
 
             subqueryString += '(';
             subqueryString += shiftFormatStringIndice(childQuery.formQueryStringPreformat(),
-                    conditionArgsIdx);
+                    finalConditionArgsIdx);
             subqueryString += ')';
             subqueryString += ', ';
 
-            saveConditionArg(childQuery.conditionArgs);
+            saveConditions(childQuery.conditionArgs);
         }
 
         return subqueryString;
