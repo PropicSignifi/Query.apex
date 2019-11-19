@@ -191,7 +191,7 @@ List<QuickText> result = new Query('QuickText').
 ### Query with subqueries
 
 Query.apex also allows selecting child relationships (subqueries), in a
-functional style similar to the conditions.
+method chain style similar to the conditions.
 
 ```javascript
 List<Account> accounts =
@@ -201,6 +201,18 @@ List<Account> accounts =
         addConditionEq('FirstName', 'Sam').
         addConditionIn('LastName', new List<String>{'Tarly'})
     ).
+    run();
+```
+
+### Query with semi-join
+
+It is also possible to have a subquery in the condition, known as the semi-join.
+
+```
+List<Account> accounts =
+    new Query('Account').
+    lookup('Id', new Query('Opportunity').
+            selectField('AccountId')).
     run();
 ```
 
