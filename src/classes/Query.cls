@@ -1833,18 +1833,12 @@ public class Query {
     }
 
     private String formHavingString() {
-        String conditionString = havingCondition.conditionString;
+        String conditionString =
+            shiftFormatStringIndice(havingCondition.conditionString, conditionArgsIdx);
         Integer indexStart = conditionArgsIdx;
 
         // shift the arg index
         saveConditionArg(havingCondition.args);
-
-        // format the arguments
-        List<String> args = new List<String>();
-        for (Integer i = indexStart; i < conditionArgsIdx; i++) {
-            args.add(':conditionArgs' + i);
-        }
-        conditionString = format(conditionString, args);
 
         return conditionString;
     }
