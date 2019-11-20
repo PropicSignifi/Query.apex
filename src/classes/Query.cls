@@ -1990,7 +1990,9 @@ public class Query {
      * Otherwise it returns the string representation of the input
      */
     private static String toString(Object obj) {
-        if (obj instanceOf Set<Id>) {
+        if (obj == null) {
+            return 'null';
+        } else if (obj instanceOf Set<Id>) {
             return toString((Set<Id>)obj);
         } else if (obj instanceOf Set<String>) {
             return toString((Set<String>)obj);
