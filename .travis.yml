@@ -3,8 +3,8 @@ os: trusty
 cache: false
 env:
 - SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-  CONSUMER_KEY=3MVG9ZL0ppGP5UrABRBHLozy3UGLlZ4mctSAdVVfn9QbqTNJqlYL6ITULTCQcfptEdFcZGf6qaziRro04ftcU
-  USERNAME=sales@signifidemo.propic.com
+  CONSUMER_KEY=3MVG9G9pzCUSkzZudlqnkY3TyOCSNo.sfmm9RzEpa7nnlp3mQRSZuNlSXa8qhGy4rApe1aSknefjqHviFnCSa
+  USERNAME=engineering@propic.com.au
 before_install:
 - openssl aes-256-cbc -K $encrypted_944b176fd4ab_key -iv $encrypted_944b176fd4ab_iv
   -in .travis/server.key.enc -out .travis/server.key -d
