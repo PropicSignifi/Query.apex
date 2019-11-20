@@ -1276,9 +1276,6 @@ public class Query {
     public Query debug() {
         System.debug(toQueryString());
 
-        for (Integer i = 0; i < finalConditionArgsIdx; i++) {
-            debugDeep(i);
-        }
         return this;
     }
 
@@ -1309,7 +1306,15 @@ public class Query {
     }
 
     public String toQueryString() {
-        return formQueryString();
+        String rawString = formQueryStringPreformat();
+
+        List<String> args = new List<String>();
+
+        for (Object arg : finalConditionArgs) {
+            args.add(toString(arg));
+        }
+
+        return format(rawString, args);
     }
 
     public SObject fetch() {
@@ -1356,12 +1361,12 @@ public class Query {
     }
 
     public List<SObject> toSObjectList() {
-        String queryString = toQueryString();
+        String queryString = formQueryString();
         return Database.query(queryString);
     }
 
     public List<AggregateResult> aggregate() {
-        String queryString = toQueryString();
+        String queryString = formQueryString();
         return Database.query(queryString);
     }
 
@@ -1376,7 +1381,7 @@ public class Query {
     }
 
     public Database.QueryLocator getQueryLocator() {
-        String queryString = toQueryString();
+        String queryString = formQueryString();
         return Database.getQueryLocator(queryString);
     }
 
@@ -1979,50 +1984,6 @@ public class Query {
         return formatString;
     }
 
-    private void debugDeep(Integer idx) {
-        if (idx == 0) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs0));
-        } else if (idx == 1) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs1));
-        } else if (idx == 2) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs2));
-        } else if (idx == 3) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs3));
-        } else if (idx == 4) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs4));
-        } else if (idx == 5) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs5));
-        } else if (idx == 6) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs6));
-        } else if (idx == 7) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs7));
-        } else if (idx == 8) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs8));
-        } else if (idx == 9) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs9));
-        } else if (idx == 10) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs10));
-        } else if (idx == 11) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs11));
-        } else if (idx == 12) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs12));
-        } else if (idx == 13) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs13));
-        } else if (idx == 14) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs14));
-        } else if (idx == 15) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs15));
-        } else if (idx == 16) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs16));
-        } else if (idx == 17) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs17));
-        } else if (idx == 18) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs18));
-        } else if (idx == 19) {
-            System.debug('conditionArgs' + idx + ': ' + toString(conditionArgs19));
-        }
-    }
-
     /*
      * Convert an argument to a part of a query string
      * If the argument is a list or a set, the string has brackets surrounded
@@ -2046,6 +2007,8 @@ public class Query {
         } else if (obj instanceOf Id ||
                    obj instanceOf String) {
             return '\'' + String.valueOf(obj) + '\'';
+        } else if (obj instanceOf Datetime) {
+            return JSON.serialize(obj).replaceAll('"', '');
         } else {
             return String.valueOf(obj);
         }

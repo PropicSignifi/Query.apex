@@ -714,6 +714,48 @@ public class QueryTest {
     }
 
     @isTest
+    static void toQueryStringTest() {
+        createData();
+
+        String queryString = new Query('Account').
+                    selectAllFields().
+                    addCondition(
+                        Query.doOr(
+                            Query.conditionIn('Name', new Set<String>{'ABC Ltd'}),
+                            Query.conditionEq('Phone', 'N/A')
+                        )
+                    ).
+                    addSubquery(
+                        Query.subquery('Opportunities').
+                        selectFields('Name, CloseDate, TotalOpportunityQuantity').
+                        addCondition(
+                            Query.doOr(
+                                Query.conditionIn('TotalOpportunityQuantity',
+                                        new Set<Integer>{10}),
+                                Query.conditionEq('Name', 'N/A'),
+                                Query.doAnd(
+                                    Query.conditionEq('CloseDate', Date.today().addDays(1)),
+                                    Query.conditionEq('Name', 'N/A'),
+                                    Query.conditionEq('Name', 'N/A')
+                                ),
+                                Query.doOr(
+                                    Query.conditionEq('CloseDate', Query.TODAY),
+                                    Query.conditionEq('Name', 'N/A'),
+                                    Query.conditionEq('Name', 'N/A')
+                                )
+                            )
+                        )
+                    ).
+                    toQueryString();
+
+        List<Account> accounts = Database.query(queryString);
+
+        assertAccount(accounts.get(0));
+        assertOpportunity(accounts.get(0).Opportunities.get(0));
+
+    }
+
+    @isTest
     static void conditionWithConstArgumentTest() {
         createData();
 
