@@ -22,7 +22,7 @@ before_install:
 - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --jwtkeyfile .travis/server.key
   --username $USERNAME -a HubOrg
 script:
-- sfdx force:org:create -v HubOrg -f config/scratch-org-config.json -a CiOrg --wait
+- sfdx force:org:create -v HubOrg -f config/project-scratch-def.json -a CiOrg --wait
   20
 - sfdx force:org:display -u CiOrg
 - sfdx force:mdapi:deploy -u CiOrg -d src -w 100
