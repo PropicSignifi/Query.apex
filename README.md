@@ -108,6 +108,34 @@ List<Account> accounts =
     toIdList();
 ```
 
+### Get the executable query string
+
+If you want to get the raw query string intead of executing the query,
+you can use the `toQueryString` method.
+
+```javascript
+String queryString = new Query('Account').
+    selectFields('Name').
+    addConditionLike('Name', '%Sam%').
+    toQueryString();
+
+Database.query(queryString);
+```
+
+### Debug
+
+You can use the `debug` method to print the current query string to
+the log.
+
+```javascript
+new Query('Account').
+    selectFields('Name').
+    debug().
+    addConditionLike('Name', '%Sam%').
+    debug()
+    run();
+```
+
 ### Select parent fields
 
 This will select all the fields from the parent object Account.
