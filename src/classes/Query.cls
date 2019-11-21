@@ -93,11 +93,30 @@ public class Query {
     public Query selectfield(String fieldName) {
         addToFieldSet(fieldName);
         return this;
-
     }
 
+    /*
+     * This function allows user provide a single field
+     */
     public Query selectField(Schema.SObjectField field) {
         return selectfields(field);
+    }
+
+    /*
+     * Select a single field providing an alias
+     * Only available in aggregate functions
+     */
+    public Query selectfield(String fieldName, String alias) {
+        aggregateList.add(new AggregateTuple(EMPTY, fieldName, alias));
+        return this;
+    }
+
+    /*
+     * Select a single field providing an alias
+     * Only available in aggregate functions
+     */
+    public Query selectField(Schema.SObjectField field, String alias) {
+        return selectfield(field.getDescribe().getName(), alias);
     }
 
     public Query selectFields(Schema.SObjectField field) {
@@ -1469,6 +1488,7 @@ public class Query {
     private Set<String> groupByFields = new Set<String>();
     Condition havingCondition;
 
+    private final String EMPTY = '';
     private final String MAX = 'MAX';
     private final String MIN = 'MIN';
     private final String AVG = 'AVG';
@@ -1799,7 +1819,11 @@ public class Query {
 
         for (AggregateTuple tuple : aggregateList) {
             String field = appendNamespaceToField(tuple.fieldName);
-            aggregateString += tuple.function + '(' + field + ')';
+            if (String.isNotBlank(tuple.function)) {
+                aggregateString += tuple.function + '(' + field + ')';
+            } else {
+                aggregateString += field + ' ';
+            }
             if (tuple.alias != null) {
                 aggregateString += tuple.alias;
             }

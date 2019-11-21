@@ -960,7 +960,7 @@ public class QueryTest {
 
         List<AggregateResult> results =
             new Query('Account').
-            selectField('Rating').
+            selectField('Rating', 'rate').
             count('Name', 'countName').
             max('NumberOfEmployees', 'maxEmployee').
             min('NumberOfEmployees', 'minEmployee').
@@ -972,7 +972,7 @@ public class QueryTest {
         Map<String, AggregateResult> resultMap = new Map<String, AggregateResult>();
 
         for (AggregateResult result : results) {
-            resultMap.put((String)result.get('Rating'), result);
+            resultMap.put((String)result.get('rate'), result);
         }
 
         System.assertEquals(resultMap.get('1').get('countName'), 2);

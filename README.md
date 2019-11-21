@@ -247,8 +247,8 @@ List<Account> accounts =
 ### Simple aggregate functions
 
 Aggregate functions including 'count', 'countDistinct', 'max', 'min', 'avg',
-'sum' are supported, but user needs to call another method named 'aggregate'
-to get the result.
+'sum' are supported. Optional alias can be provided as the second parameter.
+To get the aggregate result, user needs to call the method 'aggregate()'.
 
 The 'aggregate' method returns a list of 'AggregateResult' items.
 
@@ -283,10 +283,14 @@ each group can have its own aggregate result. Similar to the simple aggregate
 functions, the 'aggregate' method is needed to get the aggregate results, which
 will return a list of 'AggregateResult' items.
 
+We can also select fields that appear in the group by list. Similar to the
+methods 'count', 'max', etc, optional alias as the second argument is allowed
+in the 'selectField' method.
+
 ```javascript
 List<AggregateResult> results =
     new Query('Account').
-    selectField('Rating').
+    selectField('Rating', 'rate').
     count('Name', 'countName').
     max('NumberOfEmployees', 'maxEmployee').
     min('NumberOfEmployees', 'minEmployee').
@@ -296,7 +300,7 @@ List<AggregateResult> results =
     aggregate();
 
 for (AggregateResult result : results) {
-    System.debug('Rating: ' + result.get('Rating'));
+    System.debug('Rating: ' + result.get('rate'));
     System.debug('maxEmployee: ' + result.get('maxEmployee'));
     System.debug('minEmployee: ' + result.get('minEmployee'));
     System.debug('avgEmployee: ' + result.get('avgEmployee'));
