@@ -119,23 +119,6 @@ public class Query {
         return selectField(field.getDescribe().getName(), alias);
     }
 
-    /*
-     * Select a single field providing an alias
-     * Only available in aggregate functions
-     */
-    public Query selectfield(String fieldName, String alias) {
-        aggregateList.add(new AggregateTuple(EMPTY, fieldName, alias));
-        return this;
-    }
-
-    /*
-     * Select a single field providing an alias
-     * Only available in aggregate functions
-     */
-    public Query selectField(Schema.SObjectField field, String alias) {
-        return selectfield(field.getDescribe().getName(), alias);
-    }
-
     public Query selectFields(Schema.SObjectField field) {
         return selectField(field.getDescribe().getName());
     }
