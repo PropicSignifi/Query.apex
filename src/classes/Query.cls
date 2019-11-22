@@ -87,6 +87,22 @@ public class Query {
         }
     }
 
+    public Query selectFields(Schema.SObjectField field) {
+        return selectField(field.getDescribe().getName());
+    }
+
+    public Query selectFields(Set<Schema.SObjectField> fields) {
+        return selectFields(new List<Schema.SObjectField>(fields));
+    }
+
+    public Query selectFields(List<Schema.SObjectField> fields) {
+        List<String> fieldStrings = new List<String>();
+        for (Schema.SObjectField field : fields) {
+            fieldStrings.add(field.getDescribe().getName());
+        }
+        return selectFields(fieldStrings);
+    }
+
     /*
      * This function allows user provide a single field
      */
@@ -117,22 +133,6 @@ public class Query {
      */
     public Query selectField(Schema.SObjectField field, String alias) {
         return selectField(field.getDescribe().getName(), alias);
-    }
-
-    public Query selectFields(Schema.SObjectField field) {
-        return selectField(field.getDescribe().getName());
-    }
-
-    public Query selectFields(Set<Schema.SObjectField> fields) {
-        return selectFields(new List<Schema.SObjectField>(fields));
-    }
-
-    public Query selectFields(List<Schema.SObjectField> fields) {
-        List<String> fieldStrings = new List<String>();
-        for (Schema.SObjectField field : fields) {
-            fieldStrings.add(field.getDescribe().getName());
-        }
-        return selectFields(fieldStrings);
     }
 
     public Query count(String field) {
