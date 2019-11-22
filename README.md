@@ -316,19 +316,19 @@ List<AggregateResult> results =
     new Query('Account').
     selectField('Rating', 'rate').
     count('Name', 'countName').
-    max('NumberOfEmployees', 'maxEmployee').
-    min('NumberOfEmployees', 'minEmployee').
-    avg('NumberOfEmployees', 'avgEmployee').
-    sum('NumberOfEmployees', 'sumEmployee').
+    max('NumberOfEmployees', 'maxEmployees').
+    min('NumberOfEmployees', 'minEmployees').
+    avg('NumberOfEmployees', 'avgEmployees').
+    sum('NumberOfEmployees', 'sumEmployees').
     groupBy('Rating').
     aggregate();
 
 for (AggregateResult result : results) {
     System.debug('Rating: ' + result.get('rate'));
-    System.debug('maxEmployee: ' + result.get('maxEmployee'));
-    System.debug('minEmployee: ' + result.get('minEmployee'));
-    System.debug('avgEmployee: ' + result.get('avgEmployee'));
-    System.debug('sumEmployee: ' + result.get('sumEmployee'));
+    System.debug('maxEmployees: ' + result.get('maxEmployees'));
+    System.debug('minEmployees: ' + result.get('minEmployees'));
+    System.debug('avgEmployees: ' + result.get('avgEmployees'));
+    System.debug('sumEmployees: ' + result.get('sumEmployees'));
 }
 ```
 
