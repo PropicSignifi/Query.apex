@@ -2220,8 +2220,8 @@ public class Query {
 
             newCondition.conditionString =
                     '(' + this.conditionString + ') AND (' +
-                            shiftFormatStringIndice(other.conditionString, this.args.size()) +
-                            ')';
+                    shiftFormatStringIndice(other.conditionString, this.args.size()) +
+                    ')';
 
             newCondition.args.addAll(other.args);
 
@@ -2233,8 +2233,8 @@ public class Query {
 
             newCondition.conditionString =
                     '(' + this.conditionString + ') OR (' +
-                            shiftFormatStringIndice(other.conditionString, this.args.size()) +
-                            ')';
+                    shiftFormatStringIndice(other.conditionString, this.args.size()) +
+                    ')';
             newCondition.args.addAll(other.args);
 
             return newCondition;
