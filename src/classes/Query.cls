@@ -33,7 +33,7 @@ public class Query {
 
         // Get Schema.SObjectType
         Map<String, Schema.SObjectType> globalDescribe =
-            Schema.getGlobalDescribe();
+                Schema.getGlobalDescribe();
 
         this.objectName = appendNamespace(objectName);
         this.objectType = globalDescribe.get(this.objectName);
@@ -73,12 +73,12 @@ public class Query {
      * This function allows user provide a single field, or multiple fields
      *      concatenated by ','
      */
-    public Query selectfields(String fieldNames) {
+    public Query selectFields(String fieldNames) {
         if (fieldNames.contains(',')) {
             // parse the fieldNames separated by ','
             List<String> fieldList = fieldNames.split(', *');
 
-            return selectfields(new Set<String>(fieldList));
+            return selectFields(new Set<String>(fieldList));
         } else {
             final String fieldName = fieldNames;
 
@@ -90,7 +90,7 @@ public class Query {
     /*
      * This function allows user provide a single field
      */
-    public Query selectfield(String fieldName) {
+    public Query selectField(String fieldName) {
         addToFieldSet(fieldName);
         return this;
     }
@@ -99,7 +99,24 @@ public class Query {
      * This function allows user provide a single field
      */
     public Query selectField(Schema.SObjectField field) {
-        return selectfields(field);
+        return selectFields(field);
+    }
+
+    /*
+     * Select a single field providing an alias
+     * Only available in aggregate functions
+     */
+    public Query selectField(String fieldName, String alias) {
+        aggregateList.add(new AggregateTuple(EMPTY, fieldName, alias));
+        return this;
+    }
+
+    /*
+     * Select a single field providing an alias
+     * Only available in aggregate functions
+     */
+    public Query selectField(Schema.SObjectField field, String alias) {
+        return selectField(field.getDescribe().getName(), alias);
     }
 
     /*
@@ -120,7 +137,7 @@ public class Query {
     }
 
     public Query selectFields(Schema.SObjectField field) {
-        return selectfield(field.getDescribe().getName());
+        return selectField(field.getDescribe().getName());
     }
 
     public Query selectFields(Set<Schema.SObjectField> fields) {
@@ -128,7 +145,7 @@ public class Query {
     }
 
     public Query selectFields(List<Schema.SObjectField> fields) {
-        List<String> fieldStrings= new List<String>();
+        List<String> fieldStrings = new List<String>();
         for (Schema.SObjectField field : fields) {
             fieldStrings.add(field.getDescribe().getName());
         }
@@ -243,7 +260,7 @@ public class Query {
      * Select all user accessible fields from a parent field
      */
     public Query selectAllFields(String parentField) {
-        return selectParentfields(parentField);
+        return selectParentFields(parentField);
     }
 
     /*
@@ -609,7 +626,7 @@ public class Query {
      */
     public Query addCondition(Condition condition) {
         String newConditionString =
-            shiftFormatStringIndice(condition.conditionString, conditionArgs.size());
+                shiftFormatStringIndice(condition.conditionString, conditionArgs.size());
         newConditionString = '(' + newConditionString + ')';
         conditions.add(newConditionString);
         conditionArgs.addAll(condition.args);
@@ -688,7 +705,7 @@ public class Query {
      */
     public static Condition conditionIn(String lhs, Query rhs) {
         final String formatString = lhs + ' IN (' +
-            rhs.formQueryStringPreformat() + ')';
+                rhs.formQueryStringPreformat() + ')';
 
         Condition condition = new Condition();
 
@@ -956,29 +973,29 @@ public class Query {
     }
 
     public static Condition doAnd(Condition condition0,
-                                  Condition condition1,
-                                  Condition condition2) {
+            Condition condition1,
+            Condition condition2) {
         return doAnd(
                 new List<Condition>{
-                    condition0,
-                    condition1,
-                    condition2
+                        condition0,
+                        condition1,
+                        condition2
                 }
-            );
+        );
     }
 
     public static Condition doAnd(Condition condition0,
-                                  Condition condition1,
-                                  Condition condition2,
-                                  Condition condition3) {
+            Condition condition1,
+            Condition condition2,
+            Condition condition3) {
         return doAnd(
                 new List<Condition>{
-                    condition0,
-                    condition1,
-                    condition2,
-                    condition3
+                        condition0,
+                        condition1,
+                        condition2,
+                        condition3
                 }
-            );
+        );
     }
 
     public static Condition doAnd(List<Condition> conditions) {
@@ -1000,29 +1017,29 @@ public class Query {
     }
 
     public static Condition doOr(Condition condition0,
-                                     Condition condition1,
-                                     Condition condition2) {
+            Condition condition1,
+            Condition condition2) {
         return doOr(
                 new List<Condition>{
-                    condition0,
-                    condition1,
-                    condition2
+                        condition0,
+                        condition1,
+                        condition2
                 }
-            );
+        );
     }
 
     public static Condition doOr(Condition condition0,
-                                 Condition condition1,
-                                 Condition condition2,
-                                 Condition condition3) {
+            Condition condition1,
+            Condition condition2,
+            Condition condition3) {
         return doOr(
                 new List<Condition>{
-                    condition0,
-                    condition1,
-                    condition2,
-                    condition3
+                        condition0,
+                        condition1,
+                        condition2,
+                        condition3
                 }
-            );
+        );
     }
 
 
@@ -1079,17 +1096,17 @@ public class Query {
      * After calling this function, optional clause will be added to the query
      */
 
-    public Query forView(){
+    public Query forView() {
         optionalClause = 'FOR VIEW';
         return this;
     }
 
-    public Query forUpdate(){
+    public Query forUpdate() {
         optionalClause = 'FOR UPDATE';
         return this;
     }
 
-    public Query forReference(){
+    public Query forReference() {
         optionalClause = 'FOR REFERENCE';
         return this;
     }
@@ -1111,17 +1128,17 @@ public class Query {
     public static final DateLiteral LAST_YEAR = new DateLiteral('LAST_YEAR');
     public static final DateLiteral NEXT_YEAR = new DateLiteral('NEXT_YEAR');
     public static final DateLiteral THIS_FISCAL_QUARTER =
-        new DateLiteral('THIS_FISCAL_QUARTER');
+            new DateLiteral('THIS_FISCAL_QUARTER');
     public static final DateLiteral LAST_FISCAL_QUARTER =
-        new DateLiteral('LAST_FISCAL_QUARTER');
+            new DateLiteral('LAST_FISCAL_QUARTER');
     public static final DateLiteral NEXT_FISCAL_QUARTER =
-        new DateLiteral('NEXT_FISCAL_QUARTER');
+            new DateLiteral('NEXT_FISCAL_QUARTER');
     public static final DateLiteral THIS_FISCAL_YEAR =
-        new DateLiteral('THIS_FISCAL_YEAR');
+            new DateLiteral('THIS_FISCAL_YEAR');
     public static final DateLiteral LAST_FISCAL_YEAR =
-        new DateLiteral('LAST_FISCAL_YEAR');
+            new DateLiteral('LAST_FISCAL_YEAR');
     public static final DateLiteral NEXT_FISCAL_YEAR =
-        new DateLiteral('NEXT_FISCAL_YEAR');
+            new DateLiteral('NEXT_FISCAL_YEAR');
 
     public static DateLiteral LAST_N_DAYS(Integer n) {
         return new DateLiteral('LAST_N_DAYS', n);
@@ -1258,14 +1275,14 @@ public class Query {
     }
 
     public Query addSubquery(String relationshipName,
-                             Set<String> fieldSet) {
+            Set<String> fieldSet) {
         addChildRelationship(relationshipName).selectFields(fields);
 
         return this;
     }
 
     public Query addSubquery(String relationshipName,
-                             List<String> fieldList) {
+            List<String> fieldList) {
         addChildRelationship(relationshipName).selectFields(fields);
 
         return this;
@@ -1405,7 +1422,8 @@ public class Query {
     }
 
     /* Private members */
-    private Query() {}
+    private Query() {
+    }
 
     // State variables
     private Set<String> fields = new Set<String>();
@@ -1508,16 +1526,16 @@ public class Query {
     private Query addAllFields(String accessLevel) {
         // Get all the fields
         final Map<String, Schema.SObjectField> fieldMap =
-            objectType.getDescribe().fields.getMap();
+                objectType.getDescribe().fields.getMap();
 
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
             if (accessLevel == READABLE &&
-                fieldMap.get(fieldName).getDescribe().isAccessible() ||
-                accessLevel == EDITABLE &&
-                fieldMap.get(fieldName).getDescribe().isUpdateable() ||
-                accessLevel == CREATABLE &&
-                fieldMap.get(fieldName).getDescribe().isCreateable()) {
+                    fieldMap.get(fieldName).getDescribe().isAccessible() ||
+                    accessLevel == EDITABLE &&
+                    fieldMap.get(fieldName).getDescribe().isUpdateable() ||
+                    accessLevel == CREATABLE &&
+                    fieldMap.get(fieldName).getDescribe().isCreateable()) {
                 fields.add(fieldName.toLowerCase());
             }
         }
@@ -1526,7 +1544,7 @@ public class Query {
 
     private Schema.SObjectType getParentObjectType(Schema.SObjectType objType, String parentPath) {
         final String nextItem =
-            appendNamespace(translateParentField(parentPath.substringBefore('.')));
+                appendNamespace(translateParentField(parentPath.substringBefore('.')));
 
         Schema.SObjectField field = objType.getDescribe().fields.getMap().get(nextItem);
 
@@ -1541,7 +1559,7 @@ public class Query {
         }
 
         List<Schema.SObjectType> referenceTo =
-            field.getDescribe().getReferenceTo();
+                field.getDescribe().getReferenceTo();
 
         if (null == referenceTo || referenceTo.isEmpty()) {
             throw new QueryException('Cannot find parent relationship ' + nextItem +
@@ -1611,11 +1629,11 @@ public class Query {
 
     private Map<String, Schema.SObjectType> getChildRelationships() {
         Map<String, Schema.SObjectType> childMap =
-            new Map<String, Schema.SObjectType>();
+                new Map<String, Schema.SObjectType>();
         final List<Schema.ChildRelationship> childList =
-            objectType.getDescribe().getChildRelationships();
+                objectType.getDescribe().getChildRelationships();
 
-        for (Schema.ChildRelationship child: childList) {
+        for (Schema.ChildRelationship child : childList) {
             childMap.put(child.getRelationshipName(), child.getChildSObject());
         }
         return childMap;
@@ -1634,7 +1652,7 @@ public class Query {
     private Query addParentFields(String parentName) {
         // Get all the fields from the parent object
         final Map<String, Schema.SObjectField> fieldMap =
-            getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
+                getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
 
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
@@ -1762,8 +1780,8 @@ public class Query {
             query += ' OFFSET ' + resultOffset;
         }
 
-        if(!String.isEmpty(optionalClause)){
-            query += ' '+optionalClause;
+        if (!String.isEmpty(optionalClause)) {
+            query += ' ' + optionalClause;
         }
         return query;
     }
@@ -1795,7 +1813,7 @@ public class Query {
             addToFieldSet('Id');
         }
 
-        for (String field: fields) {
+        for (String field : fields) {
             fieldString += field + ', ';
         }
 
@@ -1841,7 +1859,7 @@ public class Query {
         for (String condition : conditions) {
             conditionString += condition;
             // either 'AND' or 'OR'
-            conditionString += ' ' + conditionOperator +  ' ';
+            conditionString += ' ' + conditionOperator + ' ';
         }
 
         // remove either 'AND' or 'OR' in the end
@@ -1856,7 +1874,7 @@ public class Query {
 
     private String formHavingString() {
         String conditionString =
-            shiftFormatStringIndice(havingCondition.conditionString, finalConditionArgsIdx);
+                shiftFormatStringIndice(havingCondition.conditionString, finalConditionArgsIdx);
 
         // shift the arg index
         saveConditions(havingCondition.args);
@@ -1867,7 +1885,7 @@ public class Query {
     private String formSubqueryString() {
         String subqueryString = '';
 
-        for (String key: childQuerys.keySet()) {
+        for (String key : childQuerys.keySet()) {
             Query childQuery = childQuerys.get(key);
 
             subqueryString += '(';
@@ -1911,7 +1929,7 @@ public class Query {
             if (singleOrder.nullsFirst) {
                 orderByString += ' NULLS FIRST';
             } else {
-                orderbyString += ' NULLS LAST';
+                orderByString += ' NULLS LAST';
             }
             count++;
         }
@@ -1920,13 +1938,13 @@ public class Query {
 
     private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, String fieldPath) {
         String nextItem =
-            fieldPath.substringBefore('.');
+                fieldPath.substringBefore('.');
 
         if (!fieldPath.contains('.')) {
             nextItem = appendNamespace(nextItem);
 
             final Map<String, Schema.SObjectField> fieldMap =
-                objType.getDescribe().fields.getMap();
+                    objType.getDescribe().fields.getMap();
 
             if (null == fieldMap.get(nextItem)) {
                 throw new QueryException('Cannot find ' + nextItem +
@@ -1940,7 +1958,7 @@ public class Query {
             return checkFieldLevelSecurity(
                     getParentObjectType(objType, nextItem),
                     fieldPath.substringAfter('.')
-                );
+            );
         }
 
         return true;
@@ -2016,24 +2034,24 @@ public class Query {
     private static String toString(Object obj) {
         if (obj == null) {
             return 'null';
-        } else if (obj instanceOf Set<Id>) {
-            return toString((Set<Id>)obj);
-        } else if (obj instanceOf Set<String>) {
-            return toString((Set<String>)obj);
-        } else if (obj instanceOf Set<Integer>) {
-            return toString((Set<Integer>)obj);
-        } else if (obj instanceOf Set<Decimal>) {
-            return toString((Set<Decimal>)obj);
-        } else if (obj instanceOf List<String> ||
-                   obj instanceOf List<Id>) {
-            return toString((List<String>)obj);
-        } else if (obj instanceOf List<Decimal> ||
-                   obj instanceOf List<Integer>) {
-            return toString((List<Decimal>)obj);
-        } else if (obj instanceOf Id ||
-                   obj instanceOf String) {
+        } else if (obj instanceof Set<Id>) {
+            return toString((Set<Id>) obj);
+        } else if (obj instanceof Set<String>) {
+            return toString((Set<String>) obj);
+        } else if (obj instanceof Set<Integer>) {
+            return toString((Set<Integer>) obj);
+        } else if (obj instanceof Set<Decimal>) {
+            return toString((Set<Decimal>) obj);
+        } else if (obj instanceof List<String> ||
+                obj instanceof List<Id>) {
+            return toString((List<String>) obj);
+        } else if (obj instanceof List<Decimal> ||
+                obj instanceof List<Integer>) {
+            return toString((List<Decimal>) obj);
+        } else if (obj instanceof Id ||
+                obj instanceof String) {
             return '\'' + String.valueOf(obj) + '\'';
-        } else if (obj instanceOf Datetime) {
+        } else if (obj instanceof Datetime) {
             return JSON.serialize(obj).replaceAll('"', '');
         } else {
             return String.valueOf(obj);
@@ -2069,7 +2087,7 @@ public class Query {
      */
     private static Set<Object> toObjectSet(Set<Id> items) {
         Set<Object> result = new Set<Object>();
-        for (Id item: items) {
+        for (Id item : items) {
             result.add(item);
         }
         return result;
@@ -2077,7 +2095,7 @@ public class Query {
 
     private static Set<Object> toObjectSet(Set<String> items) {
         Set<Object> result = new Set<Object>();
-        for (String item: items) {
+        for (String item : items) {
             result.add(item);
         }
         return result;
@@ -2085,7 +2103,7 @@ public class Query {
 
     private static Set<Object> toObjectSet(Set<Integer> items) {
         Set<Object> result = new Set<Object>();
-        for (Integer item: items) {
+        for (Integer item : items) {
             result.add(item);
         }
         return result;
@@ -2093,7 +2111,7 @@ public class Query {
 
     private static Set<Object> toObjectSet(Set<Decimal> items) {
         Set<Object> result = new Set<Object>();
-        for (Decimal item: items) {
+        for (Decimal item : items) {
             result.add(item);
         }
         return result;
@@ -2101,7 +2119,7 @@ public class Query {
 
     private static Set<Object> toObjectSet(List<Object> items) {
         Set<Object> result = new Set<Object>();
-        for (Object item: items) {
+        for (Object item : items) {
             result.add(item);
         }
         return result;
@@ -2117,7 +2135,7 @@ public class Query {
 
         childQuery.objectName = relationshipName;
         childQuery.objectType =
-            childRelationships.get(relationshipName);
+                childRelationships.get(relationshipName);
 
         childQuerys.put(relationshipName, childQuery);
 
@@ -2133,7 +2151,7 @@ public class Query {
         }
 
         childQuery.objectType =
-            childRelationships.get(relationshipName);
+                childRelationships.get(relationshipName);
 
         childQuerys.put(relationshipName, childQuery);
 
@@ -2218,9 +2236,9 @@ public class Query {
             Condition newCondition = this.clone();
 
             newCondition.conditionString =
-                '(' + this.conditionString + ') AND (' +
-                shiftFormatStringIndice(other.conditionString, this.args.size()) +
-                ')';
+                    '(' + this.conditionString + ') AND (' +
+                            shiftFormatStringIndice(other.conditionString, this.args.size()) +
+                            ')';
 
             newCondition.args.addAll(other.args);
 
@@ -2231,9 +2249,9 @@ public class Query {
             Condition newCondition = this.clone();
 
             newCondition.conditionString =
-                '(' + this.conditionString + ') OR (' +
-                shiftFormatStringIndice(other.conditionString, this.args.size()) +
-                ')';
+                    '(' + this.conditionString + ') OR (' +
+                            shiftFormatStringIndice(other.conditionString, this.args.size()) +
+                            ')';
             newCondition.args.addAll(other.args);
 
             return newCondition;
@@ -2243,7 +2261,7 @@ public class Query {
             Condition newCondition = this.clone();
 
             newCondition.conditionString =
-                '(NOT (' + this.conditionString + '))';
+                    '(NOT (' + this.conditionString + '))';
 
             return newCondition;
         }
@@ -2254,8 +2272,8 @@ public class Query {
 
         private Condition(String formatString, Object arg) {
             this();
-            if (arg instanceOf DateLiteral) {
-                DateLiteral literal = (DateLiteral)arg;
+            if (arg instanceof DateLiteral) {
+                DateLiteral literal = (DateLiteral) arg;
                 String literalExpression = literal.name;
 
                 if (literal.num != null) {
