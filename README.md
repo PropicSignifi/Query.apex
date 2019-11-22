@@ -136,6 +136,30 @@ new Query('Account').
     run();
 ```
 
+### Enforce security check
+
+By default, when read permission of an object/field is missing, we will
+print a warning to the log. But we can change it to an exception if that's
+needed.
+
+```javascript
+new Query('Account').
+    enforceSecurity().
+    selectFields('Name').
+    run();
+```
+
+You may also call the static method `enforceGlobalSecurity` to enforce
+exception on all Query instances.
+
+```javascript
+Query.enforceGlobalSecurity();
+
+new Query('Account').
+    selectFields('Name').
+    run();
+```
+
 ### Select parent fields
 
 This will select all the fields from the parent object Account.
