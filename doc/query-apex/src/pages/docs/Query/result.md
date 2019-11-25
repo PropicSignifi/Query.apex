@@ -12,13 +12,13 @@ weight: 2
 
 ## run
 
-Run the query as if running `Database.query()`
+Run the query as if running `Database.query()`.
 
 #### public List\<SObject\> run()
 
-Returns a list of SObject
+Returns a list of SObject.
 
-Alias to `toSObjectList()`
+Alias to `toSObjectList()`.
 
 ```javascript
 List<Account> accounts =
@@ -32,13 +32,13 @@ List<Account> accounts =
 
 ## fetch
 
-Fetch a subset of the result
+Fetch a subset of the result.
 
 #### public SObject fetch()
 
-Fetch the first SObject from the result
+Fetch the first SObject from the result.
 
-Returns an SObject
+Returns an SObject.
 
 ```javascript
 Account account =
@@ -49,11 +49,11 @@ Account account =
 
 #### public SObject fetch(Integer n)
 
-Fetch the nth SObject from the result
+Fetch the n elements from the result.
 
-n: Indicates the nth SObject in the result list, starting with 0
+n: Indicates the number of elements.
 
-Returns an SObject
+Returns an SObject.
 
 ```javascript
 Account account =
@@ -64,9 +64,9 @@ Account account =
 
 #### public List\<SObject\> fetch(Integer first, Integer last)
 
-Fetch a subset of result in the range [first, last)
+Fetch a subset of result in the range [first, last).
 
-Returns a list of SObject
+Returns a list of SObject.
 
 ```javascript
 List<Account> accounts =
@@ -80,13 +80,13 @@ List<Account> accounts =
 
 ## toSObjectList
 
-Run the query as if running `Database.query()`
+Run the query as if running `Database.query()`.
 
 #### public List\<SObject\> toSObjectList()
 
-Returns a list of SObject
+Returns a list of SObject.
 
-Alias to `run()`
+Alias to `run()`.
 
 ```javascript
 List<Account> accounts =
@@ -100,16 +100,79 @@ List<Account> accounts =
 
 ## toIdList
 
-Run the query and return the Id list of the result
+Run the query and return the Id list of the result.
 
 #### public List\<Id\> toIdList()
 
-Returns a list of Id
+Returns a list of Id.
 
 ```javascript
 List<Id> accounts =
     new Query('Account').
     toIdList();
+```
+
+</article>
+
+<article id="5">
+
+## getQueryLocator
+
+Get the QueryLocator that can be used for Batch Apex.
+
+#### public Database.QueryLocator getQueryLocator()
+
+Returns a Database.QueryLocator.
+
+```javascript
+Database.QueryLocator locator =
+    new Query('Account').
+    selectAllFields().
+    getQueryLocator();
+```
+
+</article>
+
+<article id="6">
+
+## aggregate
+
+Get the result of the aggregated query.
+
+Can only be used with aggregate functions.
+
+#### public List\<AggregateResult\> aggregate()
+
+Get the result of the aggregated query.
+
+Returns a List of AggregateResult.
+
+The returned list is guaranteed to be non-empty.
+
+```javascript
+List<AggregateResult> result =
+    new Query('Account').
+    count('Name').
+    aggregate();
+```
+
+</article>
+
+<article id="7">
+
+## toQueryString
+
+Get an executable SOQL string that can be used in `Dateabase.query()`.
+
+#### public String toQueryString()
+
+Returns an executable SOQL string.
+
+```javascript
+String queryStr = new Query('Account').
+    selectAllFields().
+    run();
+List<Account> accounts = Datebase.query(queryStr);
 ```
 
 </article>
