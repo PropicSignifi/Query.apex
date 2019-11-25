@@ -123,7 +123,7 @@ public class Query {
      * Only available in aggregate functions
      */
     public Query selectField(String fieldName, String alias) {
-        aggregateList.add(new AggregateTuple(EMPTY, fieldName, alias));
+        functionFieldList.add(new FunctionFieldTuple(EMPTY, fieldName, alias));
         return this;
     }
 
@@ -136,62 +136,62 @@ public class Query {
     }
 
     public Query count(String field) {
-        aggregateList.add(new AggregateTuple(COUNT, field));
+        functionFieldList.add(new FunctionFieldTuple(COUNT, field));
         return this;
     }
 
     public Query count(String field, String alias) {
-        aggregateList.add(new AggregateTuple(COUNT, field, alias));
+        functionFieldList.add(new FunctionFieldTuple(COUNT, field, alias));
         return this;
     }
 
     public Query max(String field) {
-        aggregateList.add(new AggregateTuple(MAX, field));
+        functionFieldList.add(new FunctionFieldTuple(MAX, field));
         return this;
     }
 
     public Query max(String field, String alias) {
-        aggregateList.add(new AggregateTuple(MAX, field, alias));
+        functionFieldList.add(new FunctionFieldTuple(MAX, field, alias));
         return this;
     }
 
     public Query min(String field) {
-        aggregateList.add(new AggregateTuple(MIN, field));
+        functionFieldList.add(new FunctionFieldTuple(MIN, field));
         return this;
     }
 
     public Query min(String field, String alias) {
-        aggregateList.add(new AggregateTuple(MIN, field, alias));
+        functionFieldList.add(new FunctionFieldTuple(MIN, field, alias));
         return this;
     }
 
     public Query avg(String field) {
-        aggregateList.add(new AggregateTuple(AVG, field));
+        functionFieldList.add(new FunctionFieldTuple(AVG, field));
         return this;
     }
 
     public Query avg(String field, String alias) {
-        aggregateList.add(new AggregateTuple(AVG, field, alias));
+        functionFieldList.add(new FunctionFieldTuple(AVG, field, alias));
         return this;
     }
 
     public Query sum(String field) {
-        aggregateList.add(new AggregateTuple(SUM, field));
+        functionFieldList.add(new FunctionFieldTuple(SUM, field));
         return this;
     }
 
     public Query sum(String field, String alias) {
-        aggregateList.add(new AggregateTuple(SUM, field, alias));
+        functionFieldList.add(new FunctionFieldTuple(SUM, field, alias));
         return this;
     }
 
     public Query countDistinct(String field) {
-        aggregateList.add(new AggregateTuple(COUNT_DISTINCT, field));
+        functionFieldList.add(new FunctionFieldTuple(COUNT_DISTINCT, field));
         return this;
     }
 
     public Query countDistinct(String field, String alias) {
-        aggregateList.add(new AggregateTuple(COUNT_DISTINCT, field, alias));
+        functionFieldList.add(new FunctionFieldTuple(COUNT_DISTINCT, field, alias));
         return this;
     }
 
@@ -1469,19 +1469,19 @@ public class Query {
         }
     }
 
-    private List<AggregateTuple> aggregateList = new List<AggregateTuple>();
-    private class AggregateTuple {
+    private List<FunctionFieldTuple> functionFieldList = new List<FunctionFieldTuple>();
+    private class FunctionFieldTuple {
         private String function;
         private String fieldName;
         private String alias;
 
-        private AggregateTuple(String function, String fieldName, String alias) {
+        private FunctionFieldTuple(String function, String fieldName, String alias) {
             this.function = function;
             this.fieldName = fieldName;
             this.alias = alias;
         }
 
-        private AggregateTuple(String function, String fieldName) {
+        private FunctionFieldTuple(String function, String fieldName) {
             this(function, fieldName, null);
         }
     }
@@ -1731,7 +1731,7 @@ public class Query {
 
         query += formFieldString();
 
-        if (!aggregateList.isEmpty()) {
+        if (!functionFieldList.isEmpty()) {
             query += ' ' + formAggregateString();
         }
 
@@ -1792,7 +1792,7 @@ public class Query {
             addAllFields(CREATABLE);
         }
 
-        if (fields.isEmpty() && aggregateList.isEmpty()) {
+        if (fields.isEmpty() && functionFieldList.isEmpty()) {
             addToFieldSet('Id');
         }
 
@@ -1810,7 +1810,7 @@ public class Query {
     private String formAggregateString() {
         String aggregateString = '';
 
-        for (AggregateTuple tuple : aggregateList) {
+        for (FunctionFieldTuple tuple : functionFieldList) {
             checkFieldLevelSecurity(objectType, tuple.fieldName);
         }
 
@@ -1818,7 +1818,7 @@ public class Query {
             aggregateString += ', ';
         }
 
-        for (AggregateTuple tuple : aggregateList) {
+        for (FunctionFieldTuple tuple : functionFieldList) {
             String field = appendNamespaceToField(tuple.fieldName);
             if (String.isNotBlank(tuple.function)) {
                 aggregateString += tuple.function + '(' + field + ')';
