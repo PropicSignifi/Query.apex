@@ -66,6 +66,14 @@ public class QueryTest {
     }
 
     @isTest
+    static void getSObjectTypeTest() {
+        System.assertEquals(
+            new Query('Account').getSObjectType(),
+            Account.getSObjectType()
+        );
+    }
+
+    @isTest
     static void fetchTest() {
         Account acc0 = new Account(Name = 'Account 0');
         Account acc1 = new Account(Name = 'Account 1');

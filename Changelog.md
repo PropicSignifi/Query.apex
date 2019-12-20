@@ -1,3 +1,7 @@
+### 1.2.0
+
+Add the getSObjectType() method
+
 ### 1.1.0 (2019-11-25)
 
 Add semi-join feature in the `addConditionIn`, `conditionIn` and `lookup`

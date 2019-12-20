@@ -1405,6 +1405,10 @@ public class Query {
         return Database.getQueryLocator(queryString);
     }
 
+    public Schema.SObjectType getSObjectType() {
+        return objectType;
+    }
+
     /* Private members */
     private Query() {
     }
