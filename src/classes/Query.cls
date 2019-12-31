@@ -384,6 +384,24 @@ public class Query {
     }
 
     /*
+     * Add an anti-join condition
+     * Example: addConditionNotIn('Id', new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id NOT IN (SELECT AccountId FROM Opportunity)"
+     */
+    public Query addConditionNotIn(String lhs, Query rhs) {
+        return addCondition(conditionNotIn(lhs, rhs));
+    }
+
+    /*
+     * Add an anti-join condition
+     * Example: addConditionNotIn(Account.Id, new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id NOT IN (SELECT AccountId FROM Opportunity)"
+     */
+    public Query addConditionNotIn(Schema.SObjectField lhs, Query rhs) {
+        return addCondition(conditionNotIn(lhs.getDescribe().getName(), rhs));
+    }
+
+    /*
      * Add a condition
      * Example: addConditionLt('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate < :Datetime.now()"
@@ -724,6 +742,32 @@ public class Query {
      *          the condition is equivalent to "Name NOT IN :mySet"
      */
     public static Condition conditionNotIn(Schema.SObjectField lhs, Object rhs) {
+        return conditionNotIn(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create an anti-join condition
+     * Example: conditionNotIn('Id', new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id NOT IN (SELECT AccountId FROM Opportunity)"
+     */
+    public static Condition conditionNotIn(String lhs, Query rhs) {
+        final String formatString = lhs + ' NOT IN (' +
+                rhs.formQueryStringPreformat() + ')';
+
+        Condition condition = new Condition();
+
+        condition.conditionString = formatString;
+        condition.args = rhs.conditionArgs;
+
+        return condition;
+    }
+
+    /*
+     * Create an anti-join condition
+     * Example: conditionNotIn(Account.Id, new Query('Opportunity').selectField('AccountId'))
+     *          the condition is equivalent to "Id NOT IN (SELECT AccountId FROM Opportunity)"
+     */
+    public static Condition conditionNotIn(Schema.SObjectField lhs, Query rhs) {
         return conditionNotIn(lhs.getDescribe().getName(), rhs);
     }
 

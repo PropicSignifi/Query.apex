@@ -1067,6 +1067,30 @@ public class QueryTest {
         System.assertEquals(opp.Id, opp2.Id);
     }
 
+    static void antiJoinTest() {
+        Account acc1 = new Account(Name = 'New Account 1');
+        insert acc1;
+        Account acc2 = new Account(Name = 'New Account 2');
+        insert acc2;
+
+        Opportunity opp = new Opportunity(
+            AccountId = acc1.Id,
+            Name = 'New Opportunity',
+            CloseDate = Date.today().addDays(3),
+            TotalOpportunityQuantity = 10,
+            StageName = 'New',
+            IsPrivate = false);
+        insert opp;
+
+        Account acc3 = (Account)new Query('Account').
+            addConditionNotIn('Id', new Query('Opportunity').
+                    selectField('AccountId').
+                    byId(opp.Id)).
+            fetch();
+
+        System.assertEquals(acc2, acc3);
+    }
+
     @isTest
     static void debugTest() {
         Id id = '001O000000qkv3KIAQ';
