@@ -5,6 +5,12 @@
 Query.apex provides a flexible and dynamic way of building a SOQL query on the
 Salesforce platform.
 
+[Our Page](https://propicsignifi.github.io/query-apex)
+&nbsp;&nbsp;
+[Documentation](https://propicsignifi.github.io/query-apex/docs/Query/)
+&nbsp;&nbsp;
+[Tutorials](https://propicsignifi.github.io/query-apex/tutorials/getting_started/)
+
 ## Why Query.apex
 
 Although Salesforce provides Database.query method to dynamically execute a
@@ -26,16 +32,6 @@ conditions in a flexible way
 
 - Manages the namespace of the object names and field names, while also
 provides the Object/Field Level Security checking
-
-## Documentation
-
-You can find the documentation in
-
-https://click-to-cloud.github.io/query-apex/
-
-As well as the tutorial
-
-https://click-to-cloud.github.io/query-apex/tutorials/getting_started/
 
 ## Examples
 
