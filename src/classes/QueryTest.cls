@@ -958,6 +958,31 @@ public class QueryTest {
     }
 
     @isTest
+    static void toLabelTest() {
+        Account acc1 = new Account(Name = 'New Account 1');
+
+        insert acc1;
+
+        Opportunity opp = new Opportunity(
+                AccountId = acc1.Id,
+                Name = 'New Opportunity',
+                CloseDate = Date.today().addDays(3),
+                TotalOpportunityQuantity = 10,
+                StageName = 'New');
+        insert opp;
+
+        List<Opportunity> opp0 = new Query('Opportunity').
+                selectField('Id').
+                toLabel('StageName').addConditionEq('Id', opp.Id).run();
+        System.assertEquals(opp0[0].get('StageName'), 'New');
+
+        List<Opportunity> opp1 = new Query('Opportunity').
+                selectField('Id').
+                toLabel('StageName', 'myStageName').addConditionEq('Id', opp.Id).run();
+        System.assertEquals(opp1[0].get('myStageName'), 'New');
+    }
+
+    @isTest
     static void groupByTest() {
         Account acc1 = new Account(Name = 'Account 1', Rating = '1', NumberOfEmployees = 1);
         Account acc2 = new Account(Name = 'Account 2', Rating = '9', NumberOfEmployees = 3);
