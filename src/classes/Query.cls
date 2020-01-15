@@ -146,6 +146,16 @@ public class Query {
         return this;
     }
 
+    public Query toLabel(String field) {
+        functionFieldList.add(new FunctionFieldTuple(TO_LABEL, field));
+        return this;
+    }
+
+    public Query toLabel(String field, String alias) {
+        functionFieldList.add(new FunctionFieldTuple(TO_LABEL, field, alias));
+        return this;
+    }
+
     public Query max(String field) {
         functionFieldList.add(new FunctionFieldTuple(MAX, field));
         return this;
@@ -1545,6 +1555,7 @@ public class Query {
     private final String SUM = 'SUM';
     private final String COUNT = 'COUNT';
     private final String COUNT_DISTINCT = 'COUNT_DISTINCT';
+    private final String TO_LABEL = 'TOLABEL';
 
     // Object Schema variables
     private String objectName;
