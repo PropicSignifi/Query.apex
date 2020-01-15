@@ -1,6 +1,6 @@
 # Query.apex
 
-[![Build Status](https://travis-ci.org/PropicSignifi/Query.apex.svg?branch=master)](https://travis-ci.org/Click-to-Cloud/Query.apex)
+[![Build Status](https://travis-ci.org/PropicSignifi/Query.apex.svg?branch=master)](https://travis-ci.org/PropicSignifi/Query.apex)
 
 Query.apex provides a flexible and dynamic way of building a SOQL query on the
 Salesforce platform.
