@@ -1118,7 +1118,23 @@ public class QueryTest {
 
         System.assertEquals(acc2, acc3);
     }
+    @isTest
+    static void fieldSettingTest() {
+        Account account = new Account(Name = 'Account 1', Rating = '1', NumberOfEmployees = 1);
+        insert account;
+        Query.FieldSetting setting = new Query.FieldSetting();
+        setting.isAccessible = true;
+        setting.isNameField = true;
 
+        Account acc = (Account)new Query('Account').selectAllFields(setting).byId(account.Id).fetch();
+        System.assertEquals(acc.Name, 'Account 1');
+
+        Query.FieldSetting settingOne = new Query.FieldSetting();
+        settingOne.isAccessible = true;
+        setting.isCalculated = true;
+        Account acc1 = (Account)new Query('Account').selectAllFields(settingOne).byId(account.Id).fetch();
+        System.assertEquals(acc1.Rating, '1');
+    }
     @isTest
     static void debugTest() {
         Id id = '001O000000qkv3KIAQ';
