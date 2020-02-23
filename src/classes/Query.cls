@@ -230,7 +230,8 @@ public class Query {
      * Select all user accessible fields
      */
     public Query selectAllFields() {
-        isSelectingAllFields = true;
+        FieldSetting config = new FieldSetting();
+        this.fieldSetting = config;
         return this;
     }
 
@@ -238,7 +239,9 @@ public class Query {
      * Select all user editable fields
      */
     public Query selectEditableFields() {
-        isSelectingEditableFields = true;
+        FieldSetting config = new FieldSetting();
+        config.isUpdateable = true;
+        this.fieldSetting = config;
         return this;
     }
 
@@ -246,7 +249,9 @@ public class Query {
      * Select all user creatable fields
      */
     public Query selectCreatableFields() {
-        isSelectingCreatableFields = true;
+        FieldSetting config = new FieldSetting();
+        config.isCreateable = true;
+        this.fieldSetting = config;
         return this;
     }
 
@@ -257,6 +262,10 @@ public class Query {
         return selectParentFields(parentField);
     }
 
+    public Query selectAllFields(FieldSetting config) {
+        this.fieldSetting = config;
+        return this;
+    }
     /*
      * Specify the Id of the object
      */
@@ -1470,9 +1479,7 @@ public class Query {
     // State variables
     private Set<String> fields = new Set<String>();
     private Set<String> parentReferences = new Set<String>();
-    private Boolean isSelectingAllFields = false;
-    private Boolean isSelectingEditableFields = false;
-    private Boolean isSelectingCreatableFields = false;
+    private FieldSetting fieldSetting;
 
     private List<String> conditions = new List<String>();
     private static final Integer maxArgSize = 20;
@@ -1505,7 +1512,34 @@ public class Query {
     private Integer sizeLimit = -1;
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
-
+    public class FieldSetting {
+        public Boolean isAccessible = true;
+        public Boolean isAutoNumber = false;
+        public Boolean isCalculated = false;
+        public Boolean isCascadeDelete = false;
+        public Boolean isCaseSensitive = false;
+        public Boolean isCreateable = false;
+        public Boolean isCustom = false;
+        public Boolean isDefaultedOnCreate = false;
+        public Boolean isDependentPicklist = false;
+        public Boolean isExternalID = false;
+        public Boolean isFilterable = false;
+        public Boolean isFormulaTreatNullNumberAsZero = false;
+        public Boolean isGroupable = false;
+        public Boolean isHtmlFormatted = false;
+        public Boolean isIdLookup = false;
+        public Boolean isNameField = false;
+        public Boolean isNamePointing = false;
+        public Boolean isNillable = false;
+        public Boolean isPermissionable = false;
+        public Boolean isRestrictedDelete = false;
+        public Boolean isRestrictedPicklist = false;
+        public Boolean isSearchPrefilterable = false;
+        public Boolean isSortable = false;
+        public Boolean isUnique = false;
+        public Boolean isUpdateable = false;
+        public  Boolean isWriteRequiresMasterRead = false;
+    }
     private List<OrderTuple> orderList = new List<OrderTuple>();
     private class OrderTuple {
         private String fieldName;
@@ -1562,23 +1596,87 @@ public class Query {
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
 
-    private final String READABLE = 'readable';
-    private final String EDITABLE = 'editable';
-    private final String CREATABLE = 'creatable';
-
-    private Query addAllFields(String accessLevel) {
+    private Query addAllFields() {
         // Get all the fields
         final Map<String, Schema.SObjectField> fieldMap =
                 objectType.getDescribe().fields.getMap();
-
+        FieldSetting config = this.fieldSetting;
         // Add the field if it is accessible by the user
         for (String fieldName : fieldMap.keySet()) {
-            if (accessLevel == READABLE &&
-                    fieldMap.get(fieldName).getDescribe().isAccessible() ||
-                    accessLevel == EDITABLE &&
-                    fieldMap.get(fieldName).getDescribe().isUpdateable() ||
-                    accessLevel == CREATABLE &&
-                    fieldMap.get(fieldName).getDescribe().isCreateable()) {
+            Boolean flag = config.isAccessible;
+            if (config.isAccessible) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isAccessible();
+            }
+            if (config.isExternalID) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isExternalID();
+            }
+            if (config.isFilterable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isFilterable();
+            }
+            if (config.isCreateable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isCreateable();
+            }
+            if (config.isUpdateable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isUpdateable();
+            }
+            if (config.isSortable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isSortable();
+            }
+            if (config.isCalculated) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isCalculated();
+            }
+            if (config.isCaseSensitive) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isCaseSensitive();
+            }
+            if (config.isCascadeDelete) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isCascadeDelete();
+            }
+            if (config.isAutoNumber) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isAutoNumber();
+            }
+            if (config.isCustom) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isCustom();
+            }
+            if (config.isFilterable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isFilterable();
+            }
+            if (config.isFormulaTreatNullNumberAsZero) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isFormulaTreatNullNumberAsZero();
+            }
+            if (config.isGroupable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isGroupable();
+            }
+            if (config.isHtmlFormatted) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isHtmlFormatted();
+            }
+            if (config.isIdLookup) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isIdLookup();
+            }
+            if (config.isNameField) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isNameField();
+            }
+            if (config.isNamePointing) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isNamePointing();
+            }
+            if (config.isNillable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isNillable();
+            }
+            if (config.isPermissionable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isPermissionable();
+            }
+            if (config.isRestrictedPicklist) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isRestrictedPicklist();
+            }
+            if (config.isSearchPrefilterable) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isSearchPrefilterable();
+            }
+            if (config.isUnique) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isUnique();
+            }
+            if (config.isWriteRequiresMasterRead) {
+                flag = flag && fieldMap.get(fieldName).getDescribe().isWriteRequiresMasterRead();
+            }
+            if (flag) {
                 fields.add(fieldName.toLowerCase());
             }
         }
@@ -1839,17 +1937,8 @@ public class Query {
         for (String parentName : parentReferences) {
             addParentFields(parentName);
         }
-
-        if (isSelectingAllFields) {
-            addAllFields(READABLE);
-        }
-
-        if (isSelectingEditableFields) {
-            addAllFields(EDITABLE);
-        }
-
-        if (isSelectingCreatableFields) {
-            addAllFields(CREATABLE);
+        if (this.fieldSetting != null){
+            addAllFields();
         }
 
         if (fields.isEmpty() && functionFieldList.isEmpty()) {
