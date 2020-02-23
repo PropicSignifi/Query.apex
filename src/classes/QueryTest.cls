@@ -526,7 +526,7 @@ public class QueryTest {
 
         System.assertEquals(accounts.get(0).Name, 'Account 2');
         System.assertEquals(accounts.get(1).Name, 'Account 3');
-	System.assertEquals(accounts.get(2).Name, 'Account 1');
+        System.assertEquals(accounts.get(2).Name, 'Account 1');
 
     }
 
@@ -959,27 +959,30 @@ public class QueryTest {
 
     @isTest
     static void toLabelTest() {
-        Account acc1 = new Account(Name = 'New Account 1');
+        Account acc = new Account(Name = 'New Account 1');
 
-        insert acc1;
+        insert acc;
 
         Opportunity opp = new Opportunity(
-                AccountId = acc1.Id,
-                Name = 'New Opportunity',
-                CloseDate = Date.today().addDays(3),
-                TotalOpportunityQuantity = 10,
-                StageName = 'New');
+            AccountId = acc.Id,
+            Name = 'New Opportunity',
+            CloseDate = Date.today().addDays(3),
+            TotalOpportunityQuantity = 10,
+            StageName = 'New');
         insert opp;
 
-        List<Opportunity> opp0 = new Query('Opportunity').
-                selectField('Id').
-                toLabel('StageName').addConditionEq('Id', opp.Id).run();
-        System.assertEquals(opp0[0].get('StageName'), 'New');
+        Sobject opportunitiesOne = new Query('Opportunity').
+            selectField('Id').
+            toLabel('StageName').
+            byId(opp.Id).
+            fetch();
+        System.assertEquals(opportunitiesOne.get('StageName'), 'New');
 
-        List<Opportunity> opp1 = new Query('Opportunity').
-                selectField('Id').
-                toLabel('StageName', 'myStageName').addConditionEq('Id', opp.Id).run();
-        System.assertEquals(opp1[0].get('myStageName'), 'New');
+        Sobject opportunitiesTwo = new Query('Opportunity').
+            toLabel('StageName', 'myStageName').
+            byId(opp.Id).
+            fetch();
+        System.assertEquals(opportunitiesTwo.get('myStageName'), 'New');
     }
 
     @isTest
