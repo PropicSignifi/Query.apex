@@ -1,6 +1,12 @@
-### 1.2.0
+### 1.2.0 (2020-02-25)
 
-Add the getSObjectType() method
+Add the getSObjectType() method.
+
+Add anti-join feature in the `addConditionNotIn`, `conditionNotIn` methods.
+
+Add the toLabel method.
+
+Add FieldSettings for the `selectAllFields` method.
 
 ### 1.1.0 (2019-11-25)
 
