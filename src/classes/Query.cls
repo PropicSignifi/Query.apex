@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Click to Cloud Pty Ltd
+ * Copyright (c) 2018 - 2020 Click to Cloud Pty Ltd, Propic Pty Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -266,6 +266,7 @@ public class Query {
         this.fieldSetting = config;
         return this;
     }
+
     /*
      * Specify the Id of the object
      */
