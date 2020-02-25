@@ -1585,6 +1585,7 @@ public class Query {
     private Integer sizeLimit = -1;
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
+
     public class FieldSetting {
         public Boolean isAccessible = true;
         public Boolean isAutoNumber = false;
@@ -1613,6 +1614,7 @@ public class Query {
         public Boolean isUpdateable = false;
         public  Boolean isWriteRequiresMasterRead = false;
     }
+
     private List<OrderTuple> orderList = new List<OrderTuple>();
     private class OrderTuple {
         private String fieldName;
@@ -1674,7 +1676,7 @@ public class Query {
         final Map<String, Schema.SObjectField> fieldMap =
                 objectType.getDescribe().fields.getMap();
         FieldSetting config = this.fieldSetting;
-        // Add the field if it is accessible by the user
+
         for (String fieldName : fieldMap.keySet()) {
             Boolean flag = config.isAccessible;
             if (config.isAccessible) {
@@ -2010,6 +2012,7 @@ public class Query {
         for (String parentName : parentReferences) {
             addParentFields(parentName);
         }
+
         if (this.fieldSetting != null){
             addAllFields();
         }
