@@ -351,6 +351,42 @@ public class Query {
 
     /*
      * Add a condition
+     * Example: addConditionNull('Name')
+     *          the condition is equivalent to "Name = null"
+     */
+    public Query addConditionNull(String field) {
+        return addCondition(conditionNull(field));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNull(Account.Name)
+     *          the condition is equivalent to "Name = null"
+     */
+    public Query addConditionNull(Schema.SObjectField field) {
+        return addCondition(conditionNull(field.getDescribe().getName()));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNotNull('Name')
+     *          the condition is equivalent to "Name != null"
+     */
+    public Query addConditionNotNull(String field) {
+        return addCondition(conditionNotNull(field));
+    }
+
+    /*
+     * Add a condition
+     * Example: addConditionNotNull(Account.Name)
+     *          the condition is equivalent to "Name != null"
+     */
+    public Query addConditionNotNull(Schema.SObjectField field) {
+        return addCondition(conditionNotNull(field.getDescribe().getName()));
+    }
+
+    /*
+     * Add a condition
      * Example: addConditionIn('Name', mySet)
      *          the condition is equivalent to "Name IN :mySet"
      */
@@ -699,6 +735,42 @@ public class Query {
      */
     public static Condition conditionNotEq(Schema.SObjectField lhs, Object rhs) {
         return conditionNotEq(lhs.getDescribe().getName(), rhs);
+    }
+
+    /*
+     * Create a condition
+     * Example: conditionNull('Name')
+     *          the condition is equivalent to "Name = null"
+     */
+    public static Condition conditionNull(String field) {
+        return conditionEq(field, null);
+    }
+
+    /*
+     * Add a condition
+     * Example: conditionNull(Account.Name)
+     *          the condition is equivalent to "Name = null"
+     */
+    public static Condition conditionNull(Schema.SObjectField field) {
+        return conditionEq(field.getDescribe().getName(), null);
+    }
+
+    /*
+     * Add a condition
+     * Example: conditionNotNull('Name')
+     *          the condition is equivalent to "Name != null"
+     */
+    public static Condition conditionNotNull(String field) {
+        return conditionNotEq(field, null);
+    }
+
+    /*
+     * Add a condition
+     * Example: conditionNotNull(Account.Name)
+     *          the condition is equivalent to "Name != null"
+     */
+    public static Condition conditionNotNull(Schema.SObjectField field) {
+        return conditionNotEq(field.getDescribe().getName(), null);
     }
 
     /*
