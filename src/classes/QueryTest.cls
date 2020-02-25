@@ -267,7 +267,7 @@ public class QueryTest {
         accounts = new Query('Account').
                     selectAllFields().
                     addConditionEq('Name', 'ABC Ltd').
-                    addConditionEq('Phone', '+61 410 000 000').
+                    addConditionNull('AccountNumber').
                     run();
 
         assertAccount(accounts.get(0));
@@ -275,7 +275,7 @@ public class QueryTest {
         // negative cases
         accounts = new Query('Account').
                     selectAllFields().
-                    addConditionEq('Name', 'ABC Ltd').
+                    addConditionNotNull('Name').
                     addConditionEq('Phone', '+61 410 111 111').
                     run();
 
@@ -467,6 +467,10 @@ public class QueryTest {
                                 Query.conditionNotEq('Website', 'https://www.samplewebsite.com'),
                                 Query.conditionGt('NumberOfEmployees', 15)
                             )
+                        ),
+                        Query.doOr(
+                            Query.conditionNull('AccountNumber'),
+                            Query.conditionNotNull('Sic')
                         )
                     )
                 ).
