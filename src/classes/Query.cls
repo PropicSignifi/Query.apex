@@ -36,13 +36,14 @@ public class Query {
         Map<String, Schema.SObjectType> globalDescribe =
                 Schema.getGlobalDescribe();
 
-        this.objectName = appendNamespace(objectName);
-        this.objectType = globalDescribe.get(this.objectName);
+        this.objectType = globalDescribe.get(appendNamespace(objectName));
 
         if (null == this.objectType) {
             throw new QueryException('Cannot find corresponding ' +
                     'SObject type from the SObject name ' + this.objectName);
         }
+
+        this.objectName = this.objectType.getDescribe().getName();
 
         childRelationships = getChildRelationships();
     }
