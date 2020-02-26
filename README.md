@@ -33,6 +33,9 @@ conditions in a flexible way
 - Manages the namespace of the object names and field names, while also
 provides the Object/Field Level Security checking
 
+- SOSL features are in active development. Please follow
+https://github.com/PropicSignifi/Query.apex/projects/1 for the progress
+
 ## Examples
 
 ### Get all accounts
