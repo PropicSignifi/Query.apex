@@ -3,6 +3,8 @@
     <types>
         <members>Query</members>
         <members>QueryTest</members>
+        <members>QuerySearch</members>
+        <members>QuerySearchTest</members>
         <name>ApexClass</name>
     </types>
     <version>47.0</version>
