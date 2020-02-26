@@ -25,15 +25,15 @@
 public class QuerySearchTest {
     @isTest
     static void simpleTest() {
-        QuerySearch qs = new QuerySearch().
-            find('ABC').
-            inNameFields().
-            returning('Account').
-            selectFields('Name, Phone');
+        QuerySearch qs = new QuerySearch()
+            .find('ABC')
+            .inNameFields()
+            .returning('Account')
+            .selectFields('Name, Phone');
 
         String str = qs.toSearchString();
 
-        System.assertEquals(getFindClause(str), '{"ABC"}');
+        System.assertEquals(getFindClause(str), '"ABC"');
 
         Account acc = new Account(Name = 'ABC Ltd',
                 Phone = '+61 410 000 000');
@@ -49,13 +49,43 @@ public class QuerySearchTest {
         System.assertEquals(accounts[0].Phone, '+61 410 000 000');
     }
 
+    @isTest
+    static void findClauseTest() {
+        String str;
+
+        str = new QuerySearch()
+            .find('ABC')
+            .find('CBA')
+            .toSearchString();
+
+        System.assertEquals(getFindClause(str), '("ABC") AND ("CBA")');
+
+        str = new QuerySearch()
+            .find(QuerySearch.doAnd('ABC', 'CBA'))
+            .toSearchString();
+
+        System.assertEquals(getFindClause(str), '("ABC") AND ("CBA")');
+
+        str = new QuerySearch()
+            .find(QuerySearch.doOr('ABC', 'CBA'))
+            .toSearchString();
+
+        System.assertEquals(getFindClause(str), '("ABC") OR ("CBA")');
+
+        str = new QuerySearch()
+            .find(QuerySearch.doOr(QuerySearch.doAnd('ABC', 'BCA'), 'CBA'))
+            .toSearchString();
+
+        System.assertEquals(getFindClause(str), '(("ABC") AND ("BCA")) OR ("CBA")');
+    }
+
     /*
      * The FIND clause is irrelevant to the SOSL result in APEX test code, so we
      * need an extra step to test the FIND clause.
      * https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_testing_SOSL.htm
      */
     private static String getFindClause(String searchString) {
-        Matcher m = Pattern.compile('FIND (\\{.*\\}).*').matcher(searchString);
+        Matcher m = Pattern.compile('FIND \\{(.*)\\}.*').matcher(searchString);
         System.assert(m.matches());
         return m.group(1);
     }

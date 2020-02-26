@@ -27,8 +27,49 @@ public class QuerySearch {
     public QuerySearch() {}
 
     public QuerySearch find(String text) {
-        this.searchText = '"' + text + '"';
+        return find(new SearchExpression(text));
+    }
+
+    public QuerySearch find(SearchExpression expression) {
+        if (this.searchExpression == null) {
+            this.searchExpression = expression;
+        } else {
+            this.searchExpression = doAnd(this.searchExpression, expression);
+        }
+
         return this;
+    }
+
+    public static SearchExpression doAnd(SearchExpression left, SearchExpression right) {
+        return left.doAnd(right);
+    }
+
+    public static SearchExpression doAnd(SearchExpression left, String right) {
+        return left.doAnd(right);
+    }
+
+    public static SearchExpression doAnd(String left, SearchExpression right) {
+        return new SearchExpression(left).doAnd(right);
+    }
+
+    public static SearchExpression doAnd(String left, String right) {
+        return new SearchExpression(left).doAnd(right);
+    }
+
+    public static SearchExpression doOr(SearchExpression left, SearchExpression right) {
+        return left.doOr(right);
+    }
+
+    public static SearchExpression doOr(SearchExpression left, String right) {
+        return left.doOr(right);
+    }
+
+    public static SearchExpression doOr(String left, SearchExpression right) {
+        return new SearchExpression(left).doOr(right);
+    }
+
+    public static SearchExpression doOr(String left, String right) {
+        return new SearchExpression(left).doOr(right);
     }
 
     public final static String ALL_FIELDS = 'ALL FIELDS';
@@ -105,11 +146,11 @@ public class QuerySearch {
     }
 
     private String searchGroup;
-    private String searchText = '';
+    private SearchExpression searchExpression;
     private List<Query> returningList = new List<Query>();
 
     private String formSearchString() {
-        String result = 'FIND {' + searchText + '}';
+        String result = 'FIND {' + searchExpression.expression + '}';
 
         if (searchGroup != null) {
             result += ' IN ' + searchGroup;
@@ -140,4 +181,34 @@ public class QuerySearch {
         return result;
     }
 
+    public class SearchExpression {
+        public SearchExpression(String text) {
+            this.expression = '"' + text + '"';
+        }
+
+        public SearchExpression doAnd(String other) {
+            return doAnd(new SearchExpression(other));
+        }
+
+        public SearchExpression doAnd(SearchExpression other) {
+            SearchExpression newExpression = new SearchExpression();
+            newExpression.expression = '(' +
+                    this.expression + ') AND (' + other.expression + ')';
+            return newExpression;
+        }
+
+        public SearchExpression doOr(String other) {
+            return doOr(new SearchExpression(other));
+        }
+
+        public SearchExpression doOr(SearchExpression other) {
+            SearchExpression newExpression = new SearchExpression();
+            newExpression.expression = '(' +
+                    this.expression + ') OR (' + other.expression + ')';
+            return newExpression;
+        }
+
+        private SearchExpression() {}
+        private String expression;
+    }
 }
