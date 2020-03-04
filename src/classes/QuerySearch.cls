@@ -108,6 +108,62 @@ public class QuerySearch {
         return this;
     }
 
+    public QuerySearch setLimit(Integer n) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).setLimit(n);
+        }
+        return this;
+    }
+
+    public QuerySearch orderBy(String fieldName, String direction) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).orderBy(fieldName, direction);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionEq(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionEq(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionEq(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size() - 1).addConditionEq(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionNotEq(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionNotEq(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionNotEq(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0 ){
+            returningList.get(returningList.size()-1).addConditionNotEq(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionLike(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionNotEq(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionLike(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionLike(lhs, rhs);
+        }
+        return this;
+    }
+
     public QuerySearch selectFields(Set<String> fields) {
         if (returningList.isEmpty()) {
             throw new QueryException('Cannot select fields without specifiying ' + 

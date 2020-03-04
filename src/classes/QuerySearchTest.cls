@@ -48,6 +48,49 @@ public class QuerySearchTest {
         System.assertEquals(accounts[0].Name, 'ABC Ltd');
         System.assertEquals(accounts[0].Phone, '+61 410 000 000');
     }
+    @isTest
+    static void limitTest() {
+        Account acc0 = new Account(Name = 'Account 0',Phone = '+61 410 000 000');
+        Account acc1 = new Account(Name = 'Account 0',Phone = '+61 410 000 000');
+        Account acc2 = new Account(Name = 'Account 0',Phone = '+61 410 000 000');
+
+        insert new List<Account>{acc0, acc1, acc2};
+        QuerySearch qs = new QuerySearch()
+            .find('Account')
+            .inNameFields()
+            .returning('Account')
+            .selectFields('Name, Phone')
+            .setLimit(2);
+
+        String str = qs.toSearchString();
+		Test.setFixedSearchResults(new List<Id>{acc0.Id, acc1.Id, acc2.Id});
+        List<Account> accounts = qs.run()[0];
+        System.assertEquals(accounts.size(), 2);
+    }
+
+    @isTest
+    static void runIdOrderTest() {
+        Account acc1 = new Account(Name = 'Account 1', Rating = '1');
+        Account acc2 = new Account(Name = 'Account 2', Rating = '9');
+        Account acc3 = new Account(Name = 'Account 3', Rating = '5');
+
+        insert new List<Account>{acc1, acc2, acc3};
+
+        List<Account> accounts;
+		Test.setFixedSearchResults(new List<Id>{acc1.Id, acc2.Id, acc3.Id});
+
+        accounts = new QuerySearch()
+            .find('Account')
+            .inNameFields()
+            .returning('Account')
+            .selectFields('Name, Rating')
+            .orderBy('Rating', 'DESC')
+            .run()[0];
+	
+        System.assertEquals(accounts.get(0).Name, 'Account 2');
+        System.assertEquals(accounts.get(1).Name, 'Account 3');
+        System.assertEquals(accounts.get(2).Name, 'Account 1');
+    }
 
     @isTest
     static void findClauseTest() {
