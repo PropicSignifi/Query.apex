@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/PropicSignifi/Query.apex.svg?branch=master)](https://travis-ci.org/PropicSignifi/Query.apex)
 
-Query.apex provides a flexible and dynamic way of building a SOQL query on the
+Query.apex provides a flexible and dynamic way of building a SOQL/SOSL query on the
 Salesforce platform.
 
 [Our Page](https://propicsignifi.github.io/query-apex)
