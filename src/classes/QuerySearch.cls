@@ -248,28 +248,28 @@ public class QuerySearch {
         return this;
     }
 
-    public QuerySearch addConditionIncludes(String lhs, Object rhs) {
+    public QuerySearch addConditionIncludes(String lhs, String rhs) {
         if (returningList.size() > 0) {
             returningList.get(returningList.size()-1).addConditionIncludes(lhs, rhs);
         }
         return this;
     }
 
-    public QuerySearch addConditionIncludes(Schema.SObjectField lhs, Object rhs) {
+    public QuerySearch addConditionIncludes(Schema.SObjectField lhs, String rhs) {
         if (returningList.size() > 0){
             returningList.get(returningList.size()-1).addConditionIncludes(lhs, rhs);
         }
         return this;
     }
 
-    public QuerySearch addConditionExcludes(String lhs, Object rhs) {
+    public QuerySearch addConditionExcludes(String lhs, String rhs) {
         if (returningList.size() > 0) {
             returningList.get(returningList.size()-1).addConditionExcludes(lhs, rhs);
         }
         return this;
     }
 
-    public QuerySearch addConditionExcludes(Schema.SObjectField lhs, Object rhs) {
+    public QuerySearch addConditionExcludes(Schema.SObjectField lhs, String rhs) {
         if (returningList.size() > 0){
             returningList.get(returningList.size()-1).addConditionExcludes(lhs, rhs);
         }
