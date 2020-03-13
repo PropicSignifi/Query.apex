@@ -164,6 +164,118 @@ public class QuerySearch {
         return this;
     }
 
+    public QuerySearch addConditionIn(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionIn(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionIn(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionIn(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionNotIn(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionNotIn(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionNotIn(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionNotIn(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionLt(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionLt(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionLt(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionLt(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionLe(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionLe(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionLe(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionLe(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionGt(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionGt(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionGt(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionGt(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionGe(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionGe(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionGe(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionGe(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionIncludes(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionIncludes(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionIncludes(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionIncludes(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionExcludes(String lhs, Object rhs) {
+        if (returningList.size() > 0) {
+            returningList.get(returningList.size()-1).addConditionExcludes(lhs, rhs);
+        }
+        return this;
+    }
+
+    public QuerySearch addConditionExcludes(Schema.SObjectField lhs, Object rhs) {
+        if (returningList.size() > 0){
+            returningList.get(returningList.size()-1).addConditionExcludes(lhs, rhs);
+        }
+        return this;
+    }
+
     public QuerySearch selectFields(Set<String> fields) {
         if (returningList.isEmpty()) {
             throw new QueryException('Cannot select fields without specifiying ' + 
