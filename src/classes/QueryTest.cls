@@ -1059,6 +1059,24 @@ public class QueryTest {
     }
 
     @isTest
+    static void allRowsTest() {
+        Account acc = new Account(Name = 'Account');
+        insert acc;
+
+        Task task1 = new Task(Subject = 'Task1', WhatId = acc.Id);
+        Task task2 = new Task(Subject = 'Task2', WhatId = acc.Id);
+        Task task3 = new Task(Subject = 'Task3', WhatId = acc.Id);
+        insert new List<Task>{task1, task2, task3};
+
+        List<Task> allTasks = new Query('Task')
+            .selectFields('Id')
+            .allRows()
+            .run();
+
+        System.assertEquals(3, allTasks.size());
+    }
+
+    @isTest
     static void semiJoinTest() {
         Account acc = new Account(Name = 'New Account');
         insert acc;

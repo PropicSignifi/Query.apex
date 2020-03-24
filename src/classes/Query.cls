@@ -701,6 +701,14 @@ public class Query {
     }
 
     /*
+     * Add all rows option for query
+     */
+    public Query allRows() {
+        addAllRows = true;
+        return this;
+    }
+
+    /*
      * Create a condition
      * Example: conditionEq('CreatedDate', Datetime.now())
      *          the condition is equivalent to "CreatedDate = :Datetime.now()"
@@ -1586,6 +1594,7 @@ public class Query {
     private Integer sizeLimit = -1;
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
+    private Boolean addAllRows = false;
 
     public class FieldSetting {
         public Boolean isAccessible = true;
@@ -1613,7 +1622,7 @@ public class Query {
         public Boolean isSortable = false;
         public Boolean isUnique = false;
         public Boolean isUpdateable = false;
-        public  Boolean isWriteRequiresMasterRead = false;
+        public Boolean isWriteRequiresMasterRead = false;
     }
 
     private List<OrderTuple> orderList = new List<OrderTuple>();
@@ -1999,7 +2008,16 @@ public class Query {
 
         if (!String.isEmpty(optionalClause)) {
             query += ' ' + optionalClause;
+            if ('FOR UPDATE'.equalsIgnoreCase(optionalClause) && addAllRows) {
+                throw new QueryException('You cannot use the ALL ROWS keywords ' +
+                    'with the FOR UPDATE keywords');
+            }
         }
+
+        if (addAllRows) {
+            query += ' ' + 'ALL ROWS';
+        }
+
         return query;
     }
 
