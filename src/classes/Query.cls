@@ -228,11 +228,19 @@ public class Query {
     }
 
     /*
-     * Select all user accessible fields
+     * Select all fields of the object
      */
     public Query selectAllFields() {
-        FieldSetting config = new FieldSetting();
-        this.fieldSetting = config;
+        this.isSystemContext = true;
+        initFieldSetting();
+        return this;
+    }
+
+    /*
+     * Select all user accessible fields
+     */
+    public Query selectReadableFields() {
+        initFieldSetting();
         return this;
     }
 
@@ -257,9 +265,17 @@ public class Query {
     }
 
     /*
-     * Select all user accessible fields from a parent field
+     * Select all fields from a parent field
      */
     public Query selectAllFields(String parentField) {
+      this.isSystemContext = true;
+        return selectParentFields(parentField);
+    }
+
+    /*
+     * Select all user accessible fields from a parent field
+     */
+    public Query selectReadableFields(String parentField) {
         return selectParentFields(parentField);
     }
 
@@ -1595,6 +1611,7 @@ public class Query {
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
     private Boolean addAllRows = false;
+    private Boolean isSystemContext = false;
 
     public class FieldSetting {
         public Boolean isAccessible = true;
@@ -1761,6 +1778,9 @@ public class Query {
             if (config.isWriteRequiresMasterRead) {
                 flag = flag && fieldMap.get(fieldName).getDescribe().isWriteRequiresMasterRead();
             }
+            if (this.isSystemContext) {
+                flag = this.isSystemContext;
+            }
             if (flag) {
                 fields.add(fieldName.toLowerCase());
             }
@@ -1881,8 +1901,11 @@ public class Query {
                 getParentObjectType(objectType, parentName).getDescribe().fields.getMap();
 
         // Add the field if it is accessible by the user
+        // or query has to run in system context
         for (String fieldName : fieldMap.keySet()) {
-            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+            if (this.isSystemContext ||
+                fieldMap.get(fieldName).getDescribe().isAccessible())
+            {
                 fields.add((appendNamespaceToField(parentName) + '.' + fieldName).
                         toLowerCase());
             }
@@ -2436,6 +2459,11 @@ public class Query {
         } else {
             return '';
         }
+    }
+
+    private void initFieldSetting(){
+        FieldSetting config = new FieldSetting();
+        this.fieldSetting = config;
     }
 
     private class QueryException extends Exception {

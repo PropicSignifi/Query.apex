@@ -42,6 +42,30 @@ public class QueryTest {
     }
 
     @isTest
+    static void selectReadableFieldsTest() {
+        createData();
+        List<Account> accounts;
+
+        accounts = new Query('Account').
+            selectReadableFields().
+            run();
+
+        assertAccount(accounts.get(0));
+
+        accounts = new Query(Account.getSObjectType()).
+            selectEditableFields().
+            run();
+
+        assertAccount(accounts.get(0));
+
+        accounts = new Query(Account.getSObjectType()).
+            selectCreatableFields().
+            run();
+
+        assertAccount(accounts.get(0));
+    }
+
+    @isTest
     static void selectAllFieldsTest() {
         createData();
         List<Account> accounts;
@@ -161,7 +185,33 @@ public class QueryTest {
     }
 
     @isTest
-    static void parentFieldsTest() {
+    static void readableParentFieldsTest() {
+        createData();
+
+        List<Opportunity> opportunities;
+
+        opportunities = new Query('Opportunity').
+            selectReadableFields().
+            selectReadableFields('CreatedBy').
+            selectReadableFields('Account.LastModifiedBy').
+            selectFields('Account.CreatedBy.FirstName').
+            selectFields('LastModifiedBy.FirstName, LastModifiedBy.LastName').
+            selectFields(new List<String>{'Owner.FirstName', 'Owner.LastName'}).
+            run();
+
+        assertOpportunity(opportunities.get(0));
+
+        System.assertNotEquals(opportunities.get(0).CreatedBy.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).Account.CreatedBy.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).Account.LastModifiedBy.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).LastModifiedBy.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).LastModifiedBy.LastName, null);
+        System.assertNotEquals(opportunities.get(0).Owner.FirstName, null);
+        System.assertNotEquals(opportunities.get(0).Owner.LastName, null);
+    }
+
+    @isTest
+    static void allParentFieldsTest() {
         createData();
 
         List<Opportunity> opportunities;

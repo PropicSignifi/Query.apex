@@ -50,13 +50,24 @@ List<Account> accounts = new Query('Account').run();
 
 ### Select all fields
 
-This will query all Accounts from the database, selecting all fields which
-the user has access privilege on.
+This will query all Accounts from the database, selecting all fields.
 
 ```javascript
 List<Account> accounts =
     new Query('Account').
     selectAllFields().
+    run();
+```
+
+### Select all user readable fields
+
+This will query all Accounts from the database, selecting all fields which
+the user has read access on.
+
+```javascript
+List<Account> accounts =
+    new Query('Account').
+    selectReadableFields().
     run();
 ```
 
@@ -170,6 +181,15 @@ List<Contact> contacts =
     run();
 ```
 
+This will select all user readable fields from the parent object Account.
+
+```javascript
+List<Contact> contacts =
+    new Query('Contact').
+    selectReadableFields('Account').
+    run();
+```
+
 ### Query with simple conditions
 
 This will query all the accounts whose 'FirstName' is 'Sam' and 'LastName' is
@@ -231,7 +251,7 @@ List<QuickText> result = new Query('QuickText').
     run();
 ```
 
-In contrast, this example is a condition that includes any of the two values: 
+In contrast, this example is a condition that includes any of the two values:
 
 ```javascript
 List<QuickText> result = new Query('QuickText').
