@@ -231,8 +231,8 @@ public class Query {
      * Select all fields of the object
      */
     public Query selectAllFields() {
-        this.isSystemContext = true;
-        initFieldSetting();
+        this.fieldSetting = initFieldSetting();
+        this.fieldSetting.isSystemContext = true;
         return this;
     }
 
@@ -240,7 +240,7 @@ public class Query {
      * Select all user accessible fields
      */
     public Query selectReadableFields() {
-        initFieldSetting();
+        this.fieldSetting = initFieldSetting();
         return this;
     }
 
@@ -248,9 +248,8 @@ public class Query {
      * Select all user editable fields
      */
     public Query selectEditableFields() {
-        FieldSetting config = new FieldSetting();
-        config.isUpdateable = true;
-        this.fieldSetting = config;
+        this.fieldSetting = initFieldSetting();
+        this.fieldSetting.isUpdateable = true;
         return this;
     }
 
@@ -258,9 +257,8 @@ public class Query {
      * Select all user creatable fields
      */
     public Query selectCreatableFields() {
-        FieldSetting config = new FieldSetting();
-        config.isCreateable = true;
-        this.fieldSetting = config;
+        this.fieldSetting = initFieldSetting();
+        this.fieldSetting.isCreateable = true;
         return this;
     }
 
@@ -268,7 +266,8 @@ public class Query {
      * Select all fields from a parent field
      */
     public Query selectAllFields(String parentField) {
-      this.isSystemContext = true;
+        this.parentFieldSetting = initParentFieldSetting();
+        this.parentFieldSetting.isSystemContext = true;
         return selectParentFields(parentField);
     }
 
@@ -276,6 +275,7 @@ public class Query {
      * Select all user accessible fields from a parent field
      */
     public Query selectReadableFields(String parentField) {
+        this.ParentFieldSetting = initParentFieldSetting();
         return selectParentFields(parentField);
     }
 
@@ -1578,6 +1578,7 @@ public class Query {
     private Set<String> fields = new Set<String>();
     private Set<String> parentReferences = new Set<String>();
     private FieldSetting fieldSetting;
+    private ParentFieldSetting parentFieldSetting;
 
     private List<String> conditions = new List<String>();
     private static final Integer maxArgSize = 20;
@@ -1611,7 +1612,6 @@ public class Query {
     private Integer resultOffset = -1;
     private Map<String, Query> childQuerys = new Map<String, Query>();
     private Boolean addAllRows = false;
-    private Boolean isSystemContext = false;
 
     public class FieldSetting {
         public Boolean isAccessible = true;
@@ -1640,6 +1640,11 @@ public class Query {
         public Boolean isUnique = false;
         public Boolean isUpdateable = false;
         public Boolean isWriteRequiresMasterRead = false;
+        public Boolean isSystemContext = false;
+    }
+
+    public class ParentFieldSetting {
+        public Boolean isSystemContext = false;
     }
 
     private List<OrderTuple> orderList = new List<OrderTuple>();
@@ -1778,8 +1783,8 @@ public class Query {
             if (config.isWriteRequiresMasterRead) {
                 flag = flag && fieldMap.get(fieldName).getDescribe().isWriteRequiresMasterRead();
             }
-            if (this.isSystemContext) {
-                flag = this.isSystemContext;
+            if (config.isSystemContext) {
+                flag = config.isSystemContext;
             }
             if (flag) {
                 fields.add(fieldName.toLowerCase());
@@ -1903,7 +1908,7 @@ public class Query {
         // Add the field if it is accessible by the user
         // or query has to run in system context
         for (String fieldName : fieldMap.keySet()) {
-            if (this.isSystemContext ||
+            if (isSelectAllParentFieldsSet() ||
                 fieldMap.get(fieldName).getDescribe().isAccessible())
             {
                 fields.add((appendNamespaceToField(parentName) + '.' + fieldName).
@@ -1911,6 +1916,11 @@ public class Query {
             }
         }
         return this;
+    }
+
+    private Boolean isSelectAllParentFieldsSet(){
+        return parentFieldSetting != null &&
+            parentFieldSetting.isSystemContext;
     }
 
     private void saveConditions(List<Object> args) {
@@ -2461,9 +2471,14 @@ public class Query {
         }
     }
 
-    private void initFieldSetting(){
+    private FieldSetting initFieldSetting(){
         FieldSetting config = new FieldSetting();
-        this.fieldSetting = config;
+        return config;
+    }
+
+    private ParentFieldSetting initParentFieldSetting(){
+        ParentFieldSetting config = new ParentFieldSetting();
+        return config;
     }
 
     private class QueryException extends Exception {
