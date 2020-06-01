@@ -1804,11 +1804,6 @@ public class Query {
                     ' from the object ' + objType.getDescribe().getName());
         }
 
-        if (!field.getDescribe().isAccessible()) {
-            alertSecurity('Permission denied: cannot read ' +
-                    nextItem + ' from object ' + objType.getDescribe().getName());
-        }
-
         List<Schema.SObjectType> referenceTo =
                 field.getDescribe().getReferenceTo();
 
@@ -2019,6 +2014,10 @@ public class Query {
             query += ' WHERE ' + conditionString;
         }
 
+        if (securityEnforced != null ? securityEnforced : securityEnforcedGlobal) {
+            query += ' WITH SECURITY_ENFORCED';
+        }
+
         if (!groupByFields.isEmpty()) {
             query += ' GROUP BY ' + formGroupByString();
         }
@@ -2057,10 +2056,6 @@ public class Query {
     private String formFieldString() {
         String fieldString = '';
 
-        for (String field : fields) {
-            checkFieldLevelSecurity(objectType, field);
-        }
-
         for (String parentName : parentReferences) {
             addParentFields(parentName);
         }
@@ -2086,10 +2081,6 @@ public class Query {
 
     private String formAggregateString() {
         String aggregateString = '';
-
-        for (FunctionFieldTuple tuple : functionFieldList) {
-            checkFieldLevelSecurity(objectType, tuple.fieldName);
-        }
 
         if (!fields.isEmpty()) {
             aggregateString += ', ';
@@ -2194,34 +2185,6 @@ public class Query {
             count++;
         }
         return orderByString;
-    }
-
-    private Boolean checkFieldLevelSecurity(Schema.SObjectType objType, String fieldPath) {
-        String nextItem =
-                fieldPath.substringBefore('.');
-
-        if (!fieldPath.contains('.')) {
-            nextItem = appendNamespace(nextItem);
-
-            final Map<String, Schema.SObjectField> fieldMap =
-                    objType.getDescribe().fields.getMap();
-
-            if (null == fieldMap.get(nextItem)) {
-                throw new QueryException('Cannot find ' + nextItem +
-                        ' in object ' + objType.getDescribe().getName());
-            }
-            if (!fieldMap.get(nextItem).getDescribe().isAccessible()) {
-                alertSecurity('Permission denied: cannot read ' +
-                        nextItem + ' from object ' + objType.getDescribe().getName());
-            }
-        } else {
-            return checkFieldLevelSecurity(
-                    getParentObjectType(objType, nextItem),
-                    fieldPath.substringAfter('.')
-            );
-        }
-
-        return true;
     }
 
     /*
