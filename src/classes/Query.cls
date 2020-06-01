@@ -2403,24 +2403,6 @@ public class Query {
     private static Boolean securityEnforcedGlobal = false;
     private Boolean securityEnforced = null;
 
-    /*
-     * By default, if field level security is missing, it will print a warning.
-     *
-     * But if the security is enforced, it will throw an exception.
-     *
-     * The flag cam be controlled by the static method `enforceGlobalSecurity` or
-     * the object method `enforceSecurity`.
-     */
-    private void alertSecurity(String msg) {
-        Boolean enforced = securityEnforced != null ? securityEnforced : securityEnforcedGlobal;
-
-        if (enforced) {
-            throw new SecurityException(msg);
-        } else {
-            System.debug(LoggingLevel.WARN, msg);
-        }
-    }
-
     private String namespace = getNamespaceFromClass();
 
     private static String getNamespaceFromClass() {
