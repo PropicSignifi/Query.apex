@@ -1551,6 +1551,12 @@ public class Query {
         return Database.query(queryString);
     }
 
+    public Integer count() {
+        count('');
+        String queryString = formQueryString();
+        return Database.countQuery(queryString);
+    }
+
     public List<Id> toIdList() {
         List<Id> ret = new List<Id>();
 

@@ -1012,6 +1012,19 @@ public class QueryTest {
     }
 
     @isTest
+    static void countTest() {
+        Account acc1 = new Account(Name = 'Account 1', Rating = '1', NumberOfEmployees = 1);
+        Account acc2 = new Account(Name = 'Account 2', Rating = '9', NumberOfEmployees = 3);
+        Account acc3 = new Account(Name = 'Account 3', Rating = '1', NumberOfEmployees = 5);
+        Account acc4 = new Account(Name = 'Account 4', Rating = null, NumberOfEmployees = 7);
+
+        insert new List<Account>{acc1, acc2, acc3, acc4};
+
+        System.assertEquals(4, new Query('Account').count());
+        System.assertEquals(2, new Query('Account').addConditionEq('Rating', '1').count());
+    }
+
+    @isTest
     static void toLabelTest() {
         Account acc = new Account(Name = 'New Account 1');
 
