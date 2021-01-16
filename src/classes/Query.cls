@@ -681,6 +681,14 @@ public class Query {
     }
 
     /*
+     * Add a condition directly from String
+     * Example: addConditionString('Channel EXCLUDES (\'MyChannel\')');
+     *          the condition is equivalent to "Channel EXCLUDES ('MyChannel')"
+     */
+    public Query addConditionString(String conditionString){
+        return addCondition(conditionString(conditionString));
+    }
+    /*
      * Add condition with a Condition object
      */
     public Query addCondition(Condition condition) {
@@ -1095,6 +1103,10 @@ public class Query {
      */
     public static Condition conditionExcludes(Schema.SObjectField lhs, Set<String> rhs) {
         return conditionExcludes(lhs.getDescribe().getName(), rhs);
+    }
+
+    public static Condition conditionString(String conditionString){
+        return new Condition(conditionString);
     }
 
     public static Condition doAnd(Condition lhs, Condition rhs) {
@@ -2277,7 +2289,7 @@ public class Query {
             return toString((List<Decimal>) obj);
         } else if (obj instanceof Id ||
                 obj instanceof String) {
-            return '\'' + String.valueOf(obj) + '\'';
+            return '\'' + String.escapeSingleQuotes(String.valueOf(obj)) + '\'';
         } else if (obj instanceof Datetime) {
             return JSON.serialize(obj).replaceAll('"', '');
         } else {
@@ -2444,6 +2456,9 @@ public class Query {
     private class SecurityException extends Exception {
     }
 
+    public class QueryConditionException extends Exception{
+    }
+
     public class DateLiteral {
         private DateLiteral(String name) {
             this.name = name;
@@ -2497,6 +2512,15 @@ public class Query {
             args = new List<Object>();
         }
 
+        private Condition(String conditionString){
+            this();
+            if(!isConditionStringSafe(conditionString)){
+                throw new QueryConditionException('Condition String contains either unended string literal or non-matching parentheses');
+            }
+
+            this.conditionString = '(' + conditionString + ')';
+        }
+
         private Condition(String formatString, Object arg) {
             this();
             if (arg instanceof DateLiteral) {
@@ -2511,6 +2535,40 @@ public class Query {
                 this.conditionString = formatString;
                 this.args.add(arg);
             }
+        }
+
+        /*
+         * Checks if condition string does not have unended String literal or non-matching parentheses
+         */
+        public Boolean isConditionStringSafe(String conditionString){
+            Integer paranthesesNestLevel = 0;
+            Boolean stringLiteralMode = false;
+
+            for(Integer i = 0; i <conditionString.length(); i++){
+                if(!stringLiteralMode){
+                    if(conditionString.charAt(i) == '('.charAt(0)){
+                        paranthesesNestLevel++;
+                    }
+
+                    if(conditionString.charAt(i) == ')'.charAt(0)){
+                        paranthesesNestLevel--;
+                    }
+                }
+
+                // check if quote is not escaped (or first character in the conditionString)
+                if(conditionString.charAt(i) == '\''.charAt(0) && (i == 0 || conditionString.charAt(i-1) != '\\'.charAt(0))){
+                    stringLiteralMode = !stringLiteralMode;
+                }
+
+                // if parantheses nest level gets negative the string is SOQL injection unsafe
+                if(paranthesesNestLevel < 0){
+                    return false;
+                }
+            }
+
+            // if we are in string Literal mode - string is unsafe
+            // otherwise return true
+            return !stringLiteralMode;
         }
 
         private String conditionString;
