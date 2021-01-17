@@ -854,6 +854,54 @@ public class QueryTest {
     }
 
     @isTest
+    static void conditionFromStringTest(){
+        createData();
+
+        Account account;
+
+        account = (Account) new Query('Account')
+            .selectAllFields()
+            .addConditionString('AnnualRevenue = NULL')
+            .fetch();
+        assertAccount(account);
+
+        account = (Account) new Query('Account')
+            .selectAllFields()
+            .addConditionString('Sic = \'D001\'')
+            .fetch();
+        assertAccount(account);
+
+        account = (Account) new Query('Account')
+            .selectAllFields()
+            .addConditionString('(AnnualRevenue = NULL AND (Sic IN (\'D001\', \'(D002)\')))')
+            .fetch();
+        assertAccount(account); 
+        
+        Query.QueryConditionException thrownException;
+        try{
+            new Query('Account')
+                .selectAllFields()
+                .addConditionString('= null) OR (Id !=null');
+        }
+        catch(Query.QueryConditionException e){
+            thrownException=e;
+        }
+        System.assert(thrownException != null);
+
+
+        thrownException=null;
+        try{
+            new Query('Account')
+                .selectAllFields()
+                .addConditionString('Id = \'asdf');
+        }
+        catch(Query.QueryConditionException e){
+            thrownException=e;
+        }
+        System.assert(thrownException != null);
+    }
+
+    @isTest
     static void dateLiteralTest() {
         createData();
 
