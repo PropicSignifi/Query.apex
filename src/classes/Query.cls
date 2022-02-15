@@ -24,14 +24,14 @@
 public class Query {
     public static final String VERSION = '2.0.0-pre';
     
-    public static Map<String, SObjectType> globalDescribe {
+    private static Map<String, SObjectType> globalDescribe {
         get {
             if (globalDescribe == null) {
                 globalDescribe = Schema.getGlobalDescribe();
             }
             return globalDescribe;
         }
-        private set;
+        set;
     }
 
     /* Public members */
