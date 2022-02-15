@@ -23,6 +23,16 @@
  */
 public class Query {
     public static final String VERSION = '2.0.0-pre';
+    
+    private static Map<String, SObjectType> globalDescribe {
+        get {
+            if (globalDescribe == null) {
+                globalDescribe = Schema.getGlobalDescribe();
+            }
+            return globalDescribe;
+        }
+        set;
+    }
 
     /* Public members */
     public Query(String objectName) {
@@ -31,10 +41,6 @@ public class Query {
 
     public Query(String objectName, String namespace) {
         setNamespace(namespace);
-
-        // Get Schema.SObjectType
-        Map<String, Schema.SObjectType> globalDescribe =
-                Schema.getGlobalDescribe();
 
         this.objectType = globalDescribe.get(appendNamespace(objectName));
 
