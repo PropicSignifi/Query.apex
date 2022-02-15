@@ -1394,6 +1394,18 @@ public class Query {
         orderList.add(singleOrder);
         return this;
     }
+    
+    public Query orderBy(Schema.SObjectField field) {
+        return orderBy(field.getDescribe().getName());
+    }
+
+    public Query orderBy(Schema.SObjectField field, String orderDirection) {
+        return orderBy(field.getDescribe().getName(), orderDirection);
+    }
+
+    public Query orderBy(Schema.SObjectField field, String orderDirection, Boolean nullsFirst) {
+        return orderBy(field.getDescribe().getName(), orderDirection, nullsFirst);
+    }
 
     public Query ascend() {
         for (OrderTuple singleOrder : orderList) {

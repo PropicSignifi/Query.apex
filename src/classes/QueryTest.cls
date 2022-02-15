@@ -581,7 +581,15 @@ public class QueryTest {
         System.assertEquals(accounts.get(0).Name, 'Account 2');
         System.assertEquals(accounts.get(1).Name, 'Account 3');
         System.assertEquals(accounts.get(2).Name, 'Account 1');
+        
+        accounts = new Query('Account').
+                selectAllFields().
+                orderBy(Account.Rating, 'DESC').
+                run();
 
+        System.assertEquals(accounts.get(0).Name, 'Account 2');
+        System.assertEquals(accounts.get(1).Name, 'Account 3');
+        System.assertEquals(accounts.get(2).Name, 'Account 1');
     }
 
     @isTest
@@ -623,6 +631,19 @@ public class QueryTest {
                     orderBy('Rating', 'DESC', Query.NULLS_LAST).
                     orderBy('Phone', 'ASC', Query.NULLS_FIRST).
                     run();
+
+        System.assertEquals(accounts.get(0).Name, 'Account 6');
+        System.assertEquals(accounts.get(1).Name, 'Account 2');
+        System.assertEquals(accounts.get(2).Name, 'Account 4');
+        System.assertEquals(accounts.get(3).Name, 'Account 1');
+        System.assertEquals(accounts.get(4).Name, 'Account 3');
+        System.assertEquals(accounts.get(5).Name, 'Account 5');
+        
+        accounts = new Query('Account').
+                selectAllFields().
+                orderBy(Account.Rating, 'DESC', Query.NULLS_LAST).
+                orderBy(Account.Phone, 'ASC', Query.NULLS_FIRST).
+                run();
 
         System.assertEquals(accounts.get(0).Name, 'Account 6');
         System.assertEquals(accounts.get(1).Name, 'Account 2');
