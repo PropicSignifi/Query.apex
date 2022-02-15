@@ -1395,15 +1395,15 @@ public class Query {
         return this;
     }
     
-    public Query orderBy(SObjectField field) {
+    public Query orderBy(Schema.SObjectField field) {
         return orderBy(field.getDescribe().getName());
     }
 
-    public Query orderBy(SObjectField field, String orderDirection) {
+    public Query orderBy(Schema.SObjectField field, String orderDirection) {
         return orderBy(field.getDescribe().getName(), orderDirection);
     }
 
-    public Query orderBy(SObjectField field, String orderDirection, Boolean nullsFirst) {
+    public Query orderBy(Schema.SObjectField field, String orderDirection, Boolean nullsFirst) {
         return orderBy(field.getDescribe().getName(), orderDirection, nullsFirst);
     }
 
