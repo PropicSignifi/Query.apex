@@ -1282,12 +1282,29 @@ public class QueryTest {
 
         Account acc = (Account)new Query('Account').selectAllFields(setting).byId(account.Id).fetch();
         System.assertEquals(acc.Name, 'Account 1');
-
-        Query.FieldSetting settingOne = new Query.FieldSetting();
-        settingOne.isAccessible = true;
-        setting.isCalculated = true;
-        Account acc1 = (Account)new Query('Account').selectAllFields(settingOne).byId(account.Id).fetch();
-        System.assertEquals(acc1.Rating, '1');
+    }
+    @isTest
+    static void isCalculatedFieldSettingAddsCalculatedFields(){
+        Workorder workorder = new Workorder();
+        insert workorder;
+        insert new List<WorkorderLineItem>{
+                new WorkorderLineItem( WorkorderId = workorder.Id),
+                new WorkorderLineItem( WorkorderId = workorder.Id)
+        };
+        Query.FieldSetting accessibleCalculatedFields = new Query.FieldSetting();
+        accessibleCalculatedFields.isAccessible = true;
+        accessibleCalculatedFields.isCalculated = true;
+        Test.startTest();
+        Workorder queriedOrder = (Workorder)new Query('Workorder').
+                selectAllFields(accessibleCalculatedFields).
+                byId(workorder.Id).
+                fetch();
+        Test.stopTest();
+        System.assert(queriedOrder.isSet('LineItemCount'), 'Query.fetch(), when called with a FieldSetting that specifies `isCalculated = true`, should return the calculated field `LineItemCount`.');
+        System.assert(queriedOrder.isSet('SubTotal'), 'Query.fetch(), when called with a FieldSetting that specifies `isCalculated = true`, should return the calculated field `SubTotal`.');
+        System.assert(queriedOrder.isSet('TotalPrice'), 'Query.fetch(), when called with a FieldSetting that specifies `isCalculated = true`, should return the calculated field `TotalPrice`.');
+        System.assertEquals(false, queriedOrder.isSet('WorkOrderNumber'), 'Query.fetch(), when called with a FieldSetting that specifies `isCalculated = true`, should not return the non-calculated field `WorkOrderNumber`.');
+        System.assertEquals(2, queriedOrder.LineItemCount, 'Query.fetch(), when called with a FieldSetting that specifies `isCalculated = true` and an Id for a Workorder that has 2 associated WorkOrderLineItems, should return "2" for the LineItemCount.');
     }
     @isTest
     static void debugTest() {
