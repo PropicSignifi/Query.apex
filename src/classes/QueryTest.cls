@@ -175,9 +175,9 @@ public class QueryTest {
         List<Account> accounts = new Query('Account').
                                  selectField('Id').
                                  selectFields('Name').
-                                 selectFields('Phone, Sic').
+                                 selectFields('Phone, SicDesc').
                                  selectFields(new List<String>{'NumberOfEmployees', 'Website'}).
-                                 selectFields(new Set<String>{'Fax', 'Site'}).
+                                 selectFields(new Set<String>{'Fax', 'ShippingState'}).
                                  selectAllFields().
                                  run();
 
@@ -520,7 +520,7 @@ public class QueryTest {
                         ),
                         Query.doOr(
                             Query.conditionNull('AccountNumber'),
-                            Query.conditionNotNull('Sic')
+                            Query.conditionNotNull('SicDesc')
                         )
                     )
                 ).
@@ -739,7 +739,7 @@ public class QueryTest {
                     addSubquery(
                         Query.subquery('Opportunities').
                         selectAllFields().
-                        addConditionEq('TotalOpportunityQuantity', 10)
+                        addConditionEq('Amount', 20112.79)
                     ).
                     addSubquery(
                         Query.subquery('Tasks').
@@ -770,11 +770,11 @@ public class QueryTest {
                     ).
                     addSubquery(
                         Query.subquery('Opportunities').
-                        selectFields('Name, CloseDate, TotalOpportunityQuantity').
+                        selectFields('Name, CloseDate, Amount').
                         addCondition(
                             Query.doOr(
-                                Query.conditionIn('TotalOpportunityQuantity',
-                                        new Set<Integer>{10}),
+                                Query.conditionIn('Amount',
+                                        new Set<Decimal>{20112.79}),
                                 Query.conditionEq('Name', 'N/A'),
                                 Query.doAnd(
                                     Query.conditionEq('CloseDate', Date.today().addDays(1)),
@@ -810,11 +810,11 @@ public class QueryTest {
                     ).
                     addSubquery(
                         Query.subquery('Opportunities').
-                        selectFields('Name, CloseDate, TotalOpportunityQuantity').
+                        selectFields('Name, CloseDate, Amount').
                         addCondition(
                             Query.doOr(
-                                Query.conditionIn('TotalOpportunityQuantity',
-                                        new Set<Integer>{10}),
+                                Query.conditionIn('Amount',
+                                        new Set<Decimal>{20112.79}),
                                 Query.conditionEq('Name', 'N/A'),
                                 Query.doAnd(
                                     Query.conditionEq('CloseDate', Date.today().addDays(1)),
@@ -888,13 +888,13 @@ public class QueryTest {
 
         account = (Account) new Query('Account')
             .selectAllFields()
-            .addConditionString('Sic = \'D001\'')
+            .addConditionString('SicDesc = \'Aircraft\'')
             .fetch();
         assertAccount(account);
 
         account = (Account) new Query('Account')
             .selectAllFields()
-            .addConditionString('(AnnualRevenue = NULL AND (Sic IN (\'D001\', \'(D002)\')))')
+            .addConditionString('(AnnualRevenue = NULL AND (SicDesc IN (\'Aircraft\', \'Metal Cans\')))')
             .fetch();
         assertAccount(account); 
         
@@ -1090,7 +1090,7 @@ public class QueryTest {
             AccountId = acc.Id,
             Name = 'New Opportunity',
             CloseDate = Date.today().addDays(3),
-            TotalOpportunityQuantity = 10,
+            Amount = 20112.79,
             StageName = 'New');
         insert opp;
 
@@ -1217,7 +1217,7 @@ public class QueryTest {
             AccountId = acc.Id,
             Name = 'New Opportunity',
             CloseDate = Date.today().addDays(3),
-            TotalOpportunityQuantity = 10,
+            Amount = 20112.79,
             StageName = 'New',
             IsPrivate = false);
         insert opp;
@@ -1259,7 +1259,7 @@ public class QueryTest {
             AccountId = acc1.Id,
             Name = 'New Opportunity',
             CloseDate = Date.today().addDays(3),
-            TotalOpportunityQuantity = 10,
+            Amount = 20112.79,
             StageName = 'New',
             IsPrivate = false);
         insert opp;
@@ -1348,11 +1348,11 @@ public class QueryTest {
         Account acc = new Account();
         acc.Name = 'ABC Ltd';
         acc.Phone = '+61 410 000 000';
-        acc.Sic = 'D001';
+        acc.SicDesc = 'Aircraft';
         acc.NumberOfEmployees = 10;
         acc.Website = 'https://www.samplewebsite.com';
         acc.Fax = '+61 2 0000 0000';
-        acc.Site = 'Sydney';
+        acc.ShippingState = 'Wyoming';
 
         insert acc;
 
@@ -1360,7 +1360,7 @@ public class QueryTest {
         opp.AccountId = acc.Id;
         opp.Name = 'New Opportunity';
         opp.CloseDate = Date.today().addDays(3);
-        opp.TotalOpportunityQuantity = 10;
+        opp.Amount = 20112.79;
         opp.StageName = 'New';
         opp.IsPrivate = false;
 
@@ -1377,17 +1377,17 @@ public class QueryTest {
     static void assertAccount(Account acc) {
         System.assertEquals(acc.Name, 'ABC Ltd');
         System.assertEquals(acc.Phone, '+61 410 000 000');
-        System.assertEquals(acc.Sic, 'D001');
+        System.assertEquals(acc.SicDesc, 'Aircraft');
         System.assertEquals(acc.NumberOfEmployees, 10);
         System.assertEquals(acc.Website, 'https://www.samplewebsite.com');
         System.assertEquals(acc.Fax, '+61 2 0000 0000');
-        System.assertEquals(acc.Site, 'Sydney');
+        System.assertEquals(acc.ShippingState, 'Wyoming');
     }
 
     static void assertOpportunity(Opportunity opp) {
         System.assertEquals(opp.Name, 'New Opportunity');
         System.assertEquals(opp.CloseDate, Date.today().addDays(3));
-        System.assertEquals(opp.TotalOpportunityQuantity, 10);
+        System.assertEquals(opp.Amount, 20112.79);
     }
 
     static void assertTask(Task task) {
