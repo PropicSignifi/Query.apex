@@ -1485,7 +1485,10 @@ public class Query {
     }
 
     public Query debug() {
-        System.debug(toQueryString());
+        Query cloned = this.clone();
+        cloned.fields = this.fields.clone();
+
+        System.debug(cloned.toQueryString());
 
         return this;
     }
