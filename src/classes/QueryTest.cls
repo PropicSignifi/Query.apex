@@ -1344,6 +1344,12 @@ public class QueryTest {
         System.assert(query != null);
     }
 
+    @isTest
+    static void debugInTheMiddleTest() {
+        Integer c = new Query('Account').debug().countQuery();
+        System.assert(c != null);
+    }
+
     static void createData() {
         Account acc = new Account();
         acc.Name = 'ABC Ltd';
