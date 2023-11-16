@@ -1585,11 +1585,11 @@ public class Query {
     }
 
     public Integer countQuery() {
-        this.isCountQuery = true;
+        count('');
+        isCountQuery = true;
         String queryString = formQueryString();
-        Integer count = Database.countQuery(queryString);
-        this.isCountQuery;
-        return count;
+        isCountQuery = false;
+        return Database.countQuery(queryString);
     }
 
     public List<Id> toIdList() {
@@ -2041,12 +2041,16 @@ public class Query {
         finalConditionArgsIdx = 0;
 
         String query = 'SELECT ';
+        
+        if (this.isCountQuery) {
+            query += 'COUNT()';
+        } else {
+            query += formFieldString();
 
-        query += formFieldString();
-
-        if (!functionFieldList.isEmpty()) {
-            query += ' ' + formAggregateString();
-        }
+            if (!functionFieldList.isEmpty()) {
+                query += ' ' + formAggregateString();
+            }
+        } 
 
         query += ' FROM ' + objectName;
 
@@ -2097,10 +2101,6 @@ public class Query {
 
     private String formFieldString() {
         String fieldString = '';
-
-        if (isCountQuery) {
-            return 'COUNT()';
-        }
 
         for (String parentName : parentReferences) {
             addParentFields(parentName);

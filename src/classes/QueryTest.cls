@@ -1119,6 +1119,7 @@ public class QueryTest {
 
         System.assertEquals(4, new Query('Account').countQuery());
         System.assertEquals(2, new Query('Account').addConditionEq('Rating', '1').countQuery());
+        System.assertEquals(4, new Query('Account').selectAllFields('Account').addConditionEq('Rating', '1').countQuery());
     }
 
     @isTest
