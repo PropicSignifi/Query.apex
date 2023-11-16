@@ -1585,9 +1585,11 @@ public class Query {
     }
 
     public Integer countQuery() {
-        count('');
+        this.isCountQuery = true;
         String queryString = formQueryString();
-        return Database.countQuery(queryString);
+        Integer count = Database.countQuery(queryString);
+        this.isCountQuery;
+        return count;
     }
 
     public List<Id> toIdList() {
@@ -1741,6 +1743,7 @@ public class Query {
     private String objectName;
     private Schema.SObjectType objectType;
     private Map<String, Schema.SObjectType> childRelationships;
+    private Boolean isCountQuery = false;
 
     private Query addAllFields() {
         // Get all the fields
@@ -2094,6 +2097,10 @@ public class Query {
 
     private String formFieldString() {
         String fieldString = '';
+
+        if (isCountQuery) {
+            return 'COUNT()';
+        }
 
         for (String parentName : parentReferences) {
             addParentFields(parentName);
