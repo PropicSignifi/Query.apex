@@ -1585,7 +1585,6 @@ public class Query {
     }
 
     public Integer countQuery() {
-        count('');
         isCountQuery = true;
         String queryString = formQueryString();
         isCountQuery = false;
@@ -1622,7 +1621,7 @@ public class Query {
     private ParentFieldSetting parentFieldSetting;
 
     private List<String> conditions = new List<String>();
-    private static final Integer maxArgSize = 20;
+    private static final Integer maxArgSize = 40;
     private Integer finalConditionArgsIdx = 0;
     private List<Object> conditionArgs = new List<Object>();
     private List<Object> finalConditionArgs = new List<Object>();
@@ -1646,6 +1645,26 @@ public class Query {
     private Object conditionArgs17;
     private Object conditionArgs18;
     private Object conditionArgs19;
+    private Object conditionArgs20;
+    private Object conditionArgs21;
+    private Object conditionArgs22;
+    private Object conditionArgs23;
+    private Object conditionArgs24;
+    private Object conditionArgs25;
+    private Object conditionArgs26;
+    private Object conditionArgs27;
+    private Object conditionArgs28;
+    private Object conditionArgs29;
+    private Object conditionArgs30;
+    private Object conditionArgs31;
+    private Object conditionArgs32;
+    private Object conditionArgs33;
+    private Object conditionArgs34;
+    private Object conditionArgs35;
+    private Object conditionArgs36;
+    private Object conditionArgs37;
+    private Object conditionArgs38;
+    private Object conditionArgs39;
 
     private String conditionOperator = 'AND';
     private String optionalClause = '';
@@ -2019,6 +2038,46 @@ public class Query {
             conditionArgs18 = arg;
         } else if (idx == 19) {
             conditionArgs19 = arg;
+        } else if (idx == 20) {
+            conditionArgs20 = arg;
+        } else if (idx == 21) {
+            conditionArgs21 = arg;            
+        } else if (idx == 22) {
+            conditionArgs22 = arg;
+        } else if (idx == 23) {
+            conditionArgs23 = arg;
+        } else if (idx == 24) {
+            conditionArgs24 = arg;
+        } else if (idx == 25) {
+            conditionArgs25 = arg;
+        } else if (idx == 26) {
+            conditionArgs26 = arg;
+        } else if (idx == 27) {
+            conditionArgs27 = arg;
+        } else if (idx == 28) {
+            conditionArgs28 = arg;
+        } else if (idx == 29) {
+            conditionArgs29 = arg;
+        } else if (idx == 30) {
+            conditionArgs30 = arg;
+        } else if (idx == 31) {
+            conditionArgs31 = arg;
+        } else if (idx == 32) {
+            conditionArgs32 = arg;
+        } else if (idx == 33) {
+            conditionArgs33 = arg;
+        } else if (idx == 34) {
+            conditionArgs34 = arg;
+        } else if (idx == 35) {
+            conditionArgs35 = arg;
+        } else if (idx == 36) {
+            conditionArgs36 = arg;
+        } else if (idx == 37) {
+            conditionArgs37 = arg;
+        } else if (idx == 38) {
+            conditionArgs38 = arg;
+        } else if (idx == 39) {
+            conditionArgs39 = arg;
         }
     }
 
