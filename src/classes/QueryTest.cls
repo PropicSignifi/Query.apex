@@ -1119,6 +1119,7 @@ public class QueryTest {
 
         System.assertEquals(4, new Query('Account').countQuery());
         System.assertEquals(2, new Query('Account').addConditionEq('Rating', '1').countQuery());
+        System.assertEquals(2, new Query('Account').selectAllFields('Account').addConditionEq('Rating', '1').countQuery());
     }
 
     @isTest
@@ -1350,6 +1351,35 @@ public class QueryTest {
         System.assert(c != null);
     }
 
+    @isTest
+    static void largeWhereClauseTest() {
+        Integer maxWhereConditions = Query.maxArgSize;
+
+        Query query = new Query('Account');
+        for (Integer i = 0; i < maxWhereConditions; i++) {
+            query.addConditionEq('Name', 'Name' + i);
+        }
+
+        Exception excptn;
+        
+        try {
+            query.run();
+        } catch (Exception ex) {
+            excptn = ex;
+        }
+
+		Assert.areEqual(null, excptn);        
+
+        Test.startTest();
+            try {
+                query.addConditionEq('Name', 'Name' + maxWhereConditions);
+                query.run();
+            } catch (Exception qex) {
+                Assert.isNotNull(qex);
+                //Assert.areEqual('The number of arguments exceeds the limit', qex.getMessage());
+            } 
+        Test.stopTest();
+    }
     static void createData() {
         Account acc = new Account();
         acc.Name = 'ABC Ltd';
